@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Image, Text, StyleSheet, View, Button, Modal, TouchableHighlight } from 'react-native';
+import { Image, Text, StyleSheet, View, Button, Modal, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { fullName, subOrTransfer } from '../../functions/reusable';
 import { box, capText, container, playerImage, subContainer, subImage, subTransferBtn } from './style';
-import { TouchableOpacity } from 'react-native';
 import { vw } from 'react-native-expo-viewport-units';
 import { checkBox, headers, playerNamePoints } from '../../styles/textStyle';
 

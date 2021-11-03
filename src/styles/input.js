@@ -49,6 +49,6 @@ export const inputFieldContainerInLine = {
 
 export const input = {
     ...standardText,
-    height: vh(3),
+    height: vh(6),
     marginLeft: vw(3)
 }

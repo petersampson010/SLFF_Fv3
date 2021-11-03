@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { connect } from 'react-redux';
 import { fullName, positionString, playerIds } from '../../functions/reusable';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
-import { TouchableOpacity } from 'react-native';
 import { labelText, standardText } from '../../styles/textStyle';
 import { tableElement3, tableElement4, tableRow } from '../../styles/table';
 import MyModal from '../Modal/myModal';

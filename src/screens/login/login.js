@@ -15,7 +15,6 @@ import { updateStack } from '../../Navigation';
 
 class LoginScreen extends Component {
 
-
   // EVENTUALLY YOU NEED A CLEAR BREAK BETWEEN LOGGED IN AND NOT 
   // shouldnt be able to go back to login once logged in 
   // just have a log out button 

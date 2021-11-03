@@ -1,10 +1,22 @@
+import axios from 'axios';
+
+const instance = axios.create({
+    baseURL: 'http://localhost:3000/'
+})
+
+const getData = async(url, requestMethod, payload) => {
+    let res = await apiCall(url, requestMethod, payload);
+    console.log(res);
+    return res;
+}
+
 // USER
 
 import { showMessage } from "react-native-flash-message";
 
 export const fetchAllUsers = () => {
-    return fetch('http://localhost:3000/users')
-    .then(res=>res.json());
+    return axios.get('http://localhost:3000/users')
+    .then(function(res) {console.log(res)});
 }
 export const fetchUserById = id => {
     return fetch(`http://localhost:3000/users/${id}`)
@@ -14,9 +26,13 @@ export const fetchAllUsersByAdminUserId = id => {
     return fetchAllUsers()
     .then(x=>x.filter(x=>x.admin_user_id===id))
 }
-export const fetchUserByEmail = userObj => {
-    return fetchAllUsers()
-    .then(users=>users.find(x=>x.email===userObj.email))
+export const fetchUserByEmail = async(userObj) => {
+    let users = await apiCall('users', 'GET', false);
+    console.log(users);
+    let res = await axiosApi.get('users');
+    console.log(res);
+    // return fetchAllUsers()
+    // .then(users=>users.find(x=>x.email===userObj.email))
 }
 export const postUser = (userObj) => {
     let configObj = {

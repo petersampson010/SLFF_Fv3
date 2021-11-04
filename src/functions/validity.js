@@ -1,5 +1,5 @@
 import { showMessage } from "react-native-flash-message";
-import { fetchAllUsers } from "./APIcalls";
+import { getAllUsers } from "./APIcalls";
 import { playersObjToArray } from "./reusable";
 import globalConfig from '../config/globalConfig.json';
 

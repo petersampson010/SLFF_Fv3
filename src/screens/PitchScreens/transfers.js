@@ -13,7 +13,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { validateTransfers } from '../../functions/validity';
 import pitch from '../../components/Pitch/pitch.js';
 import _, { remove } from 'lodash';
-import { deleteRecord, fetchAllRecordsByUserIdAndPlayerId, fetchCurrentRecordByUserIdAndPlayerId, fetchRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
+import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
 import { TouchableHighlightBase } from 'react-native';
 import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
 import SpinnerOverlay from '../../components/spinner/spinner';
@@ -66,7 +66,7 @@ class TransfersScreen extends Component {
                 // players transferred out
                 const playersOut = _.difference(originalPlayers, teamPlayers);
                 for (let i=0;i<playersOut.length;i++) {
-                  let record = await fetchCurrentRecordByUserIdAndPlayerId(user.user_id, playersOut[i].player_id);
+                  let record = await getRecord(user.user_id, 0, playersOut[i].player_id);
                   if (record.sub) {
                       count++;
                   }

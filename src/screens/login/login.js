@@ -3,9 +3,9 @@ import { View, Text, Button, Switch, TouchableHighlightBase, TextInput } from 'r
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
-import { fetchUserByEmail, fetchAdminUserByEmail, fetchAllPlayersByAdminUserId, 
-  fetchLatestStartersByUserId, fetchLatestSubsByUserId, fetchGwStartersByUserId, fetchGwSubsByUserId, fetchAllRecordsByUserId, 
-  fetchAllUsersByAdminUserId, fetchAllGamesByAdminUserId, fetchLeague, fetchLatestGameweekFromAdminUserId, fetchAllPGJoinersFromGameweekId, fetchUGJoiner, fetchUGJoiners, fetchPlayerById, fetchUserById, fetchAdminUserById, fetchAllPGJFromUserId } 
+import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, 
+  getLatestStartersByUserId, getLatestSubsByUserId, getGwStartersByUserId, getGwSubsByUserId, getAllRecordsByUserId, 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJoinersFromGameweekId, getUGJoiner, getUGJoiners, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -59,7 +59,7 @@ class LoginScreen extends Component {
 
   handleAdminSubmit = async() => {
     try {
-      let aUser = await fetchAdminUserByEmail(this.state.userObj);
+      let aUser = await getAdminUserByEmail(this.state.userObj);
       this.handleAdminReturn(aUser);
     } catch(e) {
       showMessage({
@@ -72,7 +72,8 @@ class LoginScreen extends Component {
   
   handleUserSubmit = async() => {
     try {
-      let user = await fetchUserByEmail(this.state.userObj);
+      let user = await getUserByEmail(this.state.userObj);
+      console.log(user);
       this.handleUserReturn(user);
     } catch(e) {
       showMessage({
@@ -85,36 +86,43 @@ class LoginScreen extends Component {
     
   handleUserReturn = async(user) => {
     try {
+      console.log(user);
       if (user !== undefined && user !== null) {
         const { admin_user_id, user_id } = user;
-        let gameweek = await fetchLatestGameweekFromAdminUserId(admin_user_id);
-        let clubPlayers = await fetchAllPlayersByAdminUserId(admin_user_id);
-        let aUser = await fetchAdminUserById(admin_user_id);
-        let latestStarters = await fetchLatestStartersByUserId(user_id);
-        let latestSubs = await fetchLatestSubsByUserId(user_id);
-        let records = await fetchAllRecordsByUserId(user_id);
-        let league = await fetchLeague(admin_user_id);
+        console.log(admin_user_id);
+        console.log('here gor forme readonf')
+        let gameweeks = await getAllGameweeksFromAdminUserId(admin_user_id);
+        console.log(gameweeks);
+        gameweeks.filter(g=>g.complete===true);
+        gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+        let gameweek = gameweeks[0];
+        let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
+        let aUser = await getAdminUserById(admin_user_id);
+        let latestStarters = await getLatestStartersByUserId(user_id);
+        let latestSubs = await getLatestSubsByUserId(user_id);
+        let records = await getAllRecordsByUserId(user_id);
+        let league = await getLeague(admin_user_id);
         if (gameweek) {
           const { gameweek_id } = gameweek;
-          let lastGwStarters = await fetchGwStartersByUserId(user_id, gameweek_id);
-          let lastGwSubs = await fetchGwSubsByUserId(user_id, gameweek_id);
-          let pgJoiners = await fetchAllPGJoinersFromGameweekId(gameweek_id);
-          let allPGJoiners = await fetchAllPGJFromUserId(user_id);
+          let lastGwStarters = await getGwStartersByUserId(user_id, gameweek_id);
+          let lastGwSubs = await getGwSubsByUserId(user_id, gameweek_id);
+          let pgJoiners = await getAllPGJoinersFromGameweekId(gameweek_id);
+          let allPGJoiners = await getAllPGJFromUserId(user_id);
           if (pgJoiners.length<1) {
             await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, [], [], null, null, null);
           } else {
-            let ugJoiners = await fetchUGJoiners(admin_user_id, gameweek_id);
-            let latestUG = await fetchUGJoiner(user_id, gameweek_id);
+            let ugJoiners = await getUGJoiners(admin_user_id, gameweek_id);
+            let latestUG = await getUGJoiner(user_id, gameweek_id);
             let pg = pgJoiners.sort((a,b)=>b.total_points-a.total_points);
             pg = pg[0];
             let topPlayer = pg ? {
               pg,
-              player: await fetchPlayerById(pg.player_id)
+              player: await getPlayerById(pg.player_id)
             } : null;
             let ug = ugJoiners.sort((a,b)=>b.total_points-a.total_points)[0];
             let topUser = ug ? {
               ug,
-              user: await fetchUserById(ug.user_id)
+              user: await getUserById(ug.user_id)
             } : null;
             await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners);
           }
@@ -142,9 +150,9 @@ class LoginScreen extends Component {
   handleAdminReturn = async(aUser) => {
     try {
       if (aUser !== undefined && aUser !== null) {
-        let clubPlayers = await fetchAllPlayersByAdminUserId(aUser.admin_user_id);
-        let allUsers = await fetchAllUsersByAdminUserId(aUser.admin_user_id);
-        let games = await fetchAllGamesByAdminUserId(aUser.admin_user_id);
+        let clubPlayers = await getAllPlayersByAdminUserId(aUser.admin_user_id);
+        let allUsers = await getAllUsersByAdminUserId(aUser.admin_user_id);
+        let games = await getAllGamesByAdminUserId(aUser.admin_user_id);
         await this.props.loginAdminUser(aUser, clubPlayers, allUsers, games);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {

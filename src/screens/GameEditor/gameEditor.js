@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 // import Dialog, { DialogButton, DialogContent } from 'react-native-popup-dialog';
 import { connect } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJoiner, fetchCurrentRecords, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, fetchRecordsByGwIdAndUserId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGwId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGwIdAndUserId, getAllRecordsByGwId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { completeGameState } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -153,7 +153,7 @@ class GameEditorScreen extends Component {
                 await postPGJ(postArr[i]);
             }
             await this.postUGJoiners();
-            let records = await fetchCurrentRecords();
+            let records = await getAllRecordsByGwId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
             await completeGame(this.props.gwSelect.gameweek_id, this.state.score);
@@ -174,7 +174,7 @@ class GameEditorScreen extends Component {
         let { allUsers, gwSelect } = this.props;
         for (let i=0; i<allUsers.length; i++) {
             const user = allUsers[i];
-            let records = await fetchRecordsByGwIdAndUserId(user.user_id, 0);
+            let records = await getRecordsByGwIdAndUserId(user.user_id, 0);
             const score = await calculateScore(records, gwSelect.gameweek_id);
             await postUGJoiner(user.user_id, gwSelect.gameweek_id, score);
         }

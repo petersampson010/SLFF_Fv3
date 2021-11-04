@@ -3,7 +3,7 @@ import { View, Text, Button, Switch } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { setAdminUser } from '../../actions';
-import { fetchAllAdminUsers, postAdminUser } from '../../functions/APIcalls'; 
+import { getAllAdminUsers, postAdminUser } from '../../functions/APIcalls'; 
 import { showMessage } from "react-native-flash-message";
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -93,7 +93,7 @@ class AdminAccountSetupScreen extends Component {
   
   handleSubmit = async() => {
     try {
-      let allAdminUsers = await fetchAllAdminUsers();
+      let allAdminUsers = await getAllAdminUsers();
       let validAccount = this.checkValidAccount(allAdminUsers);
       if (validAccount) {
         let adminUser = await postAdminUser(this.state.aUserObj);

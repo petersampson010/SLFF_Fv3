@@ -1,4 +1,4 @@
-import { fetchAllPGJFromUserId, fetchAllRecordsByUserId, fetchGwStartersByUserId, fetchGwSubsByUserId, fetchPGJoinerFromPlayerIdAndGwId, fetchPlayerById, fetchUGJoiner, fetchUserById } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGwStartersByUserId, getGwSubsByUserId, getPGJoinerFromPlayerIdAndGwId, getPlayerById, getUGJoiner, getUserById } from "./APIcalls";
 
 export const positionString = (num) => {
     switch(num) {
@@ -131,7 +131,7 @@ export const getNameOfNavPage = navState => {
 export const calculateScore = async(records, gwId) => {
     let score = 0;
     for (let i=0; i<records.length; i++) {
-        let pgJoiner = await fetchPGJoinerFromPlayerIdAndGwId(records[i]['player_id'], gwId);
+        let pgJoiner = await getPGJoinerFromPlayerIdAndGwId(records[i]['player_id'], gwId);
         if (pgJoiner) {
             if (!records[i].sub) {
                 score += pgJoiner["total_points"];
@@ -146,16 +146,16 @@ export const getTeamPointsInfo = async(userId, gwId, otherUser) => {
     console.log(gwId);
     console.log('above');
     if (otherUser) {
-        let ugj = await fetchUGJoiner(userId, gwId);
-        let starters = await fetchGwStartersByUserId(userId, gwId);
-        let subs = await fetchGwSubsByUserId(userId, gwId);
-        let records = await fetchAllRecordsByUserId(userId);
-        let allPGJoiners = await fetchAllPGJFromUserId(userId);
+        let ugj = await getUGJoiner(userId, gwId);
+        let starters = await getGwStartersByUserId(userId, gwId);
+        let subs = await getGwSubsByUserId(userId, gwId);
+        let records = await getAllRecordsByUserId(userId);
+        let allPGJoiners = await getAllPGJFromUserId(userId);
         return { starters, subs, records, ugj, allPGJoiners };
     } else {
-        let ugj = await fetchUGJoiner(userId, gwId);
-        let starters = await fetchGwStartersByUserId(userId, gwId);
-        let subs = await fetchGwSubsByUserId(userId, gwId);
+        let ugj = await getUGJoiner(userId, gwId);
+        let starters = await getGwStartersByUserId(userId, gwId);
+        let subs = await getGwSubsByUserId(userId, gwId);
         return { starters, subs, ugj };
     }
 }

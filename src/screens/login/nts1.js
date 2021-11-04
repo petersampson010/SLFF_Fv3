@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { View, Text, Switch, Button, StyleSheet, TextInput, processColor } from 'react-native';
-import { fetchAdminUserById, fetchAllAdminUsers, fetchAllPlayersByAdminUserId, fetchAllUsers, postUser } from '../../functions/APIcalls';
+import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
 import Header from '../../components/header/header';
 import { setAdminUser, setClubPlayers, setUser } from '../../actions';
@@ -48,12 +48,12 @@ class ntsScreen1 extends Component {
     }
   }
 
-  fetchInfo = async() => {
+  getInfo = async() => {
     const { userObj } = this.state;
     try {
-      let allUsers = await fetchAllUsers();
-      let allAdminUsers = await fetchAllAdminUsers();
-      let aUser = await fetchAdminUserById(parseInt(userObj.clubId));
+      let allUsers = await getAllUsers();
+      let allAdminUsers = await getAllAdminUsers();
+      let aUser = await getAdminUserById(parseInt(userObj.clubId));
       if (validateUser(allUsers, aUser, userObj)) {
         this.handleSubmit(allUsers, allAdminUsers, aUser);
       }
@@ -75,11 +75,11 @@ class ntsScreen1 extends Component {
             this.setState({signedUp: true});
             this.props.setUser(result);
             this.props.setAdminUser(aUser);
-            fetchAllPlayersByAdminUserId(aUser.admin_user_id)
+            getAllPlayersByAdminUserId(aUser.admin_user_id)
             .then(players => this.props.setClubPlayers(players))
             .then(() => updateStack(this.props.navigation, 0, 'nts2'));
           } else {
-            console.warn("fetch return: ", result)
+            console.warn("get return: ", result)
           }})
     } catch(e) {
       showMessage({
@@ -146,7 +146,7 @@ class ntsScreen1 extends Component {
                 autoCapitalize="none"
                 />
               </View>
-              <Button title="Sign Up" onPress={this.fetchInfo}/>
+              <Button title="Sign Up" onPress={this.getInfo}/>
             </View>
           </View>
     );

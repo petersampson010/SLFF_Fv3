@@ -17,7 +17,7 @@ export default function ContactUsScreen() {
   const [email, setEmail] = useState('');
   const [msg, setMsg] = useState('');
 
-  const twitterIcon = require('../images/twitterIcon.jpeg');
+  const twitterIcon = require('../../images/twitterIcon.jpeg');
 
   const submitMessage = async() => {
     try {

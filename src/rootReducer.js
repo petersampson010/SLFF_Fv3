@@ -370,8 +370,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETOTHERTEAMPOINTS": 
-        console.log('hit');
-        console.log(action.allPGJoiners);
             return {
                 ...state, 
                 otherTeam: true,
@@ -389,7 +387,6 @@ const rootReducer = (state = initialState, action) => {
 
             }
         case "SETTEAMPOINTS":
-            console.log('root reducer; setting team points');
             return {
                 ...state, 
                 otherTeam: false,

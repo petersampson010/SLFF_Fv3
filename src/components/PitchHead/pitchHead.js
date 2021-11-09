@@ -66,14 +66,10 @@ class PitchHead extends Component {
         const { otherTeam, otherUser, otherUg, ug, setOtherTeamPoints, setTeamPoints,user } = this.props;
         if (otherTeam) {
             const { starters, subs, records, ugj, allPGJoiners } = await getTeamPointsInfo(otherUser.user_id, direction === 'L' ? otherUg.gameweek_id-1 : otherUg.gameweek_id+1, otherUser);
-            console.log(ugj);
-            console.log('above undefined');
             setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, otherUser);
         } else {
             const { starters, subs, ugj } = await getTeamPointsInfo(user.user_id, direction === 'L' ? ug.gameweek_id-1 : ug.gameweek_id+1, otherUser);
             setTeamPoints(starters, subs, ugj);
-            console.log(ugj);
-            console.log('above undefineeeeed');
         }
     }
 

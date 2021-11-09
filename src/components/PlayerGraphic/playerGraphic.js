@@ -10,6 +10,10 @@ import { checkBox, headers, playerNamePoints } from '../../styles/textStyle';
 class PlayerGraphic extends Component {
     state = {}
 
+    componentDidMount() {
+        console.log(this.props.playerPG);
+    }
+
     playerNumber = () => {
         const { num } = this.props;
         if (num) {
@@ -85,8 +89,8 @@ class PlayerGraphic extends Component {
     }
 
     render() {
-        const playerImg = require('../../images/profile.jpg');
-        const subImg = require('../../images/subIcon.png');
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         const { player, openModal, type, clickFcn } = this.props;
       return ( 
             <View style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>

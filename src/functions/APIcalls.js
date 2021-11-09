@@ -76,9 +76,12 @@ export const getAllPlayersByAdminUserId = id => axiosGet(`players?admin_user_id=
 
 export const getLatestStartersByUserId = id => axiosGet(`users/${id}/latest_starters`);
 
-export const getGwStartersByUserId = (id, gameweekId) => axiosGet(`users/${id}/${gameweekId}/gw_starters`)
-
-export const getLatestSubsByUserId = id => axiosGet(`users/${id}/latest_subs`)
+export const getPlayersByUserIdGwIdSub = async(userId, gwId, sub) => {
+    let latestRecords = await getRecordsByUserIdGwIdSub(userId, gwId, sub)
+    let playerIds = latestRecords.map(r => r.player_id);
+    let allPlayers = await getAllPlayers();
+    return allPlayers.filter(p => playerIds.includes(p.player_id));
+}
 
 export const getGwSubsByUserId = (id, gameweekId) => axiosGet(`users/${id}/${gameweekId}/gw_subs`)
 
@@ -116,7 +119,9 @@ export const getRecordsByUserIdAndPlayerId = (userId, playerId) => axiosGet(`rec
 
 export const getRecordsByGwIdAndUserId = (userId, gwId) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}`);
 
-export const getRecord = (userId, gwId, playerId) => axiosGet(`players?user_id=${userId}&gameweek_id=${gwId}&player_id=${playerId}`);
+export const getRecord = (userId, gwId, playerId) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&player_id=${playerId}`);
+
+export const getRecordsByUserIdGwIdSub = (userId, gwId, sub) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&sub=${sub}`);
 
 export const postRecord = (player, userId, count) => axiosPost('records', {
     sub: count>5 ? true : false,
@@ -274,7 +279,7 @@ export const postUGJoiner = async(userId, gameweekId, score) => axiosPost('user_
     gameweek_id: gameweekId
 });
 
-export const getUGJoiner = (userId, gameweekId) => axiosGet(`user_gameweek_joiners?user_id${userId}&gameweek_id=${gameweekId}`);
+export const getUGJoiner = (userId, gameweekId) => axiosGet(`user_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`);
 
 export const getUGJoiners = (auId, gameweekId) => axiosGet(`user_gameweek_joiners?admin_user_id=${auId}&gameweek_id=${gameweekId}`);
 

@@ -41,7 +41,6 @@ class HomeScreen extends Component {
         const { gwLatest } = this.props;
         const { starters, subs, records, ugj, allPGJoiners } = await getTeamPointsInfo(team.user_id, gwLatest.gameweek_id, true);
         this.props.setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, team);
-        console.log('should be after');
         this.props.navigation.navigate('Points');
     }
 

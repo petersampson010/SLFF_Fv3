@@ -27,13 +27,21 @@ class Pitch extends Component {
         }
     }
 
+    componentDidMount() {
+        console.log(this.props.allPGJoiners);
+    }
 
-    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>pg.player_id===playerId && pg.gameweek_id===this.props.ug.gameweek_id)[0] : false;
+
+    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>{
+        // console.log(pg.player_id);
+        // console.log(playerId);
+        // console.log(pg.gameweek_id);
+        console.log(this.props.ug.gameweek_id);
+        return pg.player_id===playerId && pg.gameweek_id===this.props.ug.gameweek_id})[0] : false;
 
     team = () => playersArrayToObj(this.props.team);
 
     renderPlayers = (position) => {
-        console.log('**** rendering players ****');
         return this.team()[position].map((player, i) => 
         <PlayerGraphic 
         sub={false}
@@ -58,7 +66,7 @@ class Pitch extends Component {
             />)
 
     openModal = async(player) => {
-        let playerStats = 
+        // let playerStats = 
         this.setState({
             modal: {
                 active: true, 
@@ -68,7 +76,7 @@ class Pitch extends Component {
     }
 
     render() { 
-        const pitchImg = require('../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
+        const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
         const team = this.team();
         return (
             <View>

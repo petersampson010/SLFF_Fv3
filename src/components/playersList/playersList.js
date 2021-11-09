@@ -59,7 +59,7 @@ class PlayersList extends Component {
     playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
 
     tableRow = (player, key) => {
-        const subImg = require('../../images/subIcon.png');
+        const subImg = require('../../../images/subIcon.png');
         const icon = this.playerSelected(player) ? null : <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
         const { clickFcn } = this.props;
         return <TouchableOpacity key={key}

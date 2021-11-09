@@ -42,7 +42,7 @@ class MyModal extends Component {
     }
 
     modalJSX = () => {
-        const playerImg = require('../../images/profile.jpg');
+        const playerImg = require('../../../images/profile.jpg');
         if (this.props.jsx) {
             return this.props.jsx
         } else {

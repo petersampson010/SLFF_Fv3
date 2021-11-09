@@ -10,7 +10,6 @@ export const loginUser = (user, aUser, clubPlayers, latestStarters, latestSubs, 
             vCaptain = latestStarters[i];
         }
     }
-    console.log(allPGJoiners);
     return {
         type: 'LOGINUSER',
         user,

@@ -39,7 +39,8 @@ export const postUser = (userObj) => axiosPost('users', {
     admin_user_id: userObj.clubId
 });
 
-export const patchUserBUDGET = (budget, userId) => axiosPatch(`users?user_id=${userId}`, {budget});
+export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
+
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 
@@ -94,7 +95,7 @@ export const postPlayer = (player, aUserId) => axiosPost('players', {
     admin_user_id: aUserId
 });
 
-export const patchPlayer = player => axiosPatch(`players?player_id=${player.admin_user_id}`, {
+export const patchPlayer = player => axiosPatch(`players/${player.player_id}`, {
     first_name: player.first_name,
     last_name: player.last_name,
     position: player.position,
@@ -134,9 +135,19 @@ export const postRecord = (player, userId, count) => axiosPost('records', {
 
 export const postRecordDUPLICATE = (record) => axiosPost('records', record);
 
-export const patchRecordGAMEWEEK = (recordId, gwId) => axiosPatch(`records?record_id=${recordId}`, {gameweek_id: gwId});
+export const patchRecordGAMEWEEK = (recordId, gwId) => axiosPatch(`records/${recordId}`, {gameweek_id: gwId});
 
-export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_captain) => axiosPost('records', {
+export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_captain) => {
+    console.log('***** POSTING RECORD ******');
+    console.log('record: ' + 
+    {sub: count>0 ? true : false,
+    captain,
+    vice_captain,
+    record_id: player.record_id,
+    user_id: userId,
+    gameweek_id: gwId
+});
+    return axiosPost('records', {
     sub: count>0 ? true : false,
     captain,
     vice_captain,
@@ -144,15 +155,16 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     user_id: userId,
     gameweek_id: gwId
 });
+}
 
-export const patchRecordSUBS = (sub, record_id) => axiosPatch(`records?record_id=${record_id}`, {sub});
+export const patchRecordSUBS = (sub, record_id) => axiosPatch(`records/${record_id}`, {sub});
 
-export const patchRecordCAPTAINS = (captain, vice_captain, record_id) => axiosPatch(`records?record_id=${record_id}`, {
+export const patchRecordCAPTAINS = (captain, vice_captain, record_id) => axiosPatch(`records/${record_id}`, {
     captain,
     vice_captain
 });
 
-export const deleteRecord = async(record_id) => axiosDelete(`records?record_id=${record_id}`);
+export const deleteRecord = async(record_id) => axiosDelete(`records/${record_id}`);
 
 
 
@@ -171,12 +183,12 @@ export const postGame = (game, aUserID) => axiosPost('gameweeks', {
     admin_user_id: aUserID
 });
 
-export const patchGame = (game) => axiosPatch(`gameweeks?gameweek_id=${game.gameweek_id}`, {
+export const patchGame = (game) => axiosPatch(`gameweeks/${game.gameweek_id}`, {
     date: game.date,
     opponent: game.opponent
 });
 
-export const completeGame = (id, score) => axiosPatch(`gameweeks?gameweek_id=${id}`, {
+export const completeGame = (id, score) => axiosPatch(`gameweeks/${id}`, {
     score: `${score.team} - ${score.oppo}`,
     complete: true
 });

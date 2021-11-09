@@ -106,8 +106,6 @@ class LoginScreen extends Component {
             await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, [], [], null, null, null);
           } else {
             let ugJoiners = await getUGJoiners(admin_user_id, gameweek_id);
-            console.log(user_id);
-            console.log(gameweek_id);
             let latestUG = await getUGJoiner(user_id, gameweek_id);
             let pg = pgJoiners.sort((a,b)=>b.total_points-a.total_points);
             pg = pg[0];

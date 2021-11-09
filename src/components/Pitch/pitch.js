@@ -27,16 +27,8 @@ class Pitch extends Component {
         }
     }
 
-    componentDidMount() {
-        console.log(this.props.allPGJoiners);
-    }
-
 
     playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>{
-        // console.log(pg.player_id);
-        // console.log(playerId);
-        // console.log(pg.gameweek_id);
-        console.log(this.props.ug.gameweek_id);
         return pg.player_id===playerId && pg.gameweek_id===this.props.ug.gameweek_id})[0] : false;
 
     team = () => playersArrayToObj(this.props.team);

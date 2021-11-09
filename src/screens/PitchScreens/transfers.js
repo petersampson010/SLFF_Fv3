@@ -94,7 +94,7 @@ class TransfersScreen extends Component {
                     }
                 }
                 // update budget
-                await patchUserBUDGET({...user, budget: budget});
+                await patchUserBUDGET(user.user_id, budget);
                 // persist budget update in root state
                 setLatestToTransferring();
                 removeSpinner();

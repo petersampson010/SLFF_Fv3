@@ -10,10 +10,6 @@ import { checkBox, headers, playerNamePoints } from '../../styles/textStyle';
 class PlayerGraphic extends Component {
     state = {}
 
-    componentDidMount() {
-        console.log(this.props.playerPG);
-    }
-
     playerNumber = () => {
         const { num } = this.props;
         if (num) {

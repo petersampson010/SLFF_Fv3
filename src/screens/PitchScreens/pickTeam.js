@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, Text, View, StyleSheet, Button, Picker, Modal, TouchableHighlight } from 'react-native';
 import { getCaptain, getVCaptain, positionString, fullName, playersObjToArray, getRecordId, playersArrayToObj } from '../../functions/reusable';
 import { connect } from 'react-redux';
-import { addSpinner, pickTeamUpdate, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
+import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
@@ -114,7 +114,6 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        pickTeamUpdate: (team, subs) => dispatch(pickTeamUpdate(team, subs)),
         subIn: player => dispatch(subIn(player)),
         subOut: player => dispatch(subOut(player)),
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),

@@ -3,7 +3,7 @@ import { View, Text, Button, Switch, TouchableHighlightBase, TextInput } from 'r
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
-import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGwIdSub, 
+import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
   getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJoinersFromGameweekId, getUGJoiner, getUGJoiners, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
@@ -58,8 +58,8 @@ class LoginScreen extends Component {
 
   handleAdminSubmit = async() => {
     try {
-      let aUser = await getAdminUserByEmail(this.state.userObj);
-      this.handleAdminReturn(aUser);
+      let adminUser = await getAdminUserByEmail(this.state.userObj);
+      this.handleAdminReturn(adminUser);
     } catch(e) {
       showMessage({
         message: "Login failed, please try again",
@@ -89,39 +89,39 @@ class LoginScreen extends Component {
         let gameweeks = await getAllGameweeksFromAdminUserId(admin_user_id);
         gameweeks.filter(g=>g.complete===true);
         gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-        let gameweek = gameweeks[0];
+        let lastGW = gameweeks[0];
         let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
-        let aUser = await getAdminUserById(admin_user_id);
-        let latestStarters = await getPlayersByUserIdGwIdSub(user_id, 0, false);
-        let latestSubs = await getPlayersByUserIdGwIdSub(user_id, 0, true);
+        let adminUser = await getAdminUserById(admin_user_id);
+        let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
+        let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
         let records = await getAllRecordsByUserId(user_id);
         let league = await getLeague(admin_user_id);
-        if (gameweek) {
-          const { gameweek_id } = gameweek;
-          let lastGwStarters = await getPlayersByUserIdGwIdSub(user_id, gameweek_id, false);
-          let lastGwSubs = await getPlayersByUserIdGwIdSub(user_id, gameweek_id, true);
-          let pgJoiners = await getAllPGJoinersFromGameweekId(gameweek_id);
+        if (lastGW) {
+          const { gameweek_id } = lastGW;
+          let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
+          let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
+          let lastPGJs = await getAllPGJoinersFromGameweekId(gameweek_id);
           let allPGJoiners = await getAllPGJFromUserId(user_id);
           if (pgJoiners.length<1) {
-            await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, [], [], null, null, null);
+            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
-            let ugJoiners = await getUGJoiners(admin_user_id, gameweek_id);
-            let latestUG = await getUGJoiner(user_id, gameweek_id);
-            let pg = pgJoiners.sort((a,b)=>b.total_points-a.total_points);
+            let allUGJs = await getUGJoiners(admin_user_id, gameweek_id);
+            let lastUGJ = await getUGJoiner(user_id, gameweek_id);
+            let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
             pg = pg[0];
             let topPlayer = pg ? {
               pg,
               player: await getPlayerById(pg.player_id)
             } : null;
-            let ug = ugJoiners.sort((a,b)=>b.total_points-a.total_points)[0];
+            let ug = lastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
             let topUser = ug ? {
               ug,
               user: await getUserById(ug.user_id)
             } : null;
-            await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners);
+            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allUGJs, topPlayer, topUser, allPGJs);
           }
         } else {
-          await this.props.loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, null, null, records, league, null, [], [], null, null, null, null);
+          await this.props.loginUser(user, adminUser, clubPlayers, latestStarters, latestSubs, [], [], records, league, null, null, [], [], null, null, []);
         }
         updateStack(this.props.navigation, 0, 'Home');
       } else {
@@ -141,17 +141,15 @@ class LoginScreen extends Component {
     }
   }
 
-  handleAdminReturn = async(aUser) => {
+  handleAdminReturn = async(adminUser) => {
     try {
-      if (aUser !== undefined && aUser !== null) {
-        let clubPlayers = await getAllPlayersByAdminUserId(aUser.admin_user_id);
-        let allUsers = await getAllUsersByAdminUserId(aUser.admin_user_id);
-        let games = await getAllGamesByAdminUserId(aUser.admin_user_id);
-        await this.props.loginAdminUser(aUser, clubPlayers, allUsers, games);
+      if (adminUser !== undefined && adminUser !== null) {
+        let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
+        let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
+        let games = await getAllGamesByAdminUserId(adminUser.admin_user_id);
+        await this.props.loginAdminUser(adminUser, clubPlayers, allUsers, games);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
-        // this.setState({email: 'A',
-        // password: 'A'});
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
@@ -210,8 +208,8 @@ class LoginScreen extends Component {
 
   const mapDispatchToProps = dispatch => {
     return {
-      loginUser: (user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners) => dispatch(loginUser(user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners)),
-      loginAdminUser: (aUser, clubPlayers, allUsers, games) => dispatch(loginAdminUser(aUser, clubPlayers, allUsers, games)),
+      loginUser: (user, adminUser, clubPlayers, latestStarters, latestSubs, lastGWStarters, lastGWSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners) => dispatch(loginUser(user, adminUser, clubPlayers, latestStarters, latestSubs, lastGWStarters, lastGWSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners)),
+      loginAdminUser: (adminUser, clubPlayers, allUsers, games) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, games)),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }
   }

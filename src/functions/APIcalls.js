@@ -53,12 +53,12 @@ export const getAllAdminUsers = () => axiosGet('admin_users');
 
 export const getAdminUserById = id => axiosGet(`admin_users?admin_user_id=${id}`);
 
-export const getAdminUserByEmail = aUser => axiosGet(`admin_users?email=${aUser.email}`);
+export const getAdminUserByEmail = adminUser => axiosGet(`admin_users?email=${adminUser.email}`);
 
-export const postAdminUser = aUser => axiosPost('admin_users', { 
-    email: aUser.email,
-    password: aUser.password,
-    club_name: aUser.email
+export const postAdminUser = adminUser => axiosPost('admin_users', { 
+    email: adminUser.email,
+    password: adminUser.password,
+    club_name: adminUser.email
 });
 
 export const getLeague = id => axiosGet(`admin_users/${id}/league`);
@@ -77,22 +77,26 @@ export const getAllPlayersByAdminUserId = id => axiosGet(`players?admin_user_id=
 
 export const getLatestStartersByUserId = id => axiosGet(`users/${id}/latest_starters`);
 
-export const getPlayersByUserIdGwIdSub = async(userId, gwId, sub) => {
-    let latestRecords = await getRecordsByUserIdGwIdSub(userId, gwId, sub)
-    let playerIds = latestRecords.map(r => r.player_id);
-    let allPlayers = await getAllPlayers();
-    return allPlayers.filter(p => playerIds.includes(p.player_id));
+export const getPlayersByUserIdGWIdSub = async(userId, gwId, sub) => {
+    let latestRecords = await getRecordsByUserIdGWIdSub(userId, gwId, sub);
+    if (latestRecords) {
+        let playerIds = latestRecords.map(r => r.player_id);
+        let allPlayers = await getAllPlayers();
+        return allPlayers.filter(p => playerIds.includes(p.player_id));
+    } else {
+        return null;
+    }
 }
 
-export const getGwSubsByUserId = (id, gameweekId) => axiosGet(`users/${id}/${gameweekId}/gw_subs`)
+export const getGWSubsByUserId = (id, gameweekId) => axiosGet(`users/${id}/${gameweekId}/gw_subs`)
 
-export const postPlayer = (player, aUserId) => axiosPost('players', {
+export const postPlayer = (player, adminUserId) => axiosPost('players', {
     first_name: player.name.split(' ')[0],
     last_name: player.name.split(' ')[1],
     position: player.position,
     price: (player.price),
     availability: 'a',
-    admin_user_id: aUserId
+    admin_user_id: adminUserId
 });
 
 export const patchPlayer = player => axiosPatch(`players/${player.player_id}`, {
@@ -114,15 +118,15 @@ export const getRecordByRecordId = recordId => axiosGet(`records?record_id=${rec
 
 export const getAllRecordsByUserId = id => axiosGet(`records?user_id=${id}`);
 
-export const getAllRecordsByGwId = gwId => axiosGet(`records?gameweek_id=${gwId}`);
+export const getAllRecordsByGWId = gwId => axiosGet(`records?gameweek_id=${gwId}`);
 
 export const getRecordsByUserIdAndPlayerId = (userId, playerId) => axiosGet(`records?user_id=${userId}&player_id=${playerId}`);
 
-export const getRecordsByGwIdAndUserId = (userId, gwId) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}`);
+export const getRecordsByGWIdAndUserId = (userId, gwId) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}`);
 
 export const getRecord = (userId, gwId, playerId) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&player_id=${playerId}`);
 
-export const getRecordsByUserIdGwIdSub = (userId, gwId, sub) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&sub=${sub}`);
+export const getRecordsByUserIdGWIdSub = (userId, gwId, sub) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&sub=${sub}`);
 
 export const postRecord = (player, userId, count) => axiosPost('records', {
     sub: count>5 ? true : false,
@@ -137,17 +141,7 @@ export const postRecordDUPLICATE = (record) => axiosPost('records', record);
 
 export const patchRecordGAMEWEEK = (recordId, gwId) => axiosPatch(`records/${recordId}`, {gameweek_id: gwId});
 
-export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_captain) => {
-    console.log('***** POSTING RECORD ******');
-    console.log('record: ' + 
-    {sub: count>0 ? true : false,
-    captain,
-    vice_captain,
-    record_id: player.record_id,
-    user_id: userId,
-    gameweek_id: gwId
-});
-    return axiosPost('records', {
+export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_captain) => axiosPost('records', {
     sub: count>0 ? true : false,
     captain,
     vice_captain,
@@ -155,7 +149,6 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     user_id: userId,
     gameweek_id: gwId
 });
-}
 
 export const patchRecordSUBS = (sub, record_id) => axiosPatch(`records/${record_id}`, {sub});
 
@@ -176,11 +169,11 @@ export const getAllGames = () => axiosGet('gameweeks');
 
 export const getAllGamesByAdminUserId = id => axiosGet(`gameweeks?admin_user_id=${id}`);
 
-export const postGame = (game, aUserID) => axiosPost('gameweeks', {
+export const postGame = (game, adminUserID) => axiosPost('gameweeks', {
     date: game.date,
     opponent: game.opponent,
     complete: false,
-    admin_user_id: aUserID
+    admin_user_id: adminUserID
 });
 
 export const patchGame = (game) => axiosPatch(`gameweeks/${game.gameweek_id}`, {
@@ -279,7 +272,7 @@ export const getPGJoinersFromUserIdAndGameweekId = (userId, gameweekId) => axios
 
 export const getAllPGJoinersFromGameweekId = (gameweekId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gameweekId}`)
 
-export const getPGJoinerFromPlayerIdAndGwId = (playerId, gwId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gwId}&player_id=${playerId}`);
+export const getPGJoinerFromPlayerIdAndGWId = (playerId, gwId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gwId}&player_id=${playerId}`);
 
 
 

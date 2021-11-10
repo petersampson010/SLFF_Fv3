@@ -24,7 +24,8 @@ class PointsScreen extends Component {
         const selectStarters = otherTeam ? otherStarters : starters;
         const selectSubs = otherTeam ? otherSubs : subs;
         const selectRecords = otherTeam ? otherRecords : records;
-        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJoiners
+        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJoiners;
+        console.log('other team: ' + otherTeam);
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="points" otherTeam={otherTeam}/>

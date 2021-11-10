@@ -12,9 +12,9 @@ export const validatePlayer = player => {
     }
 }
 
-export const validateUser = (allUsers, aUser, user) => {
+export const validateUser = (allUsers, adminUser, user) => {
     let result = true;
-    if (aUser.admin_user_id) {
+    if (adminUser.admin_user_id) {
         allUsers.forEach(x => {
             if (x.email===user.email) {
                 showMessage({

@@ -68,11 +68,11 @@ class PlayerGraphic extends Component {
     }
 
     isCaptain = () => {
-        const { player, type, lastGwCaptain, lastGwVCaptain, latestCaptain, latestVCaptain } = this.props;
+        const { player, type, lastGWCaptain, lastGWVCaptain, latestCaptain, latestVCaptain } = this.props;
         if (type==='points') {
-            if (player===lastGwCaptain) {
+            if (player===lastGWCaptain) {
                 return 'C';
-            } else if (lastGwVCaptain) {
+            } else if (lastGWVCaptain) {
                 return 'VC';
             }
         } else {
@@ -117,8 +117,8 @@ const mapStateToProps = state => {
         records: state.joiners.records,
         latestCaptain: state.players.latest.captain,
         latestVCaptain: state.players.latest.vCaptain,
-        lastGwVCaptain: state.players.teamPoints.vCaptain,
-        lastGwCaptain: state.players.teamPoints.captain,
+        lastGWVCaptain: state.players.teamPoints.vCaptain,
+        lastGWCaptain: state.players.teamPoints.captain,
     }
 }
  

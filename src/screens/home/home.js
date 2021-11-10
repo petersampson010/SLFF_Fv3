@@ -8,14 +8,15 @@ import { $arylideYellow, screenContainer } from '../../styles/global';
 import { gwInfo, leagueTable, topPerformers, topPlayerStyle } from './style';
 import PlayerGWProfile from '../../components/profile/playerGWProfile';
 import UserGWProfile from '../../components/profile/userGWProfile';
-import GwScore from '../../components/gwScore/gwScore';
+import GWScore from '../../components/gwScore/gwScore';
 import { tableElement3, tableRow, tableRowHead } from '../../styles/table';
 import { headers, sidenote, standardText } from '../../styles/textStyle';
 import { vh } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
-import { getAllRecordsByUserId, getGwStartersByUserId, getGwSubsByUserId, getUGJoiner } from '../../functions/APIcalls';
+import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJoiner } from '../../functions/APIcalls';
 import { setOtherTeamPoints } from '../../actions';
+import { showMessage } from 'react-native-flash-message';
 
 
 class HomeScreen extends Component {
@@ -40,8 +41,15 @@ class HomeScreen extends Component {
     goToTeamPoints = async(team) => {
         const { gwLatest } = this.props;
         const { starters, subs, records, ugj, allPGJoiners } = await getTeamPointsInfo(team.user_id, gwLatest.gameweek_id, true);
-        this.props.setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, team);
-        this.props.navigation.navigate('Points');
+        if (!starters) {
+            showMessage({
+                message: "This team have not yet completed a GW",
+                type: 'warning'
+            })
+        } else {
+            this.props.setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, team);
+            this.props.navigation.navigate('Points');
+        }
     }
 
     closeModal = type => {
@@ -71,7 +79,7 @@ class HomeScreen extends Component {
                 <View style={{opacity}}>
                     {gwLatest && topPlayer && topUser ? 
                     <View style={gwInfo}>
-                        <GwScore />
+                        <GWScore />
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(gwLatest.date)}</Text>
                         <View style={topPerformers}>
                             <View style={topPlayer}>

@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 // import Dialog, { DialogButton, DialogContent } from 'react-native-popup-dialog';
 import { connect } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGwId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGwIdAndUserId, getAllRecordsByGwId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { completeGameState } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -153,7 +153,7 @@ class GameEditorScreen extends Component {
                 await postPGJ(postArr[i]);
             }
             await this.postUGJoiners();
-            let records = await getAllRecordsByGwId(0);
+            let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
             await completeGame(this.props.gwSelect.gameweek_id, this.state.score);
@@ -174,7 +174,7 @@ class GameEditorScreen extends Component {
         let { allUsers, gwSelect } = this.props;
         for (let i=0; i<allUsers.length; i++) {
             const user = allUsers[i];
-            let records = await getRecordsByGwIdAndUserId(user.user_id, 0);
+            let records = await getRecordsByGWIdAndUserId(user.user_id, 0);
             const score = await calculateScore(records, gwSelect.gameweek_id);
             await postUGJoiner(user.user_id, gwSelect.gameweek_id, score);
         }
@@ -198,7 +198,7 @@ class GameEditorScreen extends Component {
                 {this.state.spinner ? <SpinnerOverlay/> : null}
                 <Button title="Confirm" onPress={()=>this.setState({...this.state, dialog: {active: true}})}/>
                 <View style={inputFieldContainerInLine}>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.aUser.club_name}</Text>
+                    <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
                     <View style={inputFieldSmall}>
                         <TextInput
                         style={input}
@@ -258,7 +258,7 @@ const mapStateToProps = state => {
     return {
         clubPlayers: state.players.clubPlayers,
         gwSelect: state.gameweek.gwSelect,
-        aUser: state.endUser.adminUser.aUser,
+        adminUser: state.endUser.adminUser.adminUser,
         allUsers: state.endUser.adminUser.allUsers
     }
 }

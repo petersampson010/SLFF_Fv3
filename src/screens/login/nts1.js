@@ -53,11 +53,12 @@ class ntsScreen1 extends Component {
     try {
       let allUsers = await getAllUsers();
       let allAdminUsers = await getAllAdminUsers();
-      let aUser = await getAdminUserById(parseInt(userObj.clubId));
-      if (validateUser(allUsers, aUser, userObj)) {
-        this.handleSubmit(allUsers, allAdminUsers, aUser);
+      let adminUser = await getAdminUserById(parseInt(userObj.clubId));
+      if (validateUser(allUsers, adminUser, userObj)) {
+        this.handleSubmit(allUsers, allAdminUsers, adminUser);
       }
     } catch(e) {
+      console.warn(e);
       showMessage({
         message: "Login failed, please try again",
         description: "It is most likely, you have an incorrect club ID. Please check this and report the issue if it continues",
@@ -66,21 +67,21 @@ class ntsScreen1 extends Component {
     }
   }
 
-  handleSubmit = async(allUsers, allAdminUsers, aUser) => {
+  handleSubmit = async(allUsers, allAdminUsers, adminUser) => {
     const { userObj } = this.state;
     try {
-        await postUser(userObj)
-        .then(result=>{
-          if (result.transfers===0) {
+        let userReturn = await postUser(userObj);
+        let userData = userReturn.data;
+          if (userData.transfers===0) {
             this.setState({signedUp: true});
-            this.props.setUser(result);
-            this.props.setAdminUser(aUser);
-            getAllPlayersByAdminUserId(aUser.admin_user_id)
+            this.props.setUser(userData);
+            this.props.setAdminUser(adminUser);
+            getAllPlayersByAdminUserId(adminUser.admin_user_id)
             .then(players => this.props.setClubPlayers(players))
             .then(() => updateStack(this.props.navigation, 0, 'nts2'));
           } else {
-            console.warn("get return: ", result)
-          }})
+            console.warn("get return: ", userData);
+          }
     } catch(e) {
       showMessage({
         message: "Fail: Network Issue, please try again later",
@@ -162,7 +163,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setUser: user => dispatch(setUser(user)),
-    setAdminUser: aUser => dispatch(setAdminUser(aUser)),
+    setAdminUser: adminUser => dispatch(setAdminUser(adminUser)),
     setClubPlayers: players => dispatch(setClubPlayers(players))
   }
 }

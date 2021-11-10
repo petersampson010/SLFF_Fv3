@@ -1,4 +1,4 @@
-import { getAllPGJFromUserId, getAllRecordsByUserId, getGwStartersByUserId, getPlayersByUserIdGwIdSub, getGwSubsByUserId, getPGJoinerFromPlayerIdAndGwId, getPlayerById, getUGJoiner, getUserById } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJoiner, getUserById } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
 
@@ -132,7 +132,7 @@ export const getNameOfNavPage = navState => {
 export const calculateScore = async(records, gwId) => {
     let score = 0;
     for (let i=0; i<records.length; i++) {
-        let pgJoiner = await getPGJoinerFromPlayerIdAndGwId(records[i]['player_id'], gwId);
+        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(records[i]['player_id'], gwId);
         if (pgJoiner) {
             if (!records[i].sub) {
                 score += pgJoiner["total_points"];
@@ -145,15 +145,15 @@ export const calculateScore = async(records, gwId) => {
 export const getTeamPointsInfo = async(userId, gwId, otherUser) => {
     if (otherUser) {
         let ugj = await getUGJoiner(userId, gwId);
-        let starters = await getPlayersByUserIdGwIdSub(userId, gwId, false);
-        let subs = await getPlayersByUserIdGwIdSub(userId, gwId, true);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
         let records = await getAllRecordsByUserId(userId);
         let allPGJoiners = await getAllPGJFromUserId(userId);
         return { starters, subs, records, ugj, allPGJoiners };
     } else {
         let ugj = await getUGJoiner(userId, gwId);
-        let starters = await getPlayersByUserIdGwIdSub(userId, gwId, false);
-        let subs = await getPlayersByUserIdGwIdSub(userId, gwId, true);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
         return { starters, subs, ugj };
     }
 }

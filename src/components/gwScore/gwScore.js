@@ -19,8 +19,8 @@ class GWScore extends Component {
 
 const mapStateToProps = state => {
     return {
-        adminUser: state.endUser.adminUser.adminUser,
-        gwLatest: state.gameweek.gwLatest
+        adminUser: state.club.adminUser,
+        lastGW: state.club.lastGW
     }
 }
  

@@ -19,7 +19,7 @@ class PitchHead extends Component {
             case 'transfers':
                     return <View>
                         <Text style={labelText}>Transfers Available: {this.props.user.transfers}</Text>
-                        <View style={{flexDirection: "row"}}><Text style={labelText}>Budget: </Text><Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor(this.props.budget*100)/100}m</Text></View>
+                        <View style={{flexDirection: "row"}}><Text style={labelText}>Budget: </Text><Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text></View>
                     </View>;
             case 'pickTeam':
                 return <Text></Text>;
@@ -29,10 +29,10 @@ class PitchHead extends Component {
     }
 
     comp3 = () => {
-        const { type, otherTeam, otherUg, ug, update } = this.props;
+        const { type, otherTeam, otherUGJ, UGJ, update } = this.props;
         switch(type) {
             case 'points': 
-                return <Text style={labelText}>{otherTeam ? otherUg.total_points : ug.total_points}</Text>;
+                return <Text style={labelText}>{otherTeam ? otherUGJ.total_points : UGJ.total_points}</Text>;
             case 'transfers':
                 return <Button text='Confirm' func={update} width={vw(30)}/>
             case 'pickTeam':
@@ -43,13 +43,13 @@ class PitchHead extends Component {
     }
 
     comp1 = () => {
-        const { otherTeam, otherUser, otherUg, ug, setOtherTeamPoints, user, gwLatest } = this.props;
+        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, user, gwLatest } = this.props;
         switch(this.props.type) {
             case 'points':
                 return <Text style={pitchHeadLeft} onPress={() => this.changeGWPoints('L')}>
-                    {otherTeam ? (otherUg.gameweek_id>1 ? `GW ${otherUg.gameweek_id-1}` : '') 
+                    {otherTeam ? (otherUGJ.gameweek_id>1 ? `GW ${otherUGJ.gameweek_id-1}` : '') 
                     :
-                    (ug.gameweek_id>1 ? `GW ${ug.gameweek_id+1}` : '')}
+                    (UGJ.gameweek_id>1 ? `GW ${UGJ.gameweek_id+1}` : '')}
                 </Text>
             default:
                 return;
@@ -57,13 +57,13 @@ class PitchHead extends Component {
     }
 
     comp4 = () => {
-        const { otherTeam, otherUser, otherUg, ug, setOtherTeamPoints, user, gwLatest } = this.props;
+        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, user, gwLatest } = this.props;
         switch(this.props.type) {
             case 'points':
                 return <Text style={pitchHeadRight} onPress={() => this.changeGWPoints('R')}>
-                    {otherTeam ? (otherUg.gameweek_id<gwLatest.gameweek_id ? `GW ${otherUg.gameweek_id+1}` : '') 
+                    {otherTeam ? (otherUGJ.gameweek_id<gwLatest.gameweek_id ? `GW ${otherUGJ.gameweek_id+1}` : '') 
                     :
-                    (ug.gameweek_id<gwLatest.gameweek_id ? `GW ${ug.gameweek_id+1}` : '')}
+                    (UGJ.gameweek_id<gwLatest.gameweek_id ? `GW ${UGJ.gameweek_id+1}` : '')}
                 </Text>
             default:
                 return;
@@ -71,13 +71,13 @@ class PitchHead extends Component {
     }
 
     changeGWPoints = async(direction) => {
-        const { otherTeam, otherUser, otherUg, ug, setOtherTeamPoints, setTeamPoints,user } = this.props;
+        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, setTeamPoints,user } = this.props;
         if (otherTeam) {
-            const { starters, subs, records, ugj, allPGJoiners } = await getTeamPointsInfo(otherUser.user_id, direction === 'L' ? otherUg.gameweek_id-1 : otherUg.gameweek_id+1, otherUser);
-            setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, otherUser);
+            const { starters, subs, records, UGJj, allPGJs } = await getTeamPointsInfo(otherUser.user_id, direction === 'L' ? otherUGJ.gameweek_id-1 : otherUGJ.gameweek_id+1, otherUser);
+            setOtherTeamPoints(starters, subs, records, UGJj, allPGJs, otherUser);
         } else {
-            const { starters, subs, ugj } = await getTeamPointsInfo(user.user_id, direction === 'L' ? ug.gameweek_id-1 : ug.gameweek_id+1, otherUser);
-            setTeamPoints(starters, subs, ugj);
+            const { starters, subs, UGJj } = await getTeamPointsInfo(user.user_id, direction === 'L' ? UGJ.gameweek_id-1 : UGJ.gameweek_id+1, otherUser);
+            setTeamPoints(starters, subs, UGJj);
         }
     }
 
@@ -98,18 +98,18 @@ class PitchHead extends Component {
 
 const mapStateToProps = state => {
     return {
-        ug: state.players.teamPoints.ug,
-        user: state.endUser.user,
-        budget: state.players.transferring.budget,
-        otherUg: state.players.otherTeamPoints.ug,
-        otherUser: state.players.otherTeamPoints.user,
-        gwLatest: state.gameweek.gwLatest
+        UGJ: state.user.focusedGWTeam.UGJ,
+        user: state.user.user,
+        budget: state.stateChanges.updatedNotPersistedTeam.budget,
+        otherUGJ: state.club.focusedGWTeam.UGJ,
+        otherUser: state.club.focusedGWTeam.user,
+        lastGW: state.club.lastGW
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJoiners, team) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJoiners, team)),
+        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, team) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team)),
         setTeamPoints: (starters, subs, UGJ) => dispatch(setTeamPoints(starters, subs, UGJ))
     }
 }

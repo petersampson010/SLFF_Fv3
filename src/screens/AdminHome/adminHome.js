@@ -191,8 +191,8 @@ class AdminHomeScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        games: state.gameweek.games,
-        adminUser: state.endUser.adminUser.adminUser
+        games: state.club.allGames,
+        adminUser: state.club.adminUser
     }
 }
 

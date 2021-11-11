@@ -101,11 +101,11 @@ class LoginScreen extends Component {
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJoinersFromGameweekId(gameweek_id);
-          let allPGJoiners = await getAllPGJFromUserId(user_id);
-          if (pgJoiners.length<1) {
+          let allPGJs = await getAllPGJFromUserId(user_id);
+          if (lastPGJs.length<1) {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
-            let allUGJs = await getUGJoiners(admin_user_id, gameweek_id);
+            let allLastUGJs = await getUGJoiners(admin_user_id, gameweek_id);
             let lastUGJ = await getUGJoiner(user_id, gameweek_id);
             let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
             pg = pg[0];
@@ -113,12 +113,12 @@ class LoginScreen extends Component {
               pg,
               player: await getPlayerById(pg.player_id)
             } : null;
-            let ug = lastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
+            let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
             let topUser = ug ? {
               ug,
               user: await getUserById(ug.user_id)
             } : null;
-            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allUGJs, topPlayer, topUser, allPGJs);
+            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
           }
         } else {
           await this.props.loginUser(user, adminUser, clubPlayers, latestStarters, latestSubs, [], [], records, league, null, null, [], [], null, null, []);
@@ -202,13 +202,13 @@ class LoginScreen extends Component {
 
   const mapStateToProps = state => {
     return {
-      loginComplete: state.loginComplete
+      loginComplete: state.boolDeciders.loginComplete
     }
   }
 
   const mapDispatchToProps = dispatch => {
     return {
-      loginUser: (user, adminUser, clubPlayers, latestStarters, latestSubs, lastGWStarters, lastGWSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners) => dispatch(loginUser(user, adminUser, clubPlayers, latestStarters, latestSubs, lastGWStarters, lastGWSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners)),
+      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
       loginAdminUser: (adminUser, clubPlayers, allUsers, games) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, games)),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }

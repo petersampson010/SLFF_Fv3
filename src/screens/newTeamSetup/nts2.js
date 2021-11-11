@@ -167,9 +167,9 @@ class ntsScreen2 extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.endUser.user,
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs),
-        budget: state.players.transferring.budget
+        user: state.user.user,
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
+        budget: state.stateChanges.updatedNotPersistedTeam.budget
     }
 }
 

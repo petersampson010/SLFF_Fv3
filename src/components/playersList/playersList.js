@@ -116,8 +116,8 @@ class PlayersList extends Component {
 
 const mapStateToProps = state => {
     return {
-        clubPlayers: state.players.clubPlayers,
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs)
+        clubPlayers: state.club.clubPlayers,
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)
     }
 }
  

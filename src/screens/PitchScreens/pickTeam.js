@@ -69,7 +69,7 @@ class PickTeamScreen extends Component {
     }
 
     teamChange = () => {
-        const { subs, originalStarters, originalSubs, records, captain, vCaptain,} = this.props;
+        const { subs, originalStarters, originalSubs, records, captain, vCaptain } = this.props;
         return (originalSubs===subs && 
         getCaptain(originalStarters, records)===captain &&
         getVCaptain(originalStarters, records)===vCaptain
@@ -100,15 +100,15 @@ class PickTeamScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        subs: state.players.transferring.subs,
-        starters: state.players.transferring.starters,
-        originalSubs: state.players.latest.subs,
-        originalStarters: state.players.latest.starters,
-        records: state.joiners.records,
-        captain: state.players.transferring.captain,
-        vCaptain: state.players.transferring.captain,
-        originalCaptain: state.players.latest.captain,
-        originalVCaptain: state.players.latest.captain,
+        subs: state.stateChanges.updatedNotPersistedTeam.subs,
+        starters: state.stateChanges.updatedNotPersistedTeam.starters,
+        originalSubs: state.user.currentTeam.subs,
+        originalStarters: state.user.currentTeam.starters,
+        records: state.user.focusedGWTeam.records,
+        captain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.captain,
+        originalCaptain: state.user.currentTeam.captain,
+        originalVCaptain: state.user.currentTeam.captain,
     }
 }
 

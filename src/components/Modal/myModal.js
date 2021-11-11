@@ -114,9 +114,9 @@ class MyModal extends Component {
  
 const mapStateToProps = state => {
     return {
-        records: state.joiners.records,
-        captain: state.players.latest.captain,
-        vCaptain: state.players.latest.vCaptain
+        records: state.user.records,
+        captain: state.user.currentTeam.captain,
+        vCaptain: state.user.currentTeam.vCaptain
     }
 }
 

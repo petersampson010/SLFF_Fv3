@@ -5,10 +5,10 @@ const instance = axios.create({
 }) 
 
 const axiosGet = url => instance.get(url).then(res => {
-    if (res.data.length>1) {
-        return res.data
-    } else {
+    if (res.data.length===1) {
         return res.data[0]
+    } else {
+        return res.data
     }
 })
 

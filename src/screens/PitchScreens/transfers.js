@@ -140,13 +140,12 @@ class TransfersScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs),
-        clubPlayers: state.players.clubPlayers,
-        user: state.endUser.user,
-        budget: state.players.transferring.budget,
-        originalPlayers: state.players.latest.starters.concat(state.players.latest.subs),
-        spinner: state.spinner,
-        gameweek: state.ga
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
+        clubPlayers: state.club.clubPlayers,
+        user: state.user.user,
+        budget: state.stateChanges.updatedNotPersistedTeam.budget,
+        originalPlayers: state.user.currentTeam.starters.concat(state.user.currentTeam.subs),
+        spinner: state.boolDeciders.spinner
     }
 }
 

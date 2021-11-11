@@ -52,9 +52,12 @@ class ntsScreen1 extends Component {
     const { userObj } = this.state;
     try {
       let allUsers = await getAllUsers();
+      console.log(allUsers);
       let allAdminUsers = await getAllAdminUsers();
+      console.log(allAdminUsers);
       let adminUser = await getAdminUserById(parseInt(userObj.clubId));
-      if (validateUser(allUsers, adminUser, userObj)) {
+      console.log(adminUser);
+      if (validateUser([allUsers], adminUser, userObj)) {
         this.handleSubmit(allUsers, allAdminUsers, adminUser);
       }
     } catch(e) {

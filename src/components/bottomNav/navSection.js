@@ -44,8 +44,8 @@ class NavSection extends Component {
 
 const mapStateToProps = state => {
     return {
-        gwLatest: state.gameweek.gwLatest,
-        lastStarters: state.players.teamPoints.starters
+        lastGW: state.club.lastGW,
+        lastStarters: state.user.focusedGWTeam.starters
     }
 }
 

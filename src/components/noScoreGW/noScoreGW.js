@@ -24,7 +24,7 @@ class NoScoreGW extends Component {
 
 export const mapStateToProps = state => {
     return {
-        topPlayer: state.homeGraphics.topPlayer
+        topPlayer: state.club.topPlayer
     }
 }
  

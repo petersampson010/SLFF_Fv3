@@ -35,14 +35,14 @@ const initialState = {
         focusedGWTeam: {
             starters: [],
             subs: [],
-            records: [],
+            otherClubFocusRecords: [],
             UGJ: null,
             user: null, 
-            allPGJoiners: [],
+            allPGJs: [],
             captain: null,
             vCaptain: null
         },
-        lastUGJ: null,
+        allLastUGJs: [],
         lastGW: null,
         focusGW: null,
         allGames: [],
@@ -104,7 +104,7 @@ const initialState = {
 //             records: [],
 //             ug: null,
 //             user: null, 
-//             allPGJoiners: [],
+//             allPGJs: [],
 //             captain: null,
 //             vCaptain: null
 //         }
@@ -112,7 +112,7 @@ const initialState = {
 //     joiners: {
 //         records: [],
 //         pgJoiners: [],
-//         allPGJoiners: []
+//         allPGJs: []
 //     },
 //     gameweek: {
 //         games: [],
@@ -142,7 +142,7 @@ const rootReducer = (state = initialState, action) => {
                     currentTeam: {
                         ...state.user.currentTeam,
                         starters: action.currentStarters, 
-                        subs: currentSubs,
+                        subs: action.currentSubs,
                         captain: action.captain,
                         vCaptain: action.vCaptain
                     },
@@ -152,17 +152,17 @@ const rootReducer = (state = initialState, action) => {
                         subs: action.lastGWSubs, 
                         UGJ: action.lastUGJ
                     },
-                    records: actions.records,
+                    records: action.records,
                     PGJs: {
-                        last: actions.lastPGJs,
-                        all: actions.allPGJs
+                        last: action.lastPGJs,
+                        all: action.allPGJs
                     }
                 },
                 club: {
                     ...state.club,
                     adminUser: action.adminUser,
                     clubPlayers: action.clubPlayers,
-                    lastUGJ: action.lastUGJ,
+                    allLastUGJs: action.allLastUGJs,
                     lastGW: action.lastGW,
                     league: action.league,
                     topPlayer: action.topPlayer,
@@ -200,6 +200,7 @@ const rootReducer = (state = initialState, action) => {
                     ...state.user, 
                     user: action.user,
                     currentTeam: {
+                        ...state.user.currentTeam,
                         starters: action.starters,
                         subs: action.subs
                     },
@@ -207,6 +208,7 @@ const rootReducer = (state = initialState, action) => {
                 },
                 stateChanges: {
                     updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.starters,
                         subs: action.subs,
                         budget: action.user.budget
@@ -239,7 +241,7 @@ const rootReducer = (state = initialState, action) => {
                 stateChanges: {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
-                        budget: action.budget
+                        budget: action.user.budget
                     }
                 }
             };
@@ -249,10 +251,12 @@ const rootReducer = (state = initialState, action) => {
                 user: {
                     ...state.user, 
                     currentTeam: {
+                        ...state.user.currentTeam,
                         starters: [],
                         subs: []
                     }, 
                     focusedGWTeam: {
+                        ...state.user.focusedGWTeam,
                         starters: [],
                         subs: [],
                         UGJ: null
@@ -298,6 +302,7 @@ const rootReducer = (state = initialState, action) => {
                 user: {
                     ...state.user, 
                     currentTeam: {
+                        ...state.user.currentTeam,
                         starters,
                         subs
                     }
@@ -322,59 +327,55 @@ const rootReducer = (state = initialState, action) => {
         case "SUBIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: [...state.players.transferring.starters, action.player],
-                        subs: state.players.transferring.subs.filter(x=>x!==action.player)
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player)
                     }
                 }
             }
         case "SUBOUT":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: state.players.transferring.starters.filter(x=>x!==action.player),
-                        subs: [...state.players.transferring.subs, action.player]
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        subs: [...state.stateChanges.updatedNotPersistedTeam.subs, action.player]
                     }
                 }
             }
         case "TRANSFERIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: [...state.players.transferring.starters, action.player],
-                        budget: state.players.transferring.budget-action.player.price
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
+                        budget: state.stateChanges.updatedNotPersistedTeam.budget-action.player.price
                     }
                 }
             }
         case "TRANSFEROUT":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: state.players.transferring.starters.filter(x=>x!==action.player),
-                        subs: state.players.transferring.subs.filter(x=>x!==action.player),
-                        budget: state.players.transferring.budget+action.player.price
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player),
+                        budget: state.stateChanges.updatedNotPersistedTeam.budget+action.player.price
                     }
                 }
             }
         case "SETCAPTAIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    latest: {
-                        ...state.players.latest,
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
                         captain: action.player
                     }
                 }
@@ -382,71 +383,77 @@ const rootReducer = (state = initialState, action) => {
         case "SETVCAPTAIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    latest: {
-                        ...state.players.latest,
-                        captain: action.player
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
+                        vCaptain: action.player
                     }
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
             return {
                 ...state,
-                otherTeam: false,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.latest,
-                        budget: state.endUser.user.budget
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        budget: state.user.user.budget
                     }
                 }
             };
         case "SETLATESTTOTRANSFERRING":
             return {
                 ...state, 
-                endUser: {
-                    ...state.endUser,
+                user: {
                     user: {
-                        ...state.user,
-                        budget: state.players.transferring.budget
+                        ...state.user, 
+                        currentTeam: {
+                            ...state.stateChanges.updatedNotPersistedTeam
+                        },
+                        budget: state.stateChanges.updatedNotPersistedTeam.budget
                     }
-                },
-                players: {
-                    ...state.players,
-                    latest: state.players.transferring
                 }
             };
         case "SETOTHERTEAMPOINTS": 
             return {
                 ...state, 
-                otherTeam: true,
-                players: {
-                    ...state.players,
-                    otherTeamPoints: {
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: true
+                },
+                club: {
+                    ...state.club, 
+                    focusedGWTeam: {
+                        ...state.club.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
                         records: action.records,
-                        ug: action.ugj,
-                        allPGJoiners: action.allPGJoiners,
+                        UGJ: action.UGJ,
+                        allPGJs: action.allPGJs,
                         user: action.team
                     }
                 }
-
             }
         case "SETTEAMPOINTS":
             return {
                 ...state, 
-                otherTeam: false,
-                players: {
-                    ...state.players,
-                    teamPoints: {
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                user: {
+                    ...state.user, 
+                    focusedGWTeam: {
+                        ...state.user.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
-                        ug: action.ug
+                        UGJ: action.UGJ
                     }
                 }
-
             }
         default:
             return state;

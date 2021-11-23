@@ -121,7 +121,7 @@ class ntsScreen2 extends Component {
                             records.push(record);
                         }
                         let returnUser = await patchUserBUDGET(
-                        budget, user.user_id);
+                        user.user_id, budget);
                         nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records);
                         updateStack(navigation, 0, 'Home');
                     } else {
@@ -167,9 +167,9 @@ class ntsScreen2 extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.endUser.user,
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs),
-        budget: state.players.transferring.budget
+        user: state.user.user,
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
+        budget: state.stateChanges.updatedNotPersistedTeam.budget
     }
 }
 

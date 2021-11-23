@@ -1,4 +1,6 @@
-import { fetchAllPGJFromUserId, fetchAllRecordsByUserId, fetchGwStartersByUserId, fetchGwSubsByUserId, fetchPGJoinerFromPlayerIdAndGwId, fetchPlayerById, fetchUGJoiner, fetchUserById } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJoiner, getUserById } from "./APIcalls";
+import 'intl';
+import "intl/locale-data/jsonp/en";
 
 export const positionString = (num) => {
     switch(num) {
@@ -107,7 +109,7 @@ export const playerIds = players => players.map(x=>x.player_id);
 
 export const displayDate = date => {
     let options = {weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'};
-    return new Intl.DateTimeFormat('en-us', options).format(Date.parse(date));
+    return new Intl.DateTimeFormat('en-GB', options).format(Date.parse(date));
 }
 
 export const subOrTransfer = type => {
@@ -124,14 +126,13 @@ export const subOrTransfer = type => {
 }
 
 export const getNameOfNavPage = navState => {
-    console.log(navState);
     return navState.routes[navState.index].name;
 }
 
 export const calculateScore = async(records, gwId) => {
     let score = 0;
     for (let i=0; i<records.length; i++) {
-        let pgJoiner = await fetchPGJoinerFromPlayerIdAndGwId(records[i]['player_id'], gwId);
+        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(records[i]['player_id'], gwId);
         if (pgJoiner) {
             if (!records[i].sub) {
                 score += pgJoiner["total_points"];
@@ -142,20 +143,17 @@ export const calculateScore = async(records, gwId) => {
 }
 
 export const getTeamPointsInfo = async(userId, gwId, otherUser) => {
-    console.log(userId);
-    console.log(gwId);
-    console.log('above');
     if (otherUser) {
-        let ugj = await fetchUGJoiner(userId, gwId);
-        let starters = await fetchGwStartersByUserId(userId, gwId);
-        let subs = await fetchGwSubsByUserId(userId, gwId);
-        let records = await fetchAllRecordsByUserId(userId);
-        let allPGJoiners = await fetchAllPGJFromUserId(userId);
+        let ugj = await getUGJoiner(userId, gwId);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
+        let records = await getAllRecordsByUserId(userId);
+        let allPGJoiners = await getAllPGJFromUserId(userId);
         return { starters, subs, records, ugj, allPGJoiners };
     } else {
-        let ugj = await fetchUGJoiner(userId, gwId);
-        let starters = await fetchGwStartersByUserId(userId, gwId);
-        let subs = await fetchGwSubsByUserId(userId, gwId);
+        let ugj = await getUGJoiner(userId, gwId);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
         return { starters, subs, ugj };
     }
 }

@@ -1,53 +1,51 @@
-import { PointPropType } from "react-native";
 import { isCaptain, isVCaptain } from "./functions/reusable"
 
-export const loginUser = (user, aUser, clubPlayers, latestStarters, latestSubs, lastGwStarters, lastGwSubs, records, league, gameweek, pgJoiners, ugJoiners, latestUG, topPlayer, topUser, allPGJoiners) => {
+export const loginUser = (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs) => {
     let captain, vCaptain;
-    for (let i=0;i<latestStarters.length;i++) {
-        if (isCaptain(latestStarters[i], records)) {
-            captain = latestStarters[i];
-        } else if (isVCaptain(latestStarters[i], records)) {
-            vCaptain = latestStarters[i];
+    for (let i=0;i<currentStarters.length;i++) {
+        if (isCaptain(currentStarters[i], records)) {
+            captain = currentStarters[i];
+        } else if (isVCaptain(currentStarters[i], records)) {
+            vCaptain = currentStarters[i];
         }
     }
-    console.log(allPGJoiners);
     return {
         type: 'LOGINUSER',
         user,
-        aUser,
+        adminUser,
         clubPlayers, 
-        latestStarters, 
-        latestSubs, 
-        lastGwStarters, 
-        lastGwSubs, 
+        currentStarters, 
+        currentSubs, 
+        lastGWStarters, 
+        lastGWSubs, 
         records,
         captain,
         vCaptain,
         league,
-        gameweek, 
-        pgJoiners,
-        ugJoiners,
-        latestUG,
+        lastGW,
+        lastUGJ, 
+        lastPGJs,
+        allLastUGJs,
         topPlayer, 
         topUser,
-        allPGJoiners
+        allPGJs
     }
 }
 
-export const loginAdminUser = (aUser, clubPlayers, allUsers, games) => {
+export const loginAdminUser = (adminUser, clubPlayers, allUsers, games) => {
     return {
         type: 'LOGINADMINUSER',
-        aUser, 
+        adminUser, 
         clubPlayers,
         allUsers,
         games
     }
 }
 
-export const setAdminUser = aUser => {
+export const setAdminUser = adminUser => {
     return {
         type: 'SETADMINUSER',
-        aUser
+        adminUser
     }
 }
 
@@ -79,14 +77,6 @@ export const addStarter = player => {
     }
 }
 
-export const pickTeamUpdate = (team, subs) => {
-    return {
-        type: 'PICKTEAMUPDATE',
-        team,
-        subs
-    }
-}
-
 export const resetTeamPlayers = () => {
     return {
         type: 'RESETTEAMPLAYERS'
@@ -103,7 +93,7 @@ export const nts2Login = (user, starters, subs, records) => {
     }
 }
 
-export const setGwSelect = game =>{
+export const setGWSelect = game =>{
     return {
         type: 'SETGWSELECT',
         game
@@ -197,23 +187,23 @@ export const setLatestToTransferring = () => {
     }
 }
 
-export const setOtherTeamPoints = (starters, subs, records, ugj, allPGJoiners, team) => {
+export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team) => {
     return {
         type: 'SETOTHERTEAMPOINTS',
         starters, 
         subs,
         records,
-        ugj, 
-        allPGJoiners,
+        UGJ, 
+        allPGJs,
         team
     }
 }
 
-export const setTeamPoints = (starters, subs, ug) => {
+export const setTeamPoints = (starters, subs, UGJ) => {
     return {
         type: 'SETTEAMPOINTS',
         starters,
         subs,
-        ug
+        UGJ
     }
 }

@@ -1,70 +1,131 @@
 import { playersObjToArray } from "./functions/reusable";
 
 const initialState = {
-    spinner: false,
-    otherTeam: false,
-    endUser: {
-        adminUser: {
-            active: false,
-            aUser: {},  
-            allUsers: [],
-        },
-        user: {},
+    boolDeciders: {
+        spinner: false, 
+        otherTeamFocus: false, 
+        adminActive: false, 
+        loginComplete: false
     },
-    players: {
-        clubPlayers: [],
-        // latest info, changes that havent been 'confirmed' will not be displayed here
-        latest: {
+    user: {
+        user: {},
+        currentTeam: {
             starters: [],
             subs: [],
             captain: null,
             vCaptain: null
-        }, 
-        // if any subs or transfers are being made, this is where it will be reflected
-        transferring: {
+        },
+        focusedGWTeam: {
+            starters: [],
+            subs: [],
+            UGJ: null,
+            captain: null,
+            vCaptain: null
+        },
+        records: [],
+        PGJs: {
+            last: [],
+            all: []
+        }
+    },
+    club: {
+        adminUser: {},
+        allUsers: [],
+        clubPlayers: [],
+        focusedGWTeam: {
+            starters: [],
+            subs: [],
+            otherClubFocusRecords: [],
+            UGJ: null,
+            user: null, 
+            allPGJs: [],
+            captain: null,
+            vCaptain: null
+        },
+        allLastUGJs: [],
+        lastGW: null,
+        focusGW: null,
+        allGames: [],
+        league: [],
+        topPlayer: null,
+        topUser: null
+    },
+    stateChanges: {
+        updatedNotPersistedTeam: {
             starters: [],
             subs: [],
             captain: null,
             vCaptain: null,
             budget: null
-        },
-        // last gw's players
-        teamPoints: {
-            starters: [],
-            subs: [],
-            ug: null,
-            captain: null,
-            vCaptain: null
-        },
-        // data for other teams the user is looking at
-        otherTeamPoints: {
-            starters: [],
-            subs: [],
-            records: [],
-            ug: null,
-            user: null, 
-            allPGJoiners: [],
-            captain: null,
-            vCaptain: null
         }
-    },
-    joiners: {
-        records: [],
-        pgJoiners: [],
-        allPGJoiners: []
-    },
-    gameweek: {
-        games: [],
-        gwSelect: null,
-        gwLatest: null,
-    },
-    homeGraphics: {
-        league: [],
-        topPlayer: null,
-        topUser: null
-    },
-    loginComplete: false,
+    }
 }
+
+// const initialState = {
+//     spinner: false,
+//     otherTeam: false,
+//     endUser: {
+//         adminUser: {
+//             active: false,
+//             adminUser: {},  
+//             allUsers: [],
+//         },
+//         user: {},
+//     },
+//     players: {
+//         clubPlayers: [],
+//         // latest info, changes that havent been 'confirmed' will not be displayed here
+//         latest: {
+//             starters: [],
+//             subs: [],
+//             captain: null,
+//             vCaptain: null
+//         }, 
+//         // if any subs or transfers are being made, this is where it will be reflected
+//         transferring: {
+//             starters: [],
+//             subs: [],
+//             captain: null,
+//             vCaptain: null,
+//             budget: null
+//         },
+//         // last (/the gw you are focusing on) gw's players
+//         teamPoints: {
+//             starters: [],
+//             subs: [],
+//             ug: null,
+//             captain: null,
+//             vCaptain: null
+//         },
+//         // data for other teams the user is looking at
+//         otherTeamPoints: {
+//             starters: [],
+//             subs: [],
+//             records: [],
+//             ug: null,
+//             user: null, 
+//             allPGJs: [],
+//             captain: null,
+//             vCaptain: null
+//         }
+//     },
+//     joiners: {
+//         records: [],
+//         pgJoiners: [],
+//         allPGJs: []
+//     },
+//     gameweek: {
+//         games: [],
+//         gwSelect: null,
+//         gwLatest: null,
+//     },
+//     homeGraphics: {
+//         league: [],
+//         topPlayer: null,
+//         topUser: null
+//     },
+//     loginComplete: false,
+// }
 
 
 const rootReducer = (state = initialState, action) => {
@@ -72,161 +133,146 @@ const rootReducer = (state = initialState, action) => {
         case 'LOGINUSER':
             return {
                 ...state,
-                endUser: {
-                    adminUser: {
-                        ...state.endUser.adminUser,
-                        aUser: action.aUser
-                    },
-                    user: action.user,
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    loginComplete: true
                 },
-                players: {
-                    ...state.players,
-                    clubPlayers: action.clubPlayers,
-                    latest: {
-                        starters: action.latestStarters,
-                        subs: action.latestSubs, 
+                user: {
+                    user: action.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
+                        starters: action.currentStarters, 
+                        subs: action.currentSubs,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     },
-                    transferring: {
-                        starters: action.latestStarters,
-                        subs: action.latestSubs, 
-                        budget: action.user.budget
+                    focusedGWTeam: {
+                        ...state.user.focusedGWTeam,
+                        starters: action.lastGWStarters,
+                        subs: action.lastGWSubs, 
+                        UGJ: action.lastUGJ
                     },
-                    teamPoints: {
-                        starters: action.lastGwStarters,
-                        subs: action.lastGwSubs, 
-                        ug: action.latestUG
+                    records: action.records,
+                    PGJs: {
+                        last: action.lastPGJs,
+                        all: action.allPGJs
                     }
                 },
-                joiners: {
-                    records: action.records,
-                    pgJoiners: action.pgJoiners,
-                    allPGJoiners: action.allPGJoiners
-                },
-                gameweek: {
-                    ...state.gameweeks,
-                    gwLatest: action.gameweek,
-                },
-                homeGraphics: {
+                club: {
+                    ...state.club,
+                    adminUser: action.adminUser,
+                    clubPlayers: action.clubPlayers,
+                    allLastUGJs: action.allLastUGJs,
+                    lastGW: action.lastGW,
                     league: action.league,
                     topPlayer: action.topPlayer,
                     topUser: action.topUser
                 },
-                loginComplete: true,
-            };
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: action.currentStarters,
+                        subs: action.currentSubs, 
+                        budget: action.user.budget
+                    }
+                }
+            }
         case 'LOGINADMINUSER':
             return {
                 ...state, 
-                endUser: {
-                    ...state.endUser,
-                    adminUser: {
-                        ...state.endUser.adminUser,
-                        aUser: action.aUser,
-                        allUsers: action.allUsers
-                    }
+                boolDeciders: {
+                    ...boolDeciders,
+                    loginComplete: true, 
+                    adminActive: true
                 },
-                players: {
-                    ...state.players,
-                    clubPlayers: action.clubPlayers
-                },
-                gameweek: {
-                    ...state.gameweek,
-                    games: action.games,
-                },
-                loginComplete: true
-            };
+                club: {
+                    ...state.club,
+                    admin_user: action.admin_user,
+                    allUsers: action.allUsers,
+                    clubPlayers: action.clubPlayers,
+                    allGames: action.games
+                }
+            }
         case 'NTS2LOGIN':
             return {
                 ...state,
-                endUser: {
-                    ...state.endUser,
-                    user: action.user
-                },
-                players: {
-                    ...state.players,
-                    latest: {
+                user: {
+                    ...state.user, 
+                    user: action.user,
+                    currentTeam: {
+                        ...state.user.currentTeam,
                         starters: action.starters,
                         subs: action.subs
                     },
-                    transferring: {
+                    records: action.records
+                },
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.starters,
                         subs: action.subs,
                         budget: action.user.budget
                     }
-                },
-                joiners: {
-                    ...state.joiners,
-                    records: action.records
                 }
             };
         case 'SETADMINUSER':
             return {
                 ...state, 
-                endUser: {
-                    ...state.endUser,
-                    adminUser: {
-                        ...state.endUser.adminUser,
-                        aUser: action.aUser
-                    }
+                club: {
+                    ...state.club,
+                    adminUser: action.adminUser
                 }
             };
         case 'SETCLUBPLAYERS':
             return {
                 ...state, 
-                players: {
-                    ...state.players,
+                club: {
+                    ...state.club,
                     clubPlayers: action.players
                 }
             };
         case 'SETUSER':
             return {
                 ...state, 
-                endUser: {
-                    ...state.endUser, 
+                user: {
+                    ...state.user, 
                     user: action.user
                 },
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         budget: action.user.budget
                     }
                 }
             };
         case 'RESETTEAMPLAYERS':
             return {
-                ...state, 
-                players: {
-                    ...state.players,
-                    latest: {
+                ...state,
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
                         starters: [],
                         subs: []
                     }, 
-                    teamPoints: {
+                    focusedGWTeam: {
+                        ...state.user.focusedGWTeam,
                         starters: [],
                         subs: [],
-                        ug: null
+                        UGJ: null
                     }
-                }
-            };
-        case 'PICKTEAMUPDATE':
-            return {
-                ...state, 
-                players: {
-                    ...state.players,
-                    starters: playersObjToArray(action.team), 
-                    subs: action.subs
                 }
             };
         case 'SETGWSELECT':
             return {
                 ...state, 
-                gameweek: {
-                    ...state.gameweek,
-                    gwSelect: action.game
+                club: {
+                    ...state.club, 
+                    focusGW: action.game
                 }
             };
         case 'COMPLETEGAME':
-            let newGames = state.gameweek.games.map(game=>{
+            let newGames = state.club.allGames.map(game=>{
                 if (game.gameweek_id===action.id) {
                     return {...game, complete: true};
                 } else {
@@ -235,17 +281,17 @@ const rootReducer = (state = initialState, action) => {
             });
             return {
                 ...state, 
-                gameweek: {
-                    ...state.gameweek,
-                    games: newGames
+                club: {
+                    ...state.club,
+                    allGames: newGames
                 }
             };
         case 'ADDGAME':
             return {
                 ...state, 
-                gameweek: {
-                    ...state.gameweek,
-                    games: [...state.gameweek.games, action.game]
+                club: {
+                    ...state.club,
+                    allGames: [...state.club.allGames, action.game]
                 }
             };
         case 'SETTRANSFERS':
@@ -253,10 +299,11 @@ const rootReducer = (state = initialState, action) => {
             let subs = action.team.filter(player=>player.sub===true);
             return {
                 ...state, 
-                players: {
-                    ...state.players, 
-                    latest: {
-                        starters, 
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
+                        starters,
                         subs
                     }
                 }
@@ -264,69 +311,71 @@ const rootReducer = (state = initialState, action) => {
         case 'ADDSPINNER':
             return {
                 ...state, 
-                spinner: true
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    spinner: true
+                }
             }
         case "REMOVESPINNER":
             return {
                 ...state, 
-                spinner: false
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    spinner: false
+                }
             }
         case "SUBIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: [...state.players.transferring.starters, action.player],
-                        subs: state.players.transferring.subs.filter(x=>x!==action.player)
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player)
                     }
                 }
             }
         case "SUBOUT":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: state.players.transferring.starters.filter(x=>x!==action.player),
-                        subs: [...state.players.transferring.subs, action.player]
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        subs: [...state.stateChanges.updatedNotPersistedTeam.subs, action.player]
                     }
                 }
             }
         case "TRANSFERIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: [...state.players.transferring.starters, action.player],
-                        budget: state.players.transferring.budget-action.player.price
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
+                        budget: state.stateChanges.updatedNotPersistedTeam.budget-action.player.price
                     }
                 }
             }
         case "TRANSFEROUT":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.transferring,
-                        starters: state.players.transferring.starters.filter(x=>x!==action.player),
-                        subs: state.players.transferring.subs.filter(x=>x!==action.player),
-                        budget: state.players.transferring.budget+action.player.price
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player),
+                        budget: state.stateChanges.updatedNotPersistedTeam.budget+action.player.price
                     }
                 }
             }
         case "SETCAPTAIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    latest: {
-                        ...state.players.latest,
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
                         captain: action.player
                     }
                 }
@@ -334,74 +383,76 @@ const rootReducer = (state = initialState, action) => {
         case "SETVCAPTAIN":
             return {
                 ...state,
-                players: {
-                    ...state.players,
-                    latest: {
-                        ...state.players.latest,
-                        captain: action.player
+                user: {
+                    ...state.user, 
+                    currentTeam: {
+                        ...state.user.currentTeam,
+                        vCaptain: action.player
                     }
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
+            console.log('reversing changes - not persisted');
             return {
                 ...state,
-                otherTeam: false,
-                players: {
-                    ...state.players,
-                    transferring: {
-                        ...state.players.latest,
-                        budget: state.endUser.user.budget
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                stateChanges: {
+                    updatedNotPersistedTeam: {
+                        ...state.user.currentTeam,
+                        budget: state.user.user.budget
                     }
                 }
             };
         case "SETLATESTTOTRANSFERRING":
             return {
                 ...state, 
-                endUser: {
-                    ...state.endUser,
-                    user: {
-                        ...state.user,
-                        budget: state.players.transferring.budget
-                    }
-                },
-                players: {
-                    ...state.players,
-                    latest: state.players.transferring
+                user: {
+                    ...state.user,
+                    currentTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam
+                    },
+                    budget: state.stateChanges.updatedNotPersistedTeam.budget
                 }
             };
         case "SETOTHERTEAMPOINTS": 
-        console.log('hit');
-        console.log(action.allPGJoiners);
             return {
                 ...state, 
-                otherTeam: true,
-                players: {
-                    ...state.players,
-                    otherTeamPoints: {
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: true
+                },
+                club: {
+                    ...state.club, 
+                    focusedGWTeam: {
+                        ...state.club.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
                         records: action.records,
-                        ug: action.ugj,
-                        allPGJoiners: action.allPGJoiners,
+                        UGJ: action.UGJ,
+                        allPGJs: action.allPGJs,
                         user: action.team
                     }
                 }
-
             }
         case "SETTEAMPOINTS":
-            console.log('root reducer; setting team points');
             return {
                 ...state, 
-                otherTeam: false,
-                players: {
-                    ...state.players,
-                    teamPoints: {
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                user: {
+                    ...state.user, 
+                    focusedGWTeam: {
+                        ...state.user.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
-                        ug: action.ug
+                        UGJ: action.UGJ
                     }
                 }
-
             }
         default:
             return state;

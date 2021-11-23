@@ -13,7 +13,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { validateTransfers } from '../../functions/validity';
 import pitch from '../../components/Pitch/pitch.js';
 import _, { remove } from 'lodash';
-import { deleteRecord, fetchAllRecordsByUserIdAndPlayerId, fetchCurrentRecordByUserIdAndPlayerId, fetchRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
+import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
 import { TouchableHighlightBase } from 'react-native';
 import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
 import SpinnerOverlay from '../../components/spinner/spinner';
@@ -66,7 +66,7 @@ class TransfersScreen extends Component {
                 // players transferred out
                 const playersOut = _.difference(originalPlayers, teamPlayers);
                 for (let i=0;i<playersOut.length;i++) {
-                  let record = await fetchCurrentRecordByUserIdAndPlayerId(user.user_id, playersOut[i].player_id);
+                  let record = await getRecord(user.user_id, 0, playersOut[i].player_id);
                   if (record.sub) {
                       count++;
                   }
@@ -94,7 +94,7 @@ class TransfersScreen extends Component {
                     }
                 }
                 // update budget
-                await patchUserBUDGET({...user, budget: budget});
+                await patchUserBUDGET(user.user_id, budget);
                 // persist budget update in root state
                 setLatestToTransferring();
                 removeSpinner();
@@ -140,13 +140,12 @@ class TransfersScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs),
-        clubPlayers: state.players.clubPlayers,
-        user: state.endUser.user,
-        budget: state.players.transferring.budget,
-        originalPlayers: state.players.latest.starters.concat(state.players.latest.subs),
-        spinner: state.spinner,
-        gameweek: state.ga
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
+        clubPlayers: state.club.clubPlayers,
+        user: state.user.user,
+        budget: state.stateChanges.updatedNotPersistedTeam.budget,
+        originalPlayers: state.user.currentTeam.starters.concat(state.user.currentTeam.subs),
+        spinner: state.boolDeciders.spinner
     }
 }
 

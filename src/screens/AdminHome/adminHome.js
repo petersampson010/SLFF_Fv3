@@ -8,7 +8,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { postGame, patchGame } from '../../functions/APIcalls';
 import { showMessage } from 'react-native-flash-message';
 import TouchableScale from 'react-native-touchable-scale'
-import { setGwSelect, addGameState } from '../../actions';
+import { setGWSelect, addGameState } from '../../actions';
 import { displayDate } from '../../functions/reusable';
 import MyModal from '../../components/Modal/myModal';
 import { TouchableOpacity } from 'react-native';
@@ -46,7 +46,7 @@ class AdminHomeScreen extends Component {
         return sortedArr.map((game,i) => {
             const gameColour = game.complete ? $chocolateBlack : $darkBlue;
             return <TouchableOpacity key={i} style={{...gameContainer, backgroundColor: gameColour}}
-            onPress={()=>{this.setState({...this.state, modal2: {active: true, game}});this.props.setGwSelect(game);}}>
+            onPress={()=>{this.setState({...this.state, modal2: {active: true, game}});this.props.setGWSelect(game);}}>
                 <View>
                     <Text style={{...headers}}>{game.opponent}</Text>
                     <Text style={standardText}>{displayDate(game.date)}</Text>
@@ -69,7 +69,7 @@ class AdminHomeScreen extends Component {
 
     addGame = async() => {
         try {
-            let res = await postGame(this.state.modal.game, this.props.aUser.admin_user_id);
+            let res = await postGame(this.state.modal.game, this.props.adminUser.admin_user_id);
             if (res.date) {
                 this.props.addGameState(res);
                 
@@ -191,14 +191,14 @@ class AdminHomeScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        games: state.gameweek.games,
-        aUser: state.endUser.adminUser.aUser
+        games: state.club.allGames,
+        adminUser: state.club.adminUser
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGwSelect: game => dispatch(setGwSelect(game)),
+        setGWSelect: game => dispatch(setGWSelect(game)),
         addGameState: game => dispatch(addGameState(game))
     }
 }

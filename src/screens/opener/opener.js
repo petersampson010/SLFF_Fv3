@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { screenContainer } from '../../styles/global';
 import { optionContainer, optionsContainer, optionText, optionHead, optionUsContainer } from './style';
 

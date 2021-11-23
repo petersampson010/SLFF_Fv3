@@ -27,13 +27,12 @@ class Pitch extends Component {
         }
     }
 
-
-    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>pg.player_id===playerId && pg.gameweek_id===this.props.ug.gameweek_id)[0] : false;
+    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>{
+        return pg.player_id===playerId && pg.gameweek_id===this.props.UGJ.gameweek_id})[0] : false;
 
     team = () => playersArrayToObj(this.props.team);
 
     renderPlayers = (position) => {
-        console.log('**** rendering players ****');
         return this.team()[position].map((player, i) => 
         <PlayerGraphic 
         sub={false}
@@ -58,7 +57,7 @@ class Pitch extends Component {
             />)
 
     openModal = async(player) => {
-        let playerStats = 
+        // let playerStats = 
         this.setState({
             modal: {
                 active: true, 
@@ -68,7 +67,7 @@ class Pitch extends Component {
     }
 
     render() { 
-        const pitchImg = require('../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
+        const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
         const team = this.team();
         return (
             <View>
@@ -117,8 +116,8 @@ class Pitch extends Component {
 
 const mapStateToProps = state => {
     return {
-        ug: state.players.teamPoints.ug,
-        records: state.joiners.records
+        UGJ: state.user.focusedGWTeam.UGJ,
+        records: state.user.records
     }
 }
  

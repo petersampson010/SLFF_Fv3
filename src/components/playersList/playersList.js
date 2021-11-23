@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { connect } from 'react-redux';
 import { fullName, positionString, playerIds } from '../../functions/reusable';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
-import { TouchableOpacity } from 'react-native';
 import { labelText, standardText } from '../../styles/textStyle';
 import { tableElement3, tableElement4, tableRow } from '../../styles/table';
 import MyModal from '../Modal/myModal';
@@ -60,7 +59,7 @@ class PlayersList extends Component {
     playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
 
     tableRow = (player, key) => {
-        const subImg = require('../../images/subIcon.png');
+        const subImg = require('../../../images/subIcon.png');
         const icon = this.playerSelected(player) ? null : <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
         const { clickFcn } = this.props;
         return <TouchableOpacity key={key}
@@ -117,8 +116,8 @@ class PlayersList extends Component {
 
 const mapStateToProps = state => {
     return {
-        clubPlayers: state.players.clubPlayers,
-        teamPlayers: state.players.transferring.starters.concat(state.players.transferring.subs)
+        clubPlayers: state.club.clubPlayers,
+        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)
     }
 }
  

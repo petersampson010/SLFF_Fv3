@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { ScrollView, Text, View, StyleSheet, Button, Picker, Modal, TouchableHighlight } from 'react-native';
 import { getCaptain, getVCaptain, positionString, fullName, playersObjToArray, getRecordId, playersArrayToObj } from '../../functions/reusable';
 import { connect } from 'react-redux';
-import { addSpinner, pickTeamUpdate, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
+import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
@@ -35,22 +35,28 @@ class PickTeamScreen extends Component {
         
     updateTeam = async() => {
         const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest } = this.props;
-        let startToSub = _.difference(originalStarters, starters)
+        let startToSub = _.difference(originalStarters, starters);
+        console.log(startToSub);
         let subToStart = _.difference(originalSubs, subs);
+        console.log(subToStart);
         try {
             addSpinner();
+            console.log('fail here');
             for (let i=0;i<startToSub.length;i++) {
-                await patchRecordSUBS(true, getRecordId(startToSub[i], records));
-                await patchRecordSUBS(false, getRecordId(subToStart[i], records));
+                await patchRecordSUBS(true, startToSub[i].player_id);
+                await patchRecordSUBS(false, subToStart[i].player_id);
             }
+            console.log(' FAIL HERE')
             if (originalCaptain!==captain) {
                 await patchRecordCAPTAINS(true, false, getRecordId(captain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalCaptain, records));
             } 
+            console.log('FAIL HERE _ V> SUPRISED TBH');
             if (originalVCaptain!==vCaptain) {
                 await patchRecordCAPTAINS(false, true, getRecordId(vCaptain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalVCaptain, records));
             }
+            console.log('No F-ING WAY IT FAILED HERE');
             setLatestToTransferring();
             removeSpinner();
             showMessage({
@@ -69,7 +75,7 @@ class PickTeamScreen extends Component {
     }
 
     teamChange = () => {
-        const { subs, originalStarters, originalSubs, records, captain, vCaptain,} = this.props;
+        const { subs, originalStarters, originalSubs, records, captain, vCaptain } = this.props;
         return (originalSubs===subs && 
         getCaptain(originalStarters, records)===captain &&
         getVCaptain(originalStarters, records)===vCaptain
@@ -100,21 +106,20 @@ class PickTeamScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        subs: state.players.transferring.subs,
-        starters: state.players.transferring.starters,
-        originalSubs: state.players.latest.subs,
-        originalStarters: state.players.latest.starters,
-        records: state.joiners.records,
-        captain: state.players.transferring.captain,
-        vCaptain: state.players.transferring.captain,
-        originalCaptain: state.players.latest.captain,
-        originalVCaptain: state.players.latest.captain,
+        subs: state.stateChanges.updatedNotPersistedTeam.subs,
+        starters: state.stateChanges.updatedNotPersistedTeam.starters,
+        originalSubs: state.user.currentTeam.subs,
+        originalStarters: state.user.currentTeam.starters,
+        records: state.user.focusedGWTeam.records,
+        captain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.captain,
+        originalCaptain: state.user.currentTeam.captain,
+        originalVCaptain: state.user.currentTeam.captain,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        pickTeamUpdate: (team, subs) => dispatch(pickTeamUpdate(team, subs)),
         subIn: player => dispatch(subIn(player)),
         subOut: player => dispatch(subOut(player)),
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),

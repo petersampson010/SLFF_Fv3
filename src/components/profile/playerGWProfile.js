@@ -4,7 +4,7 @@ import { Image } from 'react-native';
 import { View, Text } from 'react-native';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { capitalize } from '../../functions/reusable';
-import profileImg from '../../images/profile.jpg';
+import profileImg from '../../../images/profile.jpg';
 import { centerHorizontally } from '../../styles/align';
 import { standardText } from '../../styles/textStyle';
 import MyModal from '../Modal/myModal';

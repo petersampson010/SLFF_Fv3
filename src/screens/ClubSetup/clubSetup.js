@@ -127,7 +127,7 @@ class ClubSetupScreen extends Component {
             for (let i=0;i<24;i++) {
                 let entry = this.state.players[i];
                 if (validatePlayer(entry)) {
-                    await postPlayer(entry, this.props.aUserId);
+                    await postPlayer(entry, this.props.adminUserId);
                 } else {
                     console.warn('invalid entry: ' + i);
                 }
@@ -186,7 +186,7 @@ class ClubSetupScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        aUserId: state.endUser.adminUser.aUser.admin_user_id
+        adminUserId: state.club.adminUser.admin_user_id
     }
 }
 

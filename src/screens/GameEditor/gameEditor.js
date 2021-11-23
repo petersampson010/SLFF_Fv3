@@ -3,7 +3,7 @@ import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 // import Dialog, { DialogButton, DialogContent } from 'react-native-popup-dialog';
 import { connect } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJoiner, fetchCurrentRecords, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, fetchRecordsByGwIdAndUserId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { completeGameState } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -36,7 +36,7 @@ class GameEditorScreen extends Component {
                 [player.player_id]: {
                     name: player.first_name + ' ' + player.last_name,
                     player_id: player.player_id,
-                    gameweek_id: this.props.gwSelect.gameweek_id,
+                    gameweek_id: this.props.focusGW.gameweek_id,
                     minutes: '0',
                     assists: '',
                     goals: '',
@@ -153,11 +153,11 @@ class GameEditorScreen extends Component {
                 await postPGJ(postArr[i]);
             }
             await this.postUGJoiners();
-            let records = await fetchCurrentRecords();
+            let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
-            await completeGame(this.props.gwSelect.gameweek_id, this.state.score);
-            this.props.completeGameState(this.props.gwSelect.gameweek_id);
+            await completeGame(this.props.focusGW.gameweek_id, this.state.score);
+            this.props.completeGameState(this.props.focusGW.gameweek_id);
             this.setState({...this.state, spinner: false});
             this.props.navigation.navigate('AdminHome');
         } catch(e) {
@@ -171,12 +171,12 @@ class GameEditorScreen extends Component {
     }
 
     postUGJoiners = async() => {
-        let { allUsers, gwSelect } = this.props;
+        let { allUsers, focusGW } = this.props;
         for (let i=0; i<allUsers.length; i++) {
             const user = allUsers[i];
-            let records = await fetchRecordsByGwIdAndUserId(user.user_id, 0);
-            const score = await calculateScore(records, gwSelect.gameweek_id);
-            await postUGJoiner(user.user_id, gwSelect.gameweek_id, score);
+            let records = await getRecordsByGWIdAndUserId(user.user_id, 0);
+            const score = await calculateScore(records, focusGW.gameweek_id);
+            await postUGJoiner(user.user_id, focusGW.gameweek_id, score);
         }
     }
 
@@ -188,7 +188,7 @@ class GameEditorScreen extends Component {
 
     patchCurrentRecords = async(records) => {
         for (let i=0; i<records.length; i++) {
-            await patchRecordGAMEWEEK(records[i].record_id, this.props.gwSelect.gameweek_id);
+            await patchRecordGAMEWEEK(records[i].record_id, this.props.focusGW.gameweek_id);
         }
     }
     
@@ -198,7 +198,7 @@ class GameEditorScreen extends Component {
                 {this.state.spinner ? <SpinnerOverlay/> : null}
                 <Button title="Confirm" onPress={()=>this.setState({...this.state, dialog: {active: true}})}/>
                 <View style={inputFieldContainerInLine}>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.aUser.club_name}</Text>
+                    <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
                     <View style={inputFieldSmall}>
                         <TextInput
                         style={input}
@@ -215,7 +215,7 @@ class GameEditorScreen extends Component {
                         placeholder='their team'
                         />
                     </View>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.gwSelect.opponent}</Text>
+                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.focusGW.opponent}</Text>
                 </View>
                         <View style={{...tableRow, backgroundColor: $darkBlue}}>
                             <View style={tableElement1}><Text style={standardText}>Player</Text></View>
@@ -256,10 +256,10 @@ class GameEditorScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        clubPlayers: state.players.clubPlayers,
-        gwSelect: state.gameweek.gwSelect,
-        aUser: state.endUser.adminUser.aUser,
-        allUsers: state.endUser.adminUser.allUsers
+        clubPlayers: state.club.clubPlayers,
+        focusGW: state.club.focusGW,
+        adminUser: state.club.adminUser,
+        allUsers: state.club.allUsers
     }
 }
 

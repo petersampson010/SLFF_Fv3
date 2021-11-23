@@ -7,7 +7,7 @@ import { $pitchGreen } from "../../styles/global";
 import { profileImage, profileContainer } from "./style";
 
 function Shirt(props) {
-  const profilePic = require('../../images/profile.jpg');
+  const profilePic = require('../../../images/profile.jpg');
   return (
     // <TouchableWithoutFeedback onPress={()=>props.openModal(props.player)}>
       <View style={profileContainer}>

@@ -5,7 +5,7 @@ import { overlay } from "./style";
 
 
 function SpinnerOverlay(props) {
-  const profilePic = require('../../images/profile.jpg');
+  const profilePic = require('../../../images/profile.jpg');
   return (
       <Modal transparent={true}>
           <View style={overlay}>

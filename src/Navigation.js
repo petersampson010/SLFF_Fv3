@@ -107,9 +107,6 @@ function Navigation() {
         , headerTitleStyle: {
           color: 'white'
         }}}
-        listeners={({ navigation, route }) => ({
-          beforeRemove: ()=>console.log('leaving')
-        })}
         />
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} 
         options={{

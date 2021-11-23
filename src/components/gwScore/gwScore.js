@@ -4,14 +4,14 @@ import { View, Text } from 'react-native';
 import { headers } from '../../styles/textStyle';
 import { headerText } from '../header/style';
 
-class GwScore extends Component {
+class GWScore extends Component {
     state = {  }
 
     render() { 
-        const { aUser, gwLatest } = this.props;
+        const { adminUser, gwLatest } = this.props;
         return (
             <View>
-                {/* <Text style={headerText}>{aUser.club_name} {gwLatest.score} {gwLatest.opponent}</Text> */}
+                {/* <Text style={headerText}>{adminUser.club_name} {gwLatest.score} {gwLatest.opponent}</Text> */}
             </View>
          );
     }
@@ -19,9 +19,9 @@ class GwScore extends Component {
 
 const mapStateToProps = state => {
     return {
-        aUser: state.endUser.adminUser.aUser,
-        gwLatest: state.gameweek.gwLatest
+        adminUser: state.club.adminUser,
+        lastGW: state.club.lastGW
     }
 }
  
-export default connect(mapStateToProps)(GwScore);
+export default connect(mapStateToProps)(GWScore);

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
-import { Image, Text, StyleSheet, View, Button, Modal, TouchableHighlight } from 'react-native';
+import { Image, Text, StyleSheet, View, Button, Modal, TouchableHighlight, TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import { fullName, subOrTransfer } from '../../functions/reusable';
 import { box, capText, container, playerImage, subContainer, subImage, subTransferBtn } from './style';
-import { TouchableOpacity } from 'react-native';
 import { vw } from 'react-native-expo-viewport-units';
 import { checkBox, headers, playerNamePoints } from '../../styles/textStyle';
 
@@ -69,25 +68,27 @@ class PlayerGraphic extends Component {
     }
 
     isCaptain = () => {
-        const { player, type, lastGwCaptain, lastGwVCaptain, latestCaptain, latestVCaptain } = this.props;
+        const { player, type, lastGWCaptain, lastGWVCaptain, latestCaptain, latestVCaptain } = this.props;
         if (type==='points') {
-            if (player===lastGwCaptain) {
+            if (player===lastGWCaptain) {
                 return 'C';
-            } else if (lastGwVCaptain) {
+            } else if (lastGWVCaptain) {
                 return 'VC';
             }
-        } else {
+        } else if (type==='pickTeam') {
             if (player===latestCaptain) {
                 return 'C';
             } else if (player===latestVCaptain) {
                 return 'VC';
             }
+        } else {
+            return;
         }
     }
 
     render() {
-        const playerImg = require('../../images/profile.jpg');
-        const subImg = require('../../images/subIcon.png');
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         const { player, openModal, type, clickFcn } = this.props;
       return ( 
             <View style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
@@ -115,11 +116,11 @@ class PlayerGraphic extends Component {
 
 const mapStateToProps = state => {
     return {
-        records: state.joiners.records,
-        latestCaptain: state.players.latest.captain,
-        latestVCaptain: state.players.latest.vCaptain,
-        lastGwVCaptain: state.players.teamPoints.vCaptain,
-        lastGwCaptain: state.players.teamPoints.captain,
+        records: state.user.records,
+        latestCaptain: state.user.currentTeam.captain,
+        latestVCaptain: state.user.currentTeam.vCaptain,
+        lastGWCaptain: state.user.focusedGWTeam.captain,
+        lastGWVCaptain: state.user.focusedGWTeam.vCaptain,
     }
 }
  

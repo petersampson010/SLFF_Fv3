@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
 import { View, Text, Switch, Button, StyleSheet, TextInput, processColor } from 'react-native';
-import { fetchAdminUserById, fetchAllAdminUsers, fetchAllPlayersByAdminUserId, fetchAllUsers, postUser } from '../../functions/APIcalls';
+import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
 import Header from '../../components/header/header';
 import { setAdminUser, setClubPlayers, setUser } from '../../actions';
@@ -48,16 +48,20 @@ class ntsScreen1 extends Component {
     }
   }
 
-  fetchInfo = async() => {
+  getInfo = async() => {
     const { userObj } = this.state;
     try {
-      let allUsers = await fetchAllUsers();
-      let allAdminUsers = await fetchAllAdminUsers();
-      let aUser = await fetchAdminUserById(parseInt(userObj.clubId));
-      if (validateUser(allUsers, aUser, userObj)) {
-        this.handleSubmit(allUsers, allAdminUsers, aUser);
+      let allUsers = await getAllUsers();
+      console.log(allUsers);
+      let allAdminUsers = await getAllAdminUsers();
+      console.log(allAdminUsers);
+      let adminUser = await getAdminUserById(parseInt(userObj.clubId));
+      console.log(adminUser);
+      if (validateUser([allUsers], adminUser, userObj)) {
+        this.handleSubmit(allUsers, allAdminUsers, adminUser);
       }
     } catch(e) {
+      console.warn(e);
       showMessage({
         message: "Login failed, please try again",
         description: "It is most likely, you have an incorrect club ID. Please check this and report the issue if it continues",
@@ -66,21 +70,21 @@ class ntsScreen1 extends Component {
     }
   }
 
-  handleSubmit = async(allUsers, allAdminUsers, aUser) => {
+  handleSubmit = async(allUsers, allAdminUsers, adminUser) => {
     const { userObj } = this.state;
     try {
-        await postUser(userObj)
-        .then(result=>{
-          if (result.transfers===0) {
+        let userReturn = await postUser(userObj);
+        let userData = userReturn.data;
+          if (userData.transfers===0) {
             this.setState({signedUp: true});
-            this.props.setUser(result);
-            this.props.setAdminUser(aUser);
-            fetchAllPlayersByAdminUserId(aUser.admin_user_id)
+            this.props.setUser(userData);
+            this.props.setAdminUser(adminUser);
+            getAllPlayersByAdminUserId(adminUser.admin_user_id)
             .then(players => this.props.setClubPlayers(players))
             .then(() => updateStack(this.props.navigation, 0, 'nts2'));
           } else {
-            console.warn("fetch return: ", result)
-          }})
+            console.warn("get return: ", userData);
+          }
     } catch(e) {
       showMessage({
         message: "Fail: Network Issue, please try again later",
@@ -146,7 +150,7 @@ class ntsScreen1 extends Component {
                 autoCapitalize="none"
                 />
               </View>
-              <Button title="Sign Up" onPress={this.fetchInfo}/>
+              <Button title="Sign Up" onPress={this.getInfo}/>
             </View>
           </View>
     );
@@ -162,7 +166,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
   return {
     setUser: user => dispatch(setUser(user)),
-    setAdminUser: aUser => dispatch(setAdminUser(aUser)),
+    setAdminUser: adminUser => dispatch(setAdminUser(adminUser)),
     setClubPlayers: players => dispatch(setClubPlayers(players))
   }
 }

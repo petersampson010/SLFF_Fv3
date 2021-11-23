@@ -1,5 +1,5 @@
 import { showMessage } from "react-native-flash-message";
-import { fetchAllUsers } from "./APIcalls";
+import { getAllUsers } from "./APIcalls";
 import { playersObjToArray } from "./reusable";
 import globalConfig from '../config/globalConfig.json';
 
@@ -12,9 +12,9 @@ export const validatePlayer = player => {
     }
 }
 
-export const validateUser = (allUsers, aUser, user) => {
+export const validateUser = (allUsers, adminUser, user) => {
     let result = true;
-    if (aUser.admin_user_id) {
+    if (adminUser.admin_user_id) {
         allUsers.forEach(x => {
             if (x.email===user.email) {
                 showMessage({

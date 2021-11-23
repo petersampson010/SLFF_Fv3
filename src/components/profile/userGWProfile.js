@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import profileImg from '../../images/profile.jpg';
+import profileImg from '../../../images/profile.jpg';
 import { profile, profileContainer, title } from './style';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { capitalize } from '../../functions/reusable';

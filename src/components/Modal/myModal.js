@@ -42,7 +42,7 @@ class MyModal extends Component {
     }
 
     modalJSX = () => {
-        const playerImg = require('../../images/profile.jpg');
+        const playerImg = require('../../../images/profile.jpg');
         if (this.props.jsx) {
             return this.props.jsx
         } else {
@@ -114,9 +114,9 @@ class MyModal extends Component {
  
 const mapStateToProps = state => {
     return {
-        records: state.joiners.records,
-        captain: state.players.latest.captain,
-        vCaptain: state.players.latest.vCaptain
+        records: state.user.records,
+        captain: state.user.currentTeam.captain,
+        vCaptain: state.user.currentTeam.vCaptain
     }
 }
 

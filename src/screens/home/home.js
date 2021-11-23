@@ -8,14 +8,15 @@ import { $arylideYellow, screenContainer } from '../../styles/global';
 import { gwInfo, leagueTable, topPerformers, topPlayerStyle } from './style';
 import PlayerGWProfile from '../../components/profile/playerGWProfile';
 import UserGWProfile from '../../components/profile/userGWProfile';
-import GwScore from '../../components/gwScore/gwScore';
+import GWScore from '../../components/gwScore/gwScore';
 import { tableElement3, tableRow, tableRowHead } from '../../styles/table';
 import { headers, sidenote, standardText } from '../../styles/textStyle';
 import { vh } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
-import { fetchAllRecordsByUserId, fetchGwStartersByUserId, fetchGwSubsByUserId, fetchUGJoiner } from '../../functions/APIcalls';
+import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJoiner } from '../../functions/APIcalls';
 import { setOtherTeamPoints } from '../../actions';
+import { showMessage } from 'react-native-flash-message';
 
 
 class HomeScreen extends Component {
@@ -33,16 +34,24 @@ class HomeScreen extends Component {
             onPress={() => this.goToTeamPoints(team)}>
             <Text style={{...tableElement3, ...standardText}}>{team.team_name}</Text>
             <Text style={{...tableElement3, ...standardText}}>{team.total_points}</Text>
-            {this.props.gwLatest ? <Text style={{...tableElement3, ...standardText}}>{team.gw_points}</Text> : null}
+            {this.props.lastGW ? <Text style={{...tableElement3, ...standardText}}>{team.gw_points}</Text> : null}
         </TouchableOpacity>);
     }
 
     goToTeamPoints = async(team) => {
-        const { gwLatest } = this.props;
-        const { starters, subs, records, ugj, allPGJoiners } = await getTeamPointsInfo(team.user_id, gwLatest.gameweek_id, true);
-        this.props.setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, team);
-        console.log('should be after');
-        this.props.navigation.navigate('Points');
+        console.log('go to team points');
+        const { lastGW } = this.props;
+        if (lastGW) {
+            const { starters, subs, records, UGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
+            console.log('here');
+            this.props.setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team);
+            this.props.navigation.navigate('Points');
+        } else {
+            showMessage({
+                message: "This team have not yet completed a GW",
+                type: 'warning'
+            })
+        }
     }
 
     closeModal = type => {
@@ -65,15 +74,15 @@ class HomeScreen extends Component {
 
     render() { 
         const { user, topPlayer, topUser } = this.props;
-        const gwLatest = this.props.gwLatest ? this.props.gwLatest : false;
+        const lastGW = this.props.lastGW ? this.props.lastGW : false;
         const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
         return ( 
             <View style={screenContainer}>
                 <View style={{opacity}}>
-                    {gwLatest && topPlayer && topUser ? 
+                    {lastGW && topPlayer && topUser ? 
                     <View style={gwInfo}>
-                        <GwScore />
-                        <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(gwLatest.date)}</Text>
+                        <GWScore />
+                        <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
                             <View style={topPlayer}>
                                 <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
@@ -86,8 +95,8 @@ class HomeScreen extends Component {
                     <View style={tableRowHead}>
                         <Text style={{...tableElement3, ...standardText}}>Team</Text>
                         <Text style={{...tableElement3, ...standardText}}>Total</Text>
-                        {gwLatest ? 
-                        <Text style={{...tableElement3, ...standardText}}>vs. {gwLatest.opponent}</Text>
+                        {lastGW ? 
+                        <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
                         : null}
                     </View>
                     <ScrollView style={''}>
@@ -105,17 +114,17 @@ class HomeScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        user: state.endUser.user,
-        league: state.homeGraphics.league,
-        topPlayer: state.homeGraphics.topPlayer,
-        topUser: state.homeGraphics.topUser,
-        gwLatest: state.gameweek.gwLatest,
+        user: state.user.user,
+        league: state.club.league,
+        topPlayer: state.club.topPlayer,
+        topUser: state.club.topUser,
+        lastGW: state.club.lastGW,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setOtherTeamPoints: (starters, subs, records, ugj, allPGJoiners, team) => dispatch(setOtherTeamPoints(starters, subs, records, ugj, allPGJoiners, team))
+        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, team) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team))
     }
 }
  

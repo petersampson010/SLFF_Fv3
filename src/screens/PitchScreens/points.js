@@ -20,16 +20,16 @@ class PointsScreen extends Component {
     }
 
     render() {
-        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeam, otherAllPGJoiners, allPGJoiners } = this.props;
+        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeam, otherAllPGJoiners, allPGJs } = this.props;
         const selectStarters = otherTeam ? otherStarters : starters;
         const selectSubs = otherTeam ? otherSubs : subs;
         const selectRecords = otherTeam ? otherRecords : records;
-        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJoiners
+        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJs;
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="points" otherTeam={otherTeam}/>
                 <ScrollView style={pitchContainer}>
-                    {this.props.gwLatest ? 
+                    {this.props.lastGW ? 
                     <Pitch
                     type="points"
                     modalType="playerProfile"
@@ -39,7 +39,7 @@ class PointsScreen extends Component {
                     vCaptain={getVCaptain(selectStarters, selectRecords)}
                     team={selectStarters}
                     subs={selectSubs}
-                    allPGJoiners={selectAllPGJoiners}
+                    allPGJs={selectAllPGJoiners}
                     /> : <Text>No Games played yet, come back soon!</Text>}
                 </ScrollView>
                 <BottomNav navigation={this.props.navigation}/>
@@ -50,17 +50,17 @@ class PointsScreen extends Component {
 
 const mapStateToProps = state => {
     return {
-        gwLatest: state.gameweek.gwLatest,
-        subs: state.players.teamPoints.subs,
-        starters: state.players.teamPoints.starters,
-        records: state.joiners.records,
-        league: state.homeGraphics.league,
-        otherStarters: state.players.otherTeamPoints.starters,
-        otherSubs: state.players.otherTeamPoints.subs,
-        otherRecords: state.players.otherTeamPoints.records,
-        allPGJoiners: state.joiners.allPGJoiners,
-        otherAllPGJoiners: state.players.otherTeamPoints.allPGJoiners,
-        otherTeam: state.otherTeam
+        lastGW: state.club.lastGW,
+        subs: state.user.focusedGWTeam.subs,
+        starters: state.user.focusedGWTeam.starters,
+        records: state.user.focusedGWTeam.records,
+        league: state.club.league,
+        otherStarters: state.club.focusedGWTeam.starters,
+        otherSubs: state.club.focusedGWTeam.subs,
+        otherRecords: state.club.focusedGWTeam.records,
+        allPGJs: state.user.PGJs.all,
+        otherAllPGJs: state.club.focusedGWTeam.allPGJs,
+        otherTeam: state.boolDeciders.otherTeamFocus
     }
 }
  

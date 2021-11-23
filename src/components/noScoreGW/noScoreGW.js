@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { headers } from '../../styles/textStyle';
-import GwScore from '../gwScore/gwScore';
+import GWScore from '../gwScore/gwScore';
 
 class NoScoreGW extends Component {
     state = {  }
@@ -11,7 +11,7 @@ class NoScoreGW extends Component {
             <View>
                 {this.props.topPlayer ? 
                 <View>
-                    <GwScore/>
+                    <GWScore/>
                     <Text style={headers}>No Points Were Scored For This Gameweek! Maybe someone else should take over the admin account..</Text>
                 </View>
                 :
@@ -24,7 +24,7 @@ class NoScoreGW extends Component {
 
 export const mapStateToProps = state => {
     return {
-        topPlayer: state.homeGraphics.topPlayer
+        topPlayer: state.club.topPlayer
     }
 }
  

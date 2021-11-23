@@ -46,6 +46,7 @@ class PitchHead extends Component {
         const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, user, gwLatest } = this.props;
         switch(this.props.type) {
             case 'points':
+                
                 return <Text style={pitchHeadLeft} onPress={() => this.changeGWPoints('L')}>
                     {otherTeam ? (otherUGJ.gameweek_id>1 ? `GW ${otherUGJ.gameweek_id-1}` : '') 
                     :

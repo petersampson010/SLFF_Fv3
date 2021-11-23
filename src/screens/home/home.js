@@ -39,16 +39,18 @@ class HomeScreen extends Component {
     }
 
     goToTeamPoints = async(team) => {
+        console.log('go to team points');
         const { lastGW } = this.props;
-        const { starters, subs, records, UGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
-        if (!starters) {
+        if (lastGW) {
+            const { starters, subs, records, UGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
+            console.log('here');
+            this.props.setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team);
+            this.props.navigation.navigate('Points');
+        } else {
             showMessage({
                 message: "This team have not yet completed a GW",
                 type: 'warning'
             })
-        } else {
-            this.props.setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team);
-            this.props.navigation.navigate('Points');
         }
     }
 

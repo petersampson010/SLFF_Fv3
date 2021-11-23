@@ -75,12 +75,14 @@ class PlayerGraphic extends Component {
             } else if (lastGWVCaptain) {
                 return 'VC';
             }
-        } else {
+        } else if (type==='pickTeam') {
             if (player===latestCaptain) {
                 return 'C';
             } else if (player===latestVCaptain) {
                 return 'VC';
             }
+        } else {
+            return;
         }
     }
 

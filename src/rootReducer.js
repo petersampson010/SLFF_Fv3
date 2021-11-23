@@ -392,6 +392,7 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
+            console.log('reversing changes - not persisted');
             return {
                 ...state,
                 boolDeciders: {
@@ -400,7 +401,7 @@ const rootReducer = (state = initialState, action) => {
                 },
                 stateChanges: {
                     updatedNotPersistedTeam: {
-                        ...state.stateChanges.updatedNotPersistedTeam,
+                        ...state.user.currentTeam,
                         budget: state.user.user.budget
                     }
                 }
@@ -409,13 +410,11 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state, 
                 user: {
-                    user: {
-                        ...state.user, 
-                        currentTeam: {
-                            ...state.stateChanges.updatedNotPersistedTeam
-                        },
-                        budget: state.stateChanges.updatedNotPersistedTeam.budget
-                    }
+                    ...state.user,
+                    currentTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam
+                    },
+                    budget: state.stateChanges.updatedNotPersistedTeam.budget
                 }
             };
         case "SETOTHERTEAMPOINTS": 

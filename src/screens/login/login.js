@@ -121,7 +121,7 @@ class LoginScreen extends Component {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
           }
         } else {
-          await this.props.loginUser(user, adminUser, clubPlayers, latestStarters, latestSubs, [], [], records, league, null, null, [], [], null, null, []);
+          await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
         }
         updateStack(this.props.navigation, 0, 'Home');
       } else {

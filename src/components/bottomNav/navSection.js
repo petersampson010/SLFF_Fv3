@@ -18,7 +18,8 @@ class NavSection extends Component {
 
     navigate = () => {
         const { page, setTransferringBackToLatest, navigation, lastStarters } = this.props;
-        if (page==='Points' && !lastStarters) {
+        console.log(lastStarters);
+        if (page==='Points' && lastStarters.length<1) {
             showMessage({
                 message: "There are no points available as no games have been played",
                 type: 'warning'

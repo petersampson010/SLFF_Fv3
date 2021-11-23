@@ -35,22 +35,28 @@ class PickTeamScreen extends Component {
         
     updateTeam = async() => {
         const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest } = this.props;
-        let startToSub = _.difference(originalStarters, starters)
+        let startToSub = _.difference(originalStarters, starters);
+        console.log(startToSub);
         let subToStart = _.difference(originalSubs, subs);
+        console.log(subToStart);
         try {
             addSpinner();
+            console.log('fail here');
             for (let i=0;i<startToSub.length;i++) {
-                await patchRecordSUBS(true, getRecordId(startToSub[i], records));
-                await patchRecordSUBS(false, getRecordId(subToStart[i], records));
+                await patchRecordSUBS(true, startToSub[i].player_id);
+                await patchRecordSUBS(false, subToStart[i].player_id);
             }
+            console.log(' FAIL HERE')
             if (originalCaptain!==captain) {
                 await patchRecordCAPTAINS(true, false, getRecordId(captain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalCaptain, records));
             } 
+            console.log('FAIL HERE _ V> SUPRISED TBH');
             if (originalVCaptain!==vCaptain) {
                 await patchRecordCAPTAINS(false, true, getRecordId(vCaptain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalVCaptain, records));
             }
+            console.log('No F-ING WAY IT FAILED HERE');
             setLatestToTransferring();
             removeSpinner();
             showMessage({

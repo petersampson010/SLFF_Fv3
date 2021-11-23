@@ -150,7 +150,7 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     gameweek_id: gwId
 });
 
-export const patchRecordSUBS = (sub, record_id) => axiosPatch(`records/${record_id}`, {sub});
+export const patchRecordSUBS = (sub, playerId) => axiosPatch(`records?player_id=${playerId}&gameweek_id=0`, {sub});
 
 export const patchRecordCAPTAINS = (captain, vice_captain, record_id) => axiosPatch(`records/${record_id}`, {
     captain,

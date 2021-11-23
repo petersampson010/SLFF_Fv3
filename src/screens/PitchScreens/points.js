@@ -53,7 +53,7 @@ const mapStateToProps = state => {
         lastGW: state.club.lastGW,
         subs: state.user.focusedGWTeam.subs,
         starters: state.user.focusedGWTeam.starters,
-        records: state.user.focusedGWTeam.records,
+        records: state.user.records,
         league: state.club.league,
         otherStarters: state.club.focusedGWTeam.starters,
         otherSubs: state.club.focusedGWTeam.subs,

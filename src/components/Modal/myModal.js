@@ -91,9 +91,16 @@ class MyModal extends Component {
                         </View>
                         : null}
                     </View>
+                case 'gwStatsSubmit': 
+                    return <View style={modalTextContainer}>
+                        <Text style={standardText}>Please review your stats before submission! Once submitted, stats cannot be changed. Clicking confirm will submit these stats and set this 'Game' to complete.</Text>
+                    </View>;
+                default: 
+                return;
             }
         }
     }
+
     render() { 
         return ( 
             <Modal visible={this.props.visible} 
@@ -134,5 +141,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(MyModal);
 // props we need: 
 // visible
 // closeModalFcn
-// jsx: 
+// jsx: *OPTIONAL*
 // array of button options at bottom, each element needs text and an onPress fcn

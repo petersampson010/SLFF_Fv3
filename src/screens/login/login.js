@@ -147,7 +147,7 @@ class LoginScreen extends Component {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
         let games = await getAllGamesByAdminUserId(adminUser.admin_user_id);
-        await this.props.loginAdminUser(adminUser, clubPlayers, allUsers, games);
+        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, games);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
         showMessage({

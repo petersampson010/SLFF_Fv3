@@ -181,13 +181,13 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state, 
                 boolDeciders: {
-                    ...boolDeciders,
+                    ...state.boolDeciders,
                     loginComplete: true, 
                     adminActive: true
                 },
                 club: {
                     ...state.club,
-                    admin_user: action.admin_user,
+                    adminUser: action.adminUser,
                     allUsers: action.allUsers,
                     clubPlayers: action.clubPlayers,
                     allGames: action.games
@@ -392,7 +392,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
-            console.log('reversing changes - not persisted');
             return {
                 ...state,
                 boolDeciders: {

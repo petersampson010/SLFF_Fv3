@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-// import Dialog, { DialogButton, DialogContent } from 'react-native-popup-dialog';
 import { connect } from 'react-redux';
 import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
@@ -13,6 +12,7 @@ import { standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine } from '../../styles/input';
 import { calculateScore } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
+import MyModal from '../../components/Modal/myModal';
 
 class GameEditorScreen extends Component {
     state = { 
@@ -113,8 +113,11 @@ class GameEditorScreen extends Component {
         }
     }
 
+    startSpin = () => {
+        this.setState({...this.state, spinner: true}, () => this.validatePlayerScores());
+    }
+
     validatePlayerScores = () => {
-        this.setState({...this.state, spinner: true});
         let outcome = true;
         let postArr = [];
         let updatedState = this.state;
@@ -159,6 +162,10 @@ class GameEditorScreen extends Component {
             await completeGame(this.props.focusGW.gameweek_id, this.state.score);
             this.props.completeGameState(this.props.focusGW.gameweek_id);
             this.setState({...this.state, spinner: false});
+            showMessage({
+                message: "Success",
+                type: "success"
+              });
             this.props.navigation.navigate('AdminHome');
         } catch(e) {
             this.setState({...this.state, spinner: false});
@@ -217,38 +224,31 @@ class GameEditorScreen extends Component {
                     </View>
                     <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.focusGW.opponent}</Text>
                 </View>
-                        <View style={{...tableRow, backgroundColor: $darkBlue}}>
-                            <View style={tableElement1}><Text style={standardText}>Player</Text></View>
-                            <Text style={tableElement9}>M</Text>
-                            <Text style={tableElement9}>A</Text>
-                            <Text style={tableElement9}>G</Text>
-                            <Text style={tableElement9}>OG</Text>
-                            <Text style={tableElement9}>YC</Text>
-                            <Text style={tableElement9}>RC</Text>
-                            <Text style={tableElement9}>B</Text>
-                            <Text style={tableElement9}>PM</Text>
-                            <Text style={tableElement9}>GC</Text>
-                        </View>
-            <ScrollView style={screenContainer}>
+                <View style={{...tableRow, backgroundColor: $darkBlue}}>
+                    <View style={tableElement1}><Text style={standardText}>Player</Text></View>
+                    <Text style={tableElement9}>M</Text>
+                    <Text style={tableElement9}>A</Text>
+                    <Text style={tableElement9}>G</Text>
+                    <Text style={tableElement9}>OG</Text>
+                    <Text style={tableElement9}>YC</Text>
+                    <Text style={tableElement9}>RC</Text>
+                    <Text style={tableElement9}>B</Text>
+                    <Text style={tableElement9}>PM</Text>
+                    <Text style={tableElement9}>GC</Text>
+                </View>
+                <ScrollView style={screenContainer}>
                     <View style={{paddingBottom: vh(30)}}>
                         {this.renderRows()}
                     </View>
-                {/* <Dialog
-                visible={this.state.dialog.active}
-                width={0.6}
-                height={0.2}
-                onTouchOutside={()=>this.setState({...this.state, dialog:{active: false}})}
-                >
-                    <DialogContent>
-                        <Text>Please review your stats before submission! Once submitted, stats cannot be changed. Clicking confirm will submit these stats and set this 'Game' to complete.</Text>
-                    </DialogContent>
-                    <DialogButton
-                    text="SUBMIT STATS"
-                    onPress={this.validatePlayerScores}
-                    />
-                </Dialog> */}
-            </ScrollView>
-
+                </ScrollView>
+                <MyModal
+                    visible={this.state.dialog.active}
+                    height={vh(30)}
+                    width={vw(70)}
+                    closeModalFcn={()=>this.setState({...this.state, dialog:{active: false}})}
+                    jsx={<Text style={standardText}>Pleas ensure statss are correct, once confirmeed they cannot be corrected.</Text>}
+                    buttonOptions={[{text: 'Submit Stats', fcn: this.startSpin}]}
+                />
             </View> 
         );
     }

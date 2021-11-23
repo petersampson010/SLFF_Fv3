@@ -52,11 +52,8 @@ class ntsScreen1 extends Component {
     const { userObj } = this.state;
     try {
       let allUsers = await getAllUsers();
-      console.log(allUsers);
       let allAdminUsers = await getAllAdminUsers();
-      console.log(allAdminUsers);
       let adminUser = await getAdminUserById(parseInt(userObj.clubId));
-      console.log(adminUser);
       if (validateUser([allUsers], adminUser, userObj)) {
         this.handleSubmit(allUsers, allAdminUsers, adminUser);
       }
@@ -74,7 +71,7 @@ class ntsScreen1 extends Component {
     const { userObj } = this.state;
     try {
         let userReturn = await postUser(userObj);
-        let userData = userReturn.data;
+        let userData = userReturn;
           if (userData.transfers===0) {
             this.setState({signedUp: true});
             this.props.setUser(userData);

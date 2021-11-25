@@ -27,8 +27,9 @@ class Pitch extends Component {
         }
     }
 
-    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>{
-        return pg.player_id===playerId && pg.gameweek_id===this.props.UGJ.gameweek_id})[0] : false;
+    playerPG = (playerId) => {
+        return this.props.type==="points" ? this.props.allPGJs.filter(pg=>{
+        return pg.player_id===playerId && pg.gameweek_id===this.props.UGJ.gameweek_id})[0] : false;}
 
     team = () => playersArrayToObj(this.props.team);
 
@@ -71,10 +72,6 @@ class Pitch extends Component {
         const team = this.team();
         return (
             <View>
-                {/* <PitchHead
-                type={this.props.type}
-                update={this.props.update}
-                /> */}
                 <View>
                         <ImageBackground source={pitchImg} imageStyle={{resizeMode: 'stretch'}} style={pitchImage}>
                             <View style={{flex: 1, flexDirection: 'row'}}>

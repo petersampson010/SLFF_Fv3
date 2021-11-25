@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../components/header/header';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
-import { patchUserBUDGET, postRecord } from '../../functions/APIcalls';
+import { patchUserBUDGET, patchUserGWSTART, postRecord } from '../../functions/APIcalls';
 import Pitch from '../../components/Pitch/pitch';
 import PlayersList from '../../components/playersList/playersList';
 import { showMessage } from 'react-native-flash-message';
@@ -109,7 +109,7 @@ class ntsScreen2 extends Component {
     }
 
     submitTeam = async() => {
-        const { teamPlayers, budget, addSpinner, removeSpinner, user, navigation, nts2Login } = this.props
+        const { teamPlayers, budget, addSpinner, removeSpinner, user, navigation, nts2Login, lastGW } = this.props
         const teamPlayersObj = playersArrayToObj(teamPlayers);
         try {
             addSpinner();
@@ -122,6 +122,7 @@ class ntsScreen2 extends Component {
                         }
                         let returnUser = await patchUserBUDGET(
                         user.user_id, budget);
+                        await patchUserGWSTART(lastGW ? lastGW.gameweek+1 : 1);
                         nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records);
                         updateStack(navigation, 0, 'Home');
                     } else {
@@ -169,7 +170,8 @@ const mapStateToProps = state => {
     return {
         user: state.user.user,
         teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
-        budget: state.stateChanges.updatedNotPersistedTeam.budget
+        budget: state.stateChanges.updatedNotPersistedTeam.budget,
+        lastGW: state.club.lastGW
     }
 }
 

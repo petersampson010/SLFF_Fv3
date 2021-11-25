@@ -32,15 +32,17 @@ export const getUserByEmail = userObj => axiosGet(`users?email=${userObj.email}`
 
 export const postUser = (userObj) => axiosPost('users', {
     email: userObj.email,
-    teamname: userObj.teamName,
+    team_name: userObj.team_name,
     password: userObj.password,
     transfers: 0,
     budget: userObj.budget,
+    gw_start: 0,
     admin_user_id: userObj.clubId
 });
 
 export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
 
+export const patchUserGWSTART = (userId, gw_start) => axiosPatch(`users/${userId}`, {gw_start});
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 
@@ -134,7 +136,8 @@ export const postRecord = (player, userId, count) => axiosPost('records', {
     vice_captain: count===5 ? true : false,
     user_id: userId,
     player_id: player.player_id,
-    gameweek_id: 0
+    gameweek_id: 0,
+    admin_user_id: player.admin_user_id
 });
 
 export const postRecordDUPLICATE = (record) => axiosPost('records', {
@@ -143,7 +146,8 @@ export const postRecordDUPLICATE = (record) => axiosPost('records', {
     vice_captain: record.vice_captain,
     user_id: record.user_id,
     player_id: record.player_id,
-    gameweek_id: 0  
+    gameweek_id: 0,
+    admin_user_id: record.admin_user_id
 });
 
 export const patchRecordGAMEWEEK = (recordId, gwId) => axiosPatch(`records/${recordId}`, {gameweek_id: gwId});
@@ -154,7 +158,8 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     vice_captain,
     record_id: player.record_id,
     user_id: userId,
-    gameweek_id: gwId
+    gameweek_id: gwId,
+    admin_user_id: player.admin_user_id
 });
 
 export const patchRecordSUBS = (sub, playerId) => axiosPatch(`records?player_id=${playerId}&gameweek_id=0`, {sub});
@@ -180,6 +185,7 @@ export const postGame = (game, adminUserID) => axiosPost('gameweeks', {
     date: game.date,
     opponent: game.opponent,
     complete: false,
+    gameweek: 0,
     admin_user_id: adminUserID
 });
 
@@ -188,19 +194,20 @@ export const patchGame = (game) => axiosPatch(`gameweeks/${game.gameweek_id}`, {
     opponent: game.opponent
 });
 
-export const completeGame = (id, score) => axiosPatch(`gameweeks/${id}`, {
+export const completeGame = (id, score, gameweek) => axiosPatch(`gameweeks/${id}`, {
     score: `${score.team} - ${score.oppo}`,
-    complete: true
+    complete: true,
+    gameweek
 });
 
 export const getAllGameweeksFromAdminUserId = auId => axiosGet(`gameweeks?admin_user_id=${auId}`);
 
-
+export const getGameweekFromAdminUserIdAndGameweek = (adminUserId, gameweek) => axiosGet(`gameweeks?admin_user_id=${adminUserId}&gameweek=${gameweek}`);
 
 
 // PLAYER-GAMEWEEK-JOINERS
 
-export const postPGJ = async(joiner) => {
+export const postPGJ = async(joiner, admin_user_id) => {
     try{
         let newObj = {}
         for (const [key, value] of Object.entries(joiner)) {
@@ -260,7 +267,8 @@ export const postPGJ = async(joiner) => {
             goals_conceded: gc,
             total_points: score,
             player_id: joiner.player_id,
-            gameweek_id: joiner.gameweek_id
+            gameweek_id: joiner.gameweek_id,
+            admin_user_id
         });
     } catch(e) {
         showMessage({
@@ -275,9 +283,9 @@ export const getAllPGJoiners = () => axiosGet('player_gameweek_joiners');
 
 export const getAllPGJFromUserId = userId => axiosGet(`http://localhost:3000/player_gameweek_joiners?user_id=${userId}`)
 
-export const getPGJoinersFromUserIdAndGameweekId = (userId, gameweekId) => axiosGet(`player_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`);
+export const getPGJsFromUserIdAndGameweekId = (userId, gameweekId) => axiosGet(`player_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`);
 
-export const getAllPGJoinersFromGameweekId = (gameweekId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gameweekId}`)
+export const getAllPGJsFromGameweekId = (gameweekId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gameweekId}`)
 
 export const getPGJoinerFromPlayerIdAndGWId = (playerId, gwId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gwId}&player_id=${playerId}`, true);
 
@@ -285,15 +293,16 @@ export const getPGJoinerFromPlayerIdAndGWId = (playerId, gwId) => axiosGet(`play
 
 // USER-GAMEWEEK JOINERS
 
-export const postUGJoiner = async(userId, gameweekId, score) => axiosPost('user_gameweek_joiners', {
+export const postUGJ = async(user, gameweekId, score) => axiosPost('user_gameweek_joiners', {
     total_points: score,
-    user_id: userId,
-    gameweek_id: gameweekId
+    user_id: user.user_id,
+    gameweek_id: gameweekId,
+    admin_user_id: user.admin_user_id
 });
 
-export const getUGJoiner = (userId, gameweekId) => axiosGet(`user_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`, true);
+export const getUGJ = (userId, gameweekId) => axiosGet(`user_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`, true);
 
-export const getUGJoiners = (auId, gameweekId) => axiosGet(`user_gameweek_joiners?admin_user_id=${auId}&gameweek_id=${gameweekId}`);
+export const getUGJs = (auId, gameweekId) => axiosGet(`user_gameweek_joiners?admin_user_id=${auId}&gameweek_id=${gameweekId}`);
 
 
 

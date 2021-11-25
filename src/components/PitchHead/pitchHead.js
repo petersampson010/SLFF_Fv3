@@ -1,97 +1,110 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Modal } from 'react-native';
 import { vh, vw } from 'react-native-expo-viewport-units';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { setOtherTeamPoints, setTeamPoints } from '../../actions';
+import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
 import { getTeamPointsInfo } from '../../functions/reusable';
-import { headers, labelText, standardText } from '../../styles/textStyle';
+import { gwTEXT, headers, labelText, pointsBannerTEXT, pointsTEXT, standardText } from '../../styles/textStyle';
 import Button from '../button';
-import { pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, teamNameContainer } from './style';
+import GWScore from '../gwScore/gwScore';
+import pitch from '../Pitch/pitch';
+import { gameweekBanner, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
 
 
 class PitchHead extends Component {
     state = {  }
 
-    comp2 = () => {
-        switch(this.props.type) {
-            case 'points': 
-                return <Text style={labelText}>{this.props.otherTeam ? this.props.otherUser.team_name : this.props.user.team_name}</Text>;
-            case 'transfers':
-                    return <View>
-                        <Text style={labelText}>Transfers Available: {this.props.user.transfers}</Text>
-                        <View style={{flexDirection: "row"}}><Text style={labelText}>Budget: </Text><Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text></View>
-                    </View>;
-            case 'pickTeam':
-                return <Text></Text>;
-            default: 
-                return;
+    changeGWPoints = async(direction) => {
+        const { otherTeam, otherUser, setOtherTeamPoints, setTeamPoints,user } = this.props;
+        if (otherTeam) {
+            const clubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? clubFocusGW.gameweek-1 : clubFocusGW.gameweek+1)
+            const { starters, subs, records, otherUGJ, allPGJs } = await getTeamPointsInfo(otherUser.user_id, clubFocusGW.gameweek_id, otherUser);
+            setOtherTeamPoints(starters, subs, records, otherUGJ, allPGJs, otherUser, clubFocusGW);
+        } else {
+            const userFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? userFocusGW.gameweek-1 : userFocusGW.gameweek+1)
+            const { starters, subs, UGJ } = await getTeamPointsInfo(user.user_id, userFocusGW.gameweek_id, otherUser);
+            setTeamPoints(starters, subs, UGJ, userFocusGW);
         }
     }
 
-    comp3 = () => {
+    compX = () => {
         const { type, otherTeam, otherUGJ, UGJ, update } = this.props;
         switch(type) {
             case 'points': 
-                return <Text style={labelText}>{otherTeam ? otherUGJ.total_points : UGJ.total_points}</Text>;
-            case 'transfers':
-                return <Button text='Confirm' func={update} width={vw(30)}/>
+                return <GWScore/>;
             case 'pickTeam':
-                return <Button text='Confirm' func={update} width={vw(30)}/>
+                return <View style={pickTeamX}><Button text='Confirm' func={update} width={vw(30)}/></View>;
+            case 'transfers':
+                return <View style={transfersX}>
+                        <View >
+                            <Text style={labelText}>Transfers Available: {this.props.user.transfers}</Text>
+                            <View style={{flexDirection: "row"}}>
+                                <Text style={labelText}>Budget: </Text>
+                                <Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text>
+                            </View>
+                        </View>
+                        <Button text='Confirm' func={update} width={vw(30)}/>
+                    </View>
             default: 
                 return;
         }
     }
 
-    comp1 = () => {
-        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, user, gwLatest } = this.props;
-        switch(this.props.type) {
+    compY = () => {
+        const { type, UGJ, otherUser, otherUGJ, otherTeamFocus, lastGW, userFocusGW, clubFocusGW, user } = this.props;
+        switch(type) {
             case 'points':
-                
-                return <Text style={pitchHeadLeft} onPress={() => this.changeGWPoints('L')}>
-                    {otherTeam ? (otherUGJ.gameweek_id>1 ? `GW ${otherUGJ.gameweek_id-1}` : '') 
-                    :
-                    (UGJ.gameweek_id>1 ? `GW ${UGJ.gameweek_id+1}` : '')}
-                </Text>
-            default:
-                return;
+                console.log(userFocusGW);
+                console.log(clubFocusGW);
+                console.log(UGJ);
+                return <View style={pointsY}>
+                    <TouchableOpacity onPress={() => this.changeGWPoints('L')}>
+                        <Text style={{...gwTEXT, width: vw(20), textAlign: 'left'}}>{otherTeamFocus ? 
+                        (clubFocusGW.gameweek>otherUser.gw_start ? '<--' : '') 
+                        :
+                        (userFocusGW.gameweek>user.gw_start ? '<--' : '')}</Text>
+                    </TouchableOpacity>
+                    <Text style={gameweekBanner}>Gameweek {otherTeamFocus ? clubFocusGW.gameweek : userFocusGW.gameweek}</Text>
+                    <TouchableOpacity onPress={() => this.changeGWPoints('R')}>
+                        <Text style={{...gwTEXT, width: vw(20), textAlign: 'right'}}>{otherTeamFocus ? 
+                        (clubFocusGW.gameweek<lastGW.gameweek ? '-->' : '') 
+                        :
+                        (userFocusGW.gameweek<lastGW.gameweek ? '-->' : '')}</Text>
+                    </TouchableOpacity>
+                </View>
+            default: 
+            return;
         }
     }
 
-    comp4 = () => {
-        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, user, gwLatest } = this.props;
-        switch(this.props.type) {
-            case 'points':
-                return <Text style={pitchHeadRight} onPress={() => this.changeGWPoints('R')}>
-                    {otherTeam ? (otherUGJ.gameweek_id<gwLatest.gameweek_id ? `GW ${otherUGJ.gameweek_id+1}` : '') 
-                    :
-                    (UGJ.gameweek_id<gwLatest.gameweek_id ? `GW ${UGJ.gameweek_id+1}` : '')}
-                </Text>
-            default:
-                return;
-        }
-    }
-
-    changeGWPoints = async(direction) => {
-        const { otherTeam, otherUser, otherUGJ, UGJ, setOtherTeamPoints, setTeamPoints,user } = this.props;
-        if (otherTeam) {
-            const { starters, subs, records, UGJj, allPGJs } = await getTeamPointsInfo(otherUser.user_id, direction === 'L' ? otherUGJ.gameweek_id-1 : otherUGJ.gameweek_id+1, otherUser);
-            setOtherTeamPoints(starters, subs, records, UGJj, allPGJs, otherUser);
-        } else {
-            const { starters, subs, UGJj } = await getTeamPointsInfo(user.user_id, direction === 'L' ? UGJ.gameweek_id-1 : UGJ.gameweek_id+1, otherUser);
-            setTeamPoints(starters, subs, UGJj);
+    compZ = () => {
+        const { type, otherTeamFocus, otherUGJ, UGJ } = this.props;
+        switch(type) {
+            case 'points': 
+                return <View style={pointsBanner}>
+                    <View style={pointsBannerComp}>
+                        <Text style={pointsBannerTEXT}>Points</Text>
+                        <Text style={pointsTEXT}>{otherTeamFocus ? otherUGJ.total_points : UGJ.total_points}</Text>
+                    </View>
+                    <View style={pointsBannerComp}>
+                        <Text style={pointsBannerTEXT}>Average</Text>
+                        <Text style={pointsTEXT}>XX</Text>
+                    </View>
+                </View>
         }
     }
 
     render() {
         return (
             <View>
-                <View style={teamNameContainer}><Text style={headers}>{this.props.otherTeam ? this.props.otherUser.team_name : this.props.user.team_name}</Text></View>
-                <View style={pitchHead}>
-                    {this.comp1()}
-                    {this.comp2()}
-                    {this.comp3()}
-                    {this.comp4()}
-                </View>
+                <View style={team_nameContainer}><Text style={team_nameText}>{this.props.otherTeamFocus ? this.props.otherUser.team_name : this.props.user.team_name}</Text></View>
+            <View style={pitchHead}>
+                {this.compY()}
+            </View>
+                {this.compX()}
+                {this.compZ()}
             </View>
          );
     }
@@ -104,7 +117,10 @@ const mapStateToProps = state => {
         budget: state.stateChanges.updatedNotPersistedTeam.budget,
         otherUGJ: state.club.focusedGWTeam.UGJ,
         otherUser: state.club.focusedGWTeam.user,
-        lastGW: state.club.lastGW
+        lastGW: state.club.lastGW,
+        otherTeamFocus: state.boolDeciders.otherTeamFocus,
+        userFocusGW: state.user.userFocusGW,
+        clubFocusGW: state.club.clubFocusGW
     }
 }
 

@@ -4,7 +4,7 @@ import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
-  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJoinersFromGameweekId, getUGJoiner, getUGJoiners, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -89,30 +89,35 @@ class LoginScreen extends Component {
         let gameweeks = await getAllGameweeksFromAdminUserId(admin_user_id);
         gameweeks.filter(g=>g.complete===true);
         gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-        let lastGW = gameweeks[0];
+        let lastGW = gameweeks[0].gameweek>0 ? gameweeks[0] : null;
         let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
         let adminUser = await getAdminUserById(admin_user_id);
         let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
         let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
         let records = await getAllRecordsByUserId(user_id);
         let league = await getLeague(admin_user_id);
+        console.log('last gw');
+        console.log(lastGW);
         if (lastGW) {
           const { gameweek_id } = lastGW;
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
-          let lastPGJs = await getAllPGJoinersFromGameweekId(gameweek_id);
+          let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
           let allPGJs = await getAllPGJFromUserId(user_id);
+          console.log(lastPGJs);
           if (lastPGJs.length<1) {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
-            let allLastUGJs = await getUGJoiners(admin_user_id, gameweek_id);
-            let lastUGJ = await getUGJoiner(user_id, gameweek_id);
+            console.log('hitting section');
+            let allLastUGJs = await getUGJs(admin_user_id, gameweek_id);
+            let lastUGJ = await getUGJ(user_id, gameweek_id);
             let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
             pg = pg[0];
             let topPlayer = pg ? {
               pg,
               player: await getPlayerById(pg.player_id)
             } : null;
+            console.log(topPlayer);
             let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
             let topUser = ug ? {
               ug,

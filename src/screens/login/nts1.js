@@ -19,7 +19,7 @@ class ntsScreen1 extends Component {
   state = {
     userObj: {
       email: '',
-      teamName: '',
+      team_name: '',
       password: '',
       rePassword: '',
       clubId: '',
@@ -34,8 +34,8 @@ class ntsScreen1 extends Component {
       case 'email': 
         this.setState({...this.state, userObj: {...this.state.userObj, email: entry}})
         break;
-      case 'teamName': 
-        this.setState({...this.state, userObj: {...this.state.userObj, teamName: entry}})
+      case 'team_name': 
+        this.setState({...this.state, userObj: {...this.state.userObj, team_name: entry}})
         break;
       case 'password': 
         this.setState({...this.state, userObj: {...this.state.userObj, password: entry}})
@@ -71,6 +71,7 @@ class ntsScreen1 extends Component {
     const { userObj } = this.state;
     try {
         let userReturn = await postUser(userObj);
+        
         let userData = userReturn;
           if (userData.transfers===0) {
             this.setState({signedUp: true});
@@ -109,8 +110,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Enter your team name</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.teamName} 
-                onChangeText={value => this.formChange('teamName', value)}
+                value={this.state.userObj.team_name} 
+                onChangeText={value => this.formChange('team_name', value)}
                 placeholder="Sunday Funday"
                 placeholderTextColor='#d1d2d6'
                 />

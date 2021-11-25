@@ -52,7 +52,7 @@ class MyModal extends Component {
                 case 'userProfile':
                     const { user, ug } = entry;
                     return <View style={modalTextContainer}>
-                        <Text style={standardText}>{user.teamname}</Text>
+                        <Text style={standardText}>{user.team_name}</Text>
                         <Text style={standardText}>GW Points: {ug.total_points}</Text>
                         <Text style={standardText}>maybe total score</Text>
                     </View>

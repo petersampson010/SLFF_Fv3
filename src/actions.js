@@ -187,7 +187,7 @@ export const setLatestToTransferring = () => {
     }
 }
 
-export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team) => {
+export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team, clubFocusGW) => {
     return {
         type: 'SETOTHERTEAMPOINTS',
         starters, 
@@ -195,15 +195,17 @@ export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team) 
         records,
         UGJ, 
         allPGJs,
-        team
+        team,
+        clubFocusGW
     }
 }
 
-export const setTeamPoints = (starters, subs, UGJ) => {
+export const setTeamPoints = (starters, subs, UGJ, userFocusGW) => {
     return {
         type: 'SETTEAMPOINTS',
         starters,
         subs,
-        UGJ
+        UGJ,
+        userFocusGW
     }
 }

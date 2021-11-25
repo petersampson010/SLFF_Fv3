@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { completeGameState } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -28,6 +28,10 @@ class GameEditorScreen extends Component {
      }
 
     componentDidMount() {
+        console.log('on game editor screen, setting player_gameweek_joiners gameweek_id to: ');
+        console.log(this.props.userFocusGW.gameweek_id);
+        console.log(this.props.userFocusGW);
+        console.log(this.props.clubFocusGW);
         let players = {};
         for (let i=0;i<this.props.clubPlayers.length;i++) {
             let player = this.props.clubPlayers[i];
@@ -36,7 +40,7 @@ class GameEditorScreen extends Component {
                 [player.player_id]: {
                     name: player.first_name + ' ' + player.last_name,
                     player_id: player.player_id,
-                    gameweek_id: this.props.focusGW.gameweek_id,
+                    gameweek_id: this.props.userFocusGW.gameweek_id,
                     minutes: '0',
                     assists: '',
                     goals: '',
@@ -152,21 +156,22 @@ class GameEditorScreen extends Component {
     
     postPGJoiners = async(postArr) => {
         try{
+            const { clubFocusGW, lastGW, navigation, completeGameState, adminUser } = this.props;
             for (let i=0;i<postArr.length;i++) {
-                await postPGJ(postArr[i]);
+                await postPGJ(postArr[i], adminUser.admin_user_id);
             }
             await this.postUGJoiners();
             let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
-            await completeGame(this.props.focusGW.gameweek_id, this.state.score);
-            this.props.completeGameState(this.props.focusGW.gameweek_id);
+            await completeGame(clubFocusGW.gameweek_id, this.state.score, lastGW ? lastGW.gameweek+1 : 1);
+            completeGameState(clubFocusGW.gameweek_id);
             this.setState({...this.state, spinner: false});
             showMessage({
                 message: "Success",
                 type: "success"
               });
-            this.props.navigation.navigate('AdminHome');
+            navigation.navigate('AdminHome');
         } catch(e) {
             this.setState({...this.state, spinner: false});
             showMessage({
@@ -178,12 +183,14 @@ class GameEditorScreen extends Component {
     }
 
     postUGJoiners = async() => {
-        let { allUsers, focusGW } = this.props;
+        let { allUsers, clubFocusGW } = this.props;
         for (let i=0; i<allUsers.length; i++) {
             const user = allUsers[i];
+            if (user.gw_start===0) {
+            }
             let records = await getRecordsByGWIdAndUserId(user.user_id, 0);
-            const score = await calculateScore(records, focusGW.gameweek_id);
-            await postUGJoiner(user.user_id, focusGW.gameweek_id, score);
+            const score = await calculateScore(records, clubFocusGW.gameweek_id);
+            await postUGJ(user, clubFocusGW.gameweek_id, score);
         }
     }
 
@@ -195,7 +202,7 @@ class GameEditorScreen extends Component {
 
     patchCurrentRecords = async(records) => {
         for (let i=0; i<records.length; i++) {
-            await patchRecordGAMEWEEK(records[i].record_id, this.props.focusGW.gameweek_id);
+            await patchRecordGAMEWEEK(records[i].record_id, this.props.clubFocusGW.gameweek_id);
         }
     }
     
@@ -222,7 +229,7 @@ class GameEditorScreen extends Component {
                         placeholder='their team'
                         />
                     </View>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.focusGW.opponent}</Text>
+                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.clubFocusGW.opponent}</Text>
                 </View>
                 <View style={{...tableRow, backgroundColor: $darkBlue}}>
                     <View style={tableElement1}><Text style={standardText}>Player</Text></View>
@@ -257,9 +264,11 @@ class GameEditorScreen extends Component {
 const mapStateToProps = state => {
     return {
         clubPlayers: state.club.clubPlayers,
-        focusGW: state.club.focusGW,
+        clubFocusGW: state.club.clubFocusGW,
+        userFocusGW: state.user.userFocusGW,
         adminUser: state.club.adminUser,
-        allUsers: state.club.allUsers
+        allUsers: state.club.allUsers,
+        lastGW: state.club.lastGW
     }
 }
 

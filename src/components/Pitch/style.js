@@ -14,8 +14,10 @@ export const subHead= {
 // }
 
 export const subs = {
-    width: vw(100),
-    backgroundColor: 'grey',
+    width: vw(96),
+    marginHorizontal: vw(2),
+    borderRadius: 5,
+    backgroundColor: 'rgba(249,249,249,0.3)',
     paddingTop: 10,
     flexDirection: 'row',
     justifyContent: "space-evenly",
@@ -23,7 +25,7 @@ export const subs = {
 
 export const pitch = {
     flex: 1,
-    height: vh(50),
+    height: vh(47),
     marginTop: vh(1)
 }
 export const starters = {
@@ -40,5 +42,5 @@ export const positionRow = {
 
 export const pitchImage = {
   flex: 14,
-  height: vh(52)
+  height: vh(50)
 }

@@ -14,7 +14,7 @@ import { headers, sidenote, standardText } from '../../styles/textStyle';
 import { vh } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
-import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJoiner } from '../../functions/APIcalls';
+import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJ } from '../../functions/APIcalls';
 import { setOtherTeamPoints } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
 

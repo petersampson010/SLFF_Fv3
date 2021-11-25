@@ -20,14 +20,18 @@ class PointsScreen extends Component {
     }
 
     render() {
-        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeam, otherAllPGJoiners, allPGJs } = this.props;
-        const selectStarters = otherTeam ? otherStarters : starters;
-        const selectSubs = otherTeam ? otherSubs : subs;
-        const selectRecords = otherTeam ? otherRecords : records;
-        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJs;
+        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeamFocus, otherAllPGJs, allPGJs } = this.props;
+        console.log('other team focus: ' + otherTeamFocus);
+        console.log(otherStarters);
+        console.log(otherSubs);
+        console.log('finish');
+        const selectStarters = otherTeamFocus ? otherStarters : starters;
+        const selectSubs = otherTeamFocus ? otherSubs : subs;
+        const selectRecords = otherTeamFocus ? otherRecords : records;
+        const selectAllPGJoiners = otherTeamFocus ? otherAllPGJs : allPGJs;
         return ( 
             <View style={screenContainer}>
-                <PitchHead type="points" otherTeam={otherTeam}/>
+                <PitchHead type="points"/>
                 <ScrollView style={pitchContainer}>
                     {this.props.lastGW ? 
                     <Pitch
@@ -60,7 +64,7 @@ const mapStateToProps = state => {
         otherRecords: state.club.focusedGWTeam.records,
         allPGJs: state.user.PGJs.all,
         otherAllPGJs: state.club.focusedGWTeam.allPGJs,
-        otherTeam: state.boolDeciders.otherTeamFocus
+        otherTeamFocus: state.boolDeciders.otherTeamFocus
     }
 }
  

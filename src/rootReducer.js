@@ -22,6 +22,7 @@ const initialState = {
             captain: null,
             vCaptain: null
         },
+        userFocusGW: null,
         records: [],
         PGJs: {
             last: [],
@@ -44,7 +45,7 @@ const initialState = {
         },
         allLastUGJs: [],
         lastGW: null,
-        focusGW: null,
+        clubFocusGW: null,
         allGames: [],
         league: [],
         topPlayer: null,
@@ -60,73 +61,6 @@ const initialState = {
         }
     }
 }
-
-// const initialState = {
-//     spinner: false,
-//     otherTeam: false,
-//     endUser: {
-//         adminUser: {
-//             active: false,
-//             adminUser: {},  
-//             allUsers: [],
-//         },
-//         user: {},
-//     },
-//     players: {
-//         clubPlayers: [],
-//         // latest info, changes that havent been 'confirmed' will not be displayed here
-//         latest: {
-//             starters: [],
-//             subs: [],
-//             captain: null,
-//             vCaptain: null
-//         }, 
-//         // if any subs or transfers are being made, this is where it will be reflected
-//         transferring: {
-//             starters: [],
-//             subs: [],
-//             captain: null,
-//             vCaptain: null,
-//             budget: null
-//         },
-//         // last (/the gw you are focusing on) gw's players
-//         teamPoints: {
-//             starters: [],
-//             subs: [],
-//             ug: null,
-//             captain: null,
-//             vCaptain: null
-//         },
-//         // data for other teams the user is looking at
-//         otherTeamPoints: {
-//             starters: [],
-//             subs: [],
-//             records: [],
-//             ug: null,
-//             user: null, 
-//             allPGJs: [],
-//             captain: null,
-//             vCaptain: null
-//         }
-//     },
-//     joiners: {
-//         records: [],
-//         pgJoiners: [],
-//         allPGJs: []
-//     },
-//     gameweek: {
-//         games: [],
-//         gwSelect: null,
-//         gwLatest: null,
-//     },
-//     homeGraphics: {
-//         league: [],
-//         topPlayer: null,
-//         topUser: null
-//     },
-//     loginComplete: false,
-// }
-
 
 const rootReducer = (state = initialState, action) => {
     switch (action.type) {
@@ -152,6 +86,7 @@ const rootReducer = (state = initialState, action) => {
                         subs: action.lastGWSubs, 
                         UGJ: action.lastUGJ
                     },
+                    userFocusGW: action.lastGW,
                     records: action.records,
                     PGJs: {
                         last: action.lastPGJs,
@@ -268,7 +203,7 @@ const rootReducer = (state = initialState, action) => {
                 ...state, 
                 club: {
                     ...state.club, 
-                    focusGW: action.game
+                    clubFocusGW: action.game
                 }
             };
         case 'COMPLETEGAME':
@@ -417,6 +352,7 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETOTHERTEAMPOINTS": 
+        console.log('setting other team points');
             return {
                 ...state, 
                 boolDeciders: {
@@ -433,7 +369,8 @@ const rootReducer = (state = initialState, action) => {
                         UGJ: action.UGJ,
                         allPGJs: action.allPGJs,
                         user: action.team
-                    }
+                    },
+                    clubFocusGW: action.clubFocusGW
                 }
             }
         case "SETTEAMPOINTS":
@@ -450,7 +387,8 @@ const rootReducer = (state = initialState, action) => {
                         starters: action.starters, 
                         subs: action.subs,
                         UGJ: action.UGJ
-                    }
+                    },
+                    userFocusGW: action.userFocusGW
                 }
             }
         default:

@@ -1,3 +1,4 @@
+import { vh } from "react-native-expo-viewport-units"
 import { $arylideYellow, $caretColor, $chocolateBlack, $coral, $darkElectricBlue, $electricBlue, $luminousGreen, $skobeloff, $standardWhite } from "./global"
 
 export const standardText = {
@@ -36,4 +37,45 @@ export const playerNamePoints = {
     textAlign: 'center',
     fontWeight: "800",
     color: $chocolateBlack
+}
+
+export const team_nameTEXT = {
+    fontFamily: 'Avenir Next',
+    color: 'white',
+    fontSize: 23,
+}
+
+export const pointsBannerTEXT = {
+    fontFamily: 'Avenir Next',
+    color: 'white',
+    fontSize: 10,
+}
+
+export const pointsTEXT = {
+    fontFamily: 'Avenir Next',
+    color: $arylideYellow,
+    fontSize: 18,
+    textAlign: 'center'
+}
+
+export const scoreTEXT = {
+    fontFamily: 'Avenir Next',
+    color: $standardWhite,
+    fontSize: 18,
+    textAlign: 'center'
+}
+
+export const scoreTeamsTEXT = {
+    fontFamily: 'Avenir Next',
+    color: $standardWhite,
+    fontSize: 14,
+    paddingTop: vh(0.3),
+    textAlign: 'center'
+}
+
+export const gwTEXT = {
+    fontFamily: 'Avenir Next',
+    color: $arylideYellow,
+    fontSize: 14,
+    textAlign: 'center'
 }

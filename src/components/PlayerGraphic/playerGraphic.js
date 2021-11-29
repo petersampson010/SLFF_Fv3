@@ -106,7 +106,7 @@ class PlayerGraphic extends Component {
                     : null}
                 </View>
                 <TouchableOpacity onPress={()=>openModal(player)}>
-                    <Text style={playerNamePoints}>{fullName(player)}</Text>
+                    <Text style={playerNamePoints}>{player.last_name}</Text>
                 </TouchableOpacity>
                     {this.renderPoints()}
             </View>

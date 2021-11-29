@@ -4,13 +4,14 @@ import { View, Text, Switch, Button, StyleSheet, TextInput, processColor } from 
 import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
 import Header from '../../components/header/header';
-import { setAdminUser, setClubPlayers, setUser } from '../../actions';
+import { setAdminUser, setClubPlayersAndLastGW, setUser } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
 import { screenContainer } from '../../styles/global';
 import { inputField, inputFieldsContainer, loginHead, switchText, textLabel } from './style';
 import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/input';
 import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
+import { getLastAndAllGWs } from '../../functions/reusable';
 
 
 
@@ -19,7 +20,7 @@ class ntsScreen1 extends Component {
   state = {
     userObj: {
       email: '',
-      teamName: '',
+      team_name: '',
       password: '',
       rePassword: '',
       clubId: '',
@@ -34,8 +35,8 @@ class ntsScreen1 extends Component {
       case 'email': 
         this.setState({...this.state, userObj: {...this.state.userObj, email: entry}})
         break;
-      case 'teamName': 
-        this.setState({...this.state, userObj: {...this.state.userObj, teamName: entry}})
+      case 'team_name': 
+        this.setState({...this.state, userObj: {...this.state.userObj, team_name: entry}})
         break;
       case 'password': 
         this.setState({...this.state, userObj: {...this.state.userObj, password: entry}})
@@ -52,13 +53,10 @@ class ntsScreen1 extends Component {
     const { userObj } = this.state;
     try {
       let allUsers = await getAllUsers();
-      console.log(allUsers);
-      let allAdminUsers = await getAllAdminUsers();
-      console.log(allAdminUsers);
       let adminUser = await getAdminUserById(parseInt(userObj.clubId));
-      console.log(adminUser);
+      let { lastGW } = await getLastAndAllGWs(adminUser.admin_user_id);
       if (validateUser([allUsers], adminUser, userObj)) {
-        this.handleSubmit(allUsers, allAdminUsers, adminUser);
+        this.handleSubmit(adminUser, lastGW);
       }
     } catch(e) {
       console.warn(e);
@@ -70,17 +68,17 @@ class ntsScreen1 extends Component {
     }
   }
 
-  handleSubmit = async(allUsers, allAdminUsers, adminUser) => {
+  handleSubmit = async(adminUser, lastGW) => {
     const { userObj } = this.state;
     try {
-        let userReturn = await postUser(userObj);
-        let userData = userReturn.data;
+        let userReturn = await postUser({...userObj, gw_start: lastGW ? lastGW.gameweek+1 : 1});
+        let userData = userReturn;
           if (userData.transfers===0) {
             this.setState({signedUp: true});
             this.props.setUser(userData);
             this.props.setAdminUser(adminUser);
             getAllPlayersByAdminUserId(adminUser.admin_user_id)
-            .then(players => this.props.setClubPlayers(players))
+            .then(players => this.props.setClubPlayersAndLastGW(players, lastGW))
             .then(() => updateStack(this.props.navigation, 0, 'nts2'));
           } else {
             console.warn("get return: ", userData);
@@ -112,8 +110,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Enter your team name</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.teamName} 
-                onChangeText={value => this.formChange('teamName', value)}
+                value={this.state.userObj.team_name} 
+                onChangeText={value => this.formChange('team_name', value)}
                 placeholder="Sunday Funday"
                 placeholderTextColor='#d1d2d6'
                 />
@@ -167,7 +165,7 @@ const mapDispatchToProps = dispatch => {
   return {
     setUser: user => dispatch(setUser(user)),
     setAdminUser: adminUser => dispatch(setAdminUser(adminUser)),
-    setClubPlayers: players => dispatch(setClubPlayers(players))
+    setClubPlayersAndLastGW: (players, lastGW) => dispatch(setClubPlayersAndLastGW(players, lastGW))
   }
 }
 

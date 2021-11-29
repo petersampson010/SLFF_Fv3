@@ -14,7 +14,7 @@ import { headers, sidenote, standardText } from '../../styles/textStyle';
 import { vh } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
-import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJoiner } from '../../functions/APIcalls';
+import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJ, getUserById } from '../../functions/APIcalls';
 import { setOtherTeamPoints } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
 
@@ -39,18 +39,24 @@ class HomeScreen extends Component {
     }
 
     goToTeamPoints = async(team) => {
-        console.log('go to team points');
         const { lastGW } = this.props;
         if (lastGW) {
-            const { starters, subs, records, UGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
-            console.log('here');
-            this.props.setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team);
-            this.props.navigation.navigate('Points');
+            const { starters, subs, records, otherUGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
+            const otherUser = await getUserById(team.user_id);
+            if (otherUGJ) {
+                this.props.setOtherTeamPoints(starters, subs, records, otherUGJ, allPGJs, otherUser);
+                this.props.navigation.navigate('Points');
+            } else {
+                showMessage({
+                    message: "Team has not yet completed a GW",
+                    type: 'warning'
+                });
+            }
         } else {
             showMessage({
-                message: "This team have not yet completed a GW",
+                message: "Club has not yet completed a GW",
                 type: 'warning'
-            })
+            });
         }
     }
 
@@ -119,12 +125,13 @@ const mapStateToProps = state => {
         topPlayer: state.club.topPlayer,
         topUser: state.club.topUser,
         lastGW: state.club.lastGW,
+        lastUGJ: state.user.focusedGWTeam.UGJ
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, team) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team))
+        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, otherUser) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser))
     }
 }
  

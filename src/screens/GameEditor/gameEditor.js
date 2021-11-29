@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { View, Text, TextInput, Button, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
-// import Dialog, { DialogButton, DialogContent } from 'react-native-popup-dialog';
 import { connect } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJoiner, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { completeGameState } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -11,8 +10,9 @@ import { tableElement1, tableElement9, tableRow } from '../../styles/table';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine } from '../../styles/input';
-import { calculateScore } from '../../functions/reusable';
+import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
+import MyModal from '../../components/Modal/myModal';
 
 class GameEditorScreen extends Component {
     state = { 
@@ -36,7 +36,7 @@ class GameEditorScreen extends Component {
                 [player.player_id]: {
                     name: player.first_name + ' ' + player.last_name,
                     player_id: player.player_id,
-                    gameweek_id: this.props.focusGW.gameweek_id,
+                    gameweek_id: this.props.clubFocusGW.gameweek_id,
                     minutes: '0',
                     assists: '',
                     goals: '',
@@ -113,8 +113,11 @@ class GameEditorScreen extends Component {
         }
     }
 
+    startSpin = () => {
+        this.setState({...this.state, spinner: true}, () => this.validatePlayerScores());
+    }
+
     validatePlayerScores = () => {
-        this.setState({...this.state, spinner: true});
         let outcome = true;
         let postArr = [];
         let updatedState = this.state;
@@ -149,17 +152,25 @@ class GameEditorScreen extends Component {
     
     postPGJoiners = async(postArr) => {
         try{
+            const { clubFocusGW, lastGW, navigation, completeGameState, adminUser } = this.props;
             for (let i=0;i<postArr.length;i++) {
-                await postPGJ(postArr[i]);
+                await postPGJ(postArr[i], adminUser.admin_user_id);
             }
             await this.postUGJoiners();
             let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
-            await completeGame(this.props.focusGW.gameweek_id, this.state.score);
-            this.props.completeGameState(this.props.focusGW.gameweek_id);
+            console.log('last gw below');
+            console.log(lastGW);
+            await completeGame(clubFocusGW.gameweek_id, this.state.score, lastGW ? lastGW.gameweek+1 : 1);
+            let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
+            completeGameState(returnObj.gameweeks, returnObj.lastGW);
             this.setState({...this.state, spinner: false});
-            this.props.navigation.navigate('AdminHome');
+            showMessage({
+                message: "Success",
+                type: "success"
+              });
+            navigation.navigate('AdminHome');
         } catch(e) {
             this.setState({...this.state, spinner: false});
             showMessage({
@@ -171,12 +182,14 @@ class GameEditorScreen extends Component {
     }
 
     postUGJoiners = async() => {
-        let { allUsers, focusGW } = this.props;
+        let { allUsers, clubFocusGW } = this.props;
         for (let i=0; i<allUsers.length; i++) {
             const user = allUsers[i];
+            if (user.gw_start===0) {
+            }
             let records = await getRecordsByGWIdAndUserId(user.user_id, 0);
-            const score = await calculateScore(records, focusGW.gameweek_id);
-            await postUGJoiner(user.user_id, focusGW.gameweek_id, score);
+            const score = await calculateScore(records, clubFocusGW.gameweek_id);
+            await postUGJ(user, clubFocusGW.gameweek_id, score);
         }
     }
 
@@ -188,7 +201,7 @@ class GameEditorScreen extends Component {
 
     patchCurrentRecords = async(records) => {
         for (let i=0; i<records.length; i++) {
-            await patchRecordGAMEWEEK(records[i].record_id, this.props.focusGW.gameweek_id);
+            await patchRecordGAMEWEEK(records[i].record_id, this.props.clubFocusGW.gameweek_id);
         }
     }
     
@@ -215,40 +228,33 @@ class GameEditorScreen extends Component {
                         placeholder='their team'
                         />
                     </View>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.focusGW.opponent}</Text>
+                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.clubFocusGW.opponent}</Text>
                 </View>
-                        <View style={{...tableRow, backgroundColor: $darkBlue}}>
-                            <View style={tableElement1}><Text style={standardText}>Player</Text></View>
-                            <Text style={tableElement9}>M</Text>
-                            <Text style={tableElement9}>A</Text>
-                            <Text style={tableElement9}>G</Text>
-                            <Text style={tableElement9}>OG</Text>
-                            <Text style={tableElement9}>YC</Text>
-                            <Text style={tableElement9}>RC</Text>
-                            <Text style={tableElement9}>B</Text>
-                            <Text style={tableElement9}>PM</Text>
-                            <Text style={tableElement9}>GC</Text>
-                        </View>
-            <ScrollView style={screenContainer}>
+                <View style={{...tableRow, backgroundColor: $darkBlue}}>
+                    <View style={tableElement1}><Text style={standardText}>Player</Text></View>
+                    <Text style={tableElement9}>M</Text>
+                    <Text style={tableElement9}>A</Text>
+                    <Text style={tableElement9}>G</Text>
+                    <Text style={tableElement9}>OG</Text>
+                    <Text style={tableElement9}>YC</Text>
+                    <Text style={tableElement9}>RC</Text>
+                    <Text style={tableElement9}>B</Text>
+                    <Text style={tableElement9}>PM</Text>
+                    <Text style={tableElement9}>GC</Text>
+                </View>
+                <ScrollView style={screenContainer}>
                     <View style={{paddingBottom: vh(30)}}>
                         {this.renderRows()}
                     </View>
-                {/* <Dialog
-                visible={this.state.dialog.active}
-                width={0.6}
-                height={0.2}
-                onTouchOutside={()=>this.setState({...this.state, dialog:{active: false}})}
-                >
-                    <DialogContent>
-                        <Text>Please review your stats before submission! Once submitted, stats cannot be changed. Clicking confirm will submit these stats and set this 'Game' to complete.</Text>
-                    </DialogContent>
-                    <DialogButton
-                    text="SUBMIT STATS"
-                    onPress={this.validatePlayerScores}
-                    />
-                </Dialog> */}
-            </ScrollView>
-
+                </ScrollView>
+                <MyModal
+                    visible={this.state.dialog.active}
+                    height={vh(30)}
+                    width={vw(70)}
+                    closeModalFcn={()=>this.setState({...this.state, dialog:{active: false}})}
+                    jsx={<Text style={standardText}>Pleas ensure statss are correct, once confirmeed they cannot be corrected.</Text>}
+                    buttonOptions={[{text: 'Submit Stats', fcn: this.startSpin}]}
+                />
             </View> 
         );
     }
@@ -257,15 +263,17 @@ class GameEditorScreen extends Component {
 const mapStateToProps = state => {
     return {
         clubPlayers: state.club.clubPlayers,
-        focusGW: state.club.focusGW,
+        clubFocusGW: state.club.clubFocusGW,
+        userFocusGW: state.user.userFocusGW,
         adminUser: state.club.adminUser,
-        allUsers: state.club.allUsers
+        allUsers: state.club.allUsers,
+        lastGW: state.club.lastGW
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        completeGameState: id => dispatch(completeGameState(id))
+        completeGameState: (newAllGames, newLastGW) => dispatch(completeGameState(newAllGames, newLastGW))
     }
 }
  

@@ -20,14 +20,14 @@ class PointsScreen extends Component {
     }
 
     render() {
-        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeam, otherAllPGJoiners, allPGJs } = this.props;
-        const selectStarters = otherTeam ? otherStarters : starters;
-        const selectSubs = otherTeam ? otherSubs : subs;
-        const selectRecords = otherTeam ? otherRecords : records;
-        const selectAllPGJoiners = otherTeam ? otherAllPGJoiners : allPGJs;
+        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeamFocus, otherAllPGJs, allPGJs } = this.props;
+        const selectStarters = otherTeamFocus ? otherStarters : starters;
+        const selectSubs = otherTeamFocus ? otherSubs : subs;
+        const selectRecords = otherTeamFocus ? otherRecords : records;
+        const selectAllPGJoiners = otherTeamFocus ? otherAllPGJs : allPGJs;
         return ( 
             <View style={screenContainer}>
-                <PitchHead type="points" otherTeam={otherTeam}/>
+                <PitchHead type="points"/>
                 <ScrollView style={pitchContainer}>
                     {this.props.lastGW ? 
                     <Pitch
@@ -53,14 +53,14 @@ const mapStateToProps = state => {
         lastGW: state.club.lastGW,
         subs: state.user.focusedGWTeam.subs,
         starters: state.user.focusedGWTeam.starters,
-        records: state.user.focusedGWTeam.records,
+        records: state.user.records,
         league: state.club.league,
         otherStarters: state.club.focusedGWTeam.starters,
         otherSubs: state.club.focusedGWTeam.subs,
         otherRecords: state.club.focusedGWTeam.records,
         allPGJs: state.user.PGJs.all,
         otherAllPGJs: state.club.focusedGWTeam.allPGJs,
-        otherTeam: state.boolDeciders.otherTeamFocus
+        otherTeamFocus: state.boolDeciders.otherTeamFocus
     }
 }
  

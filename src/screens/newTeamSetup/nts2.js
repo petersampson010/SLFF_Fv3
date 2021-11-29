@@ -109,7 +109,7 @@ class ntsScreen2 extends Component {
     }
 
     submitTeam = async() => {
-        const { teamPlayers, budget, addSpinner, removeSpinner, user, navigation, nts2Login } = this.props
+        const { teamPlayers, budget, addSpinner, removeSpinner, user, navigation, nts2Login, lastGW } = this.props
         const teamPlayersObj = playersArrayToObj(teamPlayers);
         try {
             addSpinner();
@@ -169,7 +169,8 @@ const mapStateToProps = state => {
     return {
         user: state.user.user,
         teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
-        budget: state.stateChanges.updatedNotPersistedTeam.budget
+        budget: state.stateChanges.updatedNotPersistedTeam.budget,
+        lastGW: state.club.lastGW
     }
 }
 

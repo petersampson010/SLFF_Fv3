@@ -32,13 +32,14 @@ export const loginUser = (user, adminUser, clubPlayers, currentStarters, current
     }
 }
 
-export const loginAdminUser = (adminUser, clubPlayers, allUsers, games) => {
+export const loginAdminUser = (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => {
     return {
         type: 'LOGINADMINUSER',
         adminUser, 
         clubPlayers,
         allUsers,
-        games
+        gameweeks,
+        lastGW
     }
 }
 
@@ -49,10 +50,11 @@ export const setAdminUser = adminUser => {
     }
 }
 
-export const setClubPlayers = players => {
+export const setClubPlayersAndLastGW = (players, lastGW) => {
     return {
-        type: 'SETCLUBPLAYERS',
-        players
+        type: 'SETCLUBPLAYERSANDLASTGW',
+        players,
+        lastGW
     }
 }
 
@@ -93,17 +95,18 @@ export const nts2Login = (user, starters, subs, records) => {
     }
 }
 
-export const setGWSelect = game =>{
+export const setClubFocusGW = game =>{
     return {
-        type: 'SETGWSELECT',
+        type: 'SETCLUBFOCUSGW',
         game
     }
 }
 
-export const completeGameState = id => {
+export const completeGameState = (newAllGames, newLastGW) => {
     return {
         type: 'COMPLETEGAME',
-        id
+        newAllGames, 
+        newLastGW
     }
 }
 
@@ -187,7 +190,7 @@ export const setLatestToTransferring = () => {
     }
 }
 
-export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team) => {
+export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, otherUser, clubFocusGW) => {
     return {
         type: 'SETOTHERTEAMPOINTS',
         starters, 
@@ -195,15 +198,27 @@ export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, team) 
         records,
         UGJ, 
         allPGJs,
-        team
+        otherUser,
+        clubFocusGW
     }
 }
 
-export const setTeamPoints = (starters, subs, UGJ) => {
+export const changeGWOther = (starters, subs, UGJ, clubFocusGW) => {
+    return {
+        type: 'CHANGEGWOTHER',
+        starters, 
+        subs,
+        UGJ, 
+        clubFocusGW
+    }
+}
+
+export const setTeamPoints = (starters, subs, UGJ, newUserFocusGW) => {
     return {
         type: 'SETTEAMPOINTS',
         starters,
         subs,
-        UGJ
+        UGJ,
+        newUserFocusGW
     }
 }

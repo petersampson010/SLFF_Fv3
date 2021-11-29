@@ -1,4 +1,6 @@
+import { ActionSheetIOS } from "react-native";
 import { playersObjToArray } from "./functions/reusable";
+import { syncGWs } from "./functions/sync/syncGWs";
 
 const initialState = {
     boolDeciders: {
@@ -22,6 +24,7 @@ const initialState = {
             captain: null,
             vCaptain: null
         },
+        userFocusGW: null,
         records: [],
         PGJs: {
             last: [],
@@ -44,7 +47,7 @@ const initialState = {
         },
         allLastUGJs: [],
         lastGW: null,
-        focusGW: null,
+        clubFocusGW: null,
         allGames: [],
         league: [],
         topPlayer: null,
@@ -61,74 +64,8 @@ const initialState = {
     }
 }
 
-// const initialState = {
-//     spinner: false,
-//     otherTeam: false,
-//     endUser: {
-//         adminUser: {
-//             active: false,
-//             adminUser: {},  
-//             allUsers: [],
-//         },
-//         user: {},
-//     },
-//     players: {
-//         clubPlayers: [],
-//         // latest info, changes that havent been 'confirmed' will not be displayed here
-//         latest: {
-//             starters: [],
-//             subs: [],
-//             captain: null,
-//             vCaptain: null
-//         }, 
-//         // if any subs or transfers are being made, this is where it will be reflected
-//         transferring: {
-//             starters: [],
-//             subs: [],
-//             captain: null,
-//             vCaptain: null,
-//             budget: null
-//         },
-//         // last (/the gw you are focusing on) gw's players
-//         teamPoints: {
-//             starters: [],
-//             subs: [],
-//             ug: null,
-//             captain: null,
-//             vCaptain: null
-//         },
-//         // data for other teams the user is looking at
-//         otherTeamPoints: {
-//             starters: [],
-//             subs: [],
-//             records: [],
-//             ug: null,
-//             user: null, 
-//             allPGJs: [],
-//             captain: null,
-//             vCaptain: null
-//         }
-//     },
-//     joiners: {
-//         records: [],
-//         pgJoiners: [],
-//         allPGJs: []
-//     },
-//     gameweek: {
-//         games: [],
-//         gwSelect: null,
-//         gwLatest: null,
-//     },
-//     homeGraphics: {
-//         league: [],
-//         topPlayer: null,
-//         topUser: null
-//     },
-//     loginComplete: false,
-// }
-
-
 const rootReducer = (state = initialState, action) => {
+    console.log('changing redux state with action: ' + action.type);
     switch (action.type) {
         case 'LOGINUSER':
             return {
@@ -152,6 +89,7 @@ const rootReducer = (state = initialState, action) => {
                         subs: action.lastGWSubs, 
                         UGJ: action.lastUGJ
                     },
+                    userFocusGW: action.lastGW,
                     records: action.records,
                     PGJs: {
                         last: action.lastPGJs,
@@ -181,16 +119,17 @@ const rootReducer = (state = initialState, action) => {
             return {
                 ...state, 
                 boolDeciders: {
-                    ...boolDeciders,
+                    ...state.boolDeciders,
                     loginComplete: true, 
                     adminActive: true
                 },
                 club: {
                     ...state.club,
-                    admin_user: action.admin_user,
+                    adminUser: action.adminUser,
                     allUsers: action.allUsers,
                     clubPlayers: action.clubPlayers,
-                    allGames: action.games
+                    allGames: action.gameweeks,
+                    lastGW: action.lastGW
                 }
             }
         case 'NTS2LOGIN':
@@ -223,12 +162,13 @@ const rootReducer = (state = initialState, action) => {
                     adminUser: action.adminUser
                 }
             };
-        case 'SETCLUBPLAYERS':
+        case 'SETCLUBPLAYERSANDLASTGW':
             return {
                 ...state, 
                 club: {
                     ...state.club,
-                    clubPlayers: action.players
+                    clubPlayers: action.players,
+                    lastGW: action.lastGW
                 }
             };
         case 'SETUSER':
@@ -263,27 +203,23 @@ const rootReducer = (state = initialState, action) => {
                     }
                 }
             };
-        case 'SETGWSELECT':
+        case 'SETCLUBFOCUSGW':
             return {
                 ...state, 
                 club: {
                     ...state.club, 
-                    focusGW: action.game
+                    clubFocusGW: action.game
                 }
             };
         case 'COMPLETEGAME':
-            let newGames = state.club.allGames.map(game=>{
-                if (game.gameweek_id===action.id) {
-                    return {...game, complete: true};
-                } else {
-                    return game;
-                }
-            });
+            console.log(action.newAllGames);
+            console.log(action.newLastGW);
             return {
                 ...state, 
                 club: {
                     ...state.club,
-                    allGames: newGames
+                    allGames: action.newAllGames,
+                    lastGW: action.newLastGW
                 }
             };
         case 'ADDGAME':
@@ -392,7 +328,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
-            console.log('reversing changes - not persisted');
             return {
                 ...state,
                 boolDeciders: {
@@ -433,8 +368,22 @@ const rootReducer = (state = initialState, action) => {
                         records: action.records,
                         UGJ: action.UGJ,
                         allPGJs: action.allPGJs,
-                        user: action.team
+                        user: action.otherUser
                     }
+                }
+            }
+        case "CHANGEGWOTHER": 
+            return {
+                ...state, 
+                club: {
+                    ...state.club, 
+                    focusedGWTeam: {
+                        ...state.club.focusedGWTeam,
+                        starters: action.starters,
+                        subs: action.subs,
+                        UGJ: action.UGJ
+                    },
+                    clubFocusGW: action.clubFocusGW
                 }
             }
         case "SETTEAMPOINTS":
@@ -451,7 +400,8 @@ const rootReducer = (state = initialState, action) => {
                         starters: action.starters, 
                         subs: action.subs,
                         UGJ: action.UGJ
-                    }
+                    },
+                    userFocusGW: action.newUserFocusGW
                 }
             }
         default:

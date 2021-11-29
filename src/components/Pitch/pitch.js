@@ -27,8 +27,18 @@ class Pitch extends Component {
         }
     }
 
-    playerPG = (playerId) => this.props.type==="points" ? this.props.allPGJoiners.filter(pg=>{
-        return pg.player_id===playerId && pg.gameweek_id===this.props.UGJ.gameweek_id})[0] : false;
+    playerPG = (playerId) => {
+        const { otherTeamFocus, UGJ, otherUGJ, allPGJs, type } = this.props;
+        if (otherTeamFocus) {
+            return type==="points" ? allPGJs.filter(pg=>{
+                return pg.player_id===playerId && pg.gameweek_id===otherUGJ.gameweek_id
+            })[0] : false;
+        } else {
+            return type==="points" ? allPGJs.filter(pg=>{
+                return pg.player_id===playerId && pg.gameweek_id===UGJ.gameweek_id
+            })[0] : false;
+        }
+    }
 
     team = () => playersArrayToObj(this.props.team);
 
@@ -71,10 +81,6 @@ class Pitch extends Component {
         const team = this.team();
         return (
             <View>
-                {/* <PitchHead
-                type={this.props.type}
-                update={this.props.update}
-                /> */}
                 <View>
                         <ImageBackground source={pitchImg} imageStyle={{resizeMode: 'stretch'}} style={pitchImage}>
                             <View style={{flex: 1, flexDirection: 'row'}}>
@@ -117,7 +123,9 @@ class Pitch extends Component {
 const mapStateToProps = state => {
     return {
         UGJ: state.user.focusedGWTeam.UGJ,
-        records: state.user.records
+        records: state.user.records,
+        otherTeamFocus: state.boolDeciders.otherTeamFocus,
+        otherUGJ: state.club.focusedGWTeam.UGJ
     }
 }
  

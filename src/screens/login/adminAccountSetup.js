@@ -128,7 +128,7 @@ class AdminAccountSetupScreen extends Component {
               <Text style={textLabel}>Enter your club name</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.adminUserObj.teamName} 
+                value={this.state.adminUserObj.team_name} 
                 onChangeText={value => this.formChange('clubName', value)}
                 placeholder="Club de sunday futbol"
                 placeholderTextColor='#d1d2d6'

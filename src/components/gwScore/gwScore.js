@@ -11,20 +11,21 @@ class GWScore extends Component {
     state = {  }
 
     render() { 
-        const { adminUser, lastGW, otherTeamFocus, UGJFocus } = this.props;
-        console.log('other UGJ');
-        console.log(UGJFocus);
+        const { adminUser, lastGW, clubFocusGW, userFocusGW, otherTeamFocus } = this.props;
+        let GW = otherTeamFocus ? 
+        (clubFocusGW ? clubFocusGW : lastGW) :
+        (userFocusGW ? userFocusGW : lastGW);
         return otherTeamFocus ?
         <View style={gwScoreContainer}> 
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
-            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{lastGW.score}</Text>
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{lastGW.opponent}</Text>
+            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
         :
         <View style={gwScoreContainer}> 
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
-            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{lastGW.score}</Text>
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{lastGW.opponent}</Text>
+            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
     }
 }
@@ -34,7 +35,9 @@ const mapStateToProps = state => {
         adminUser: state.club.adminUser,
         lastGW: state.club.lastGW,
         UGJFocus: state.club.focusedGWTeam.UGJ,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus
+        otherTeamFocus: state.boolDeciders.otherTeamFocus,
+        userFocusGW: state.user.userFocusGW,
+        clubFocusGW: state.club.clubFocusGW
     }
 }
  

@@ -8,7 +8,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { postGame, patchGame } from '../../functions/APIcalls';
 import { showMessage } from 'react-native-flash-message';
 import TouchableScale from 'react-native-touchable-scale'
-import { setGWSelect, addGameState } from '../../actions';
+import { setClubFocusGW, addGameState } from '../../actions';
 import { displayDate } from '../../functions/reusable';
 import MyModal from '../../components/Modal/myModal';
 import { TouchableOpacity } from 'react-native';
@@ -46,7 +46,7 @@ class AdminHomeScreen extends Component {
         return sortedArr.map((game,i) => {
             const gameColour = game.complete ? $chocolateBlack : $darkBlue;
             return <TouchableOpacity key={i} style={{...gameContainer, backgroundColor: gameColour}}
-            onPress={()=>{this.setState({...this.state, modal2: {active: true, game}});this.props.setGWSelect(game);}}>
+            onPress={()=>{this.setState({...this.state, modal2: {active: true, game}});this.props.setClubFocusGW(game);}}>
                 <View>
                     <Text style={{...headers}}>{game.opponent}</Text>
                     <Text style={standardText}>{displayDate(game.date)}</Text>
@@ -197,7 +197,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setGWSelect: game => dispatch(setGWSelect(game)),
+        setClubFocusGW: game => dispatch(setClubFocusGW(game)),
         addGameState: game => dispatch(addGameState(game))
     }
 }

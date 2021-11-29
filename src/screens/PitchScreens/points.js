@@ -21,10 +21,6 @@ class PointsScreen extends Component {
 
     render() {
         const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeamFocus, otherAllPGJs, allPGJs } = this.props;
-        console.log('other team focus: ' + otherTeamFocus);
-        console.log(otherStarters);
-        console.log(otherSubs);
-        console.log('finish');
         const selectStarters = otherTeamFocus ? otherStarters : starters;
         const selectSubs = otherTeamFocus ? otherSubs : subs;
         const selectRecords = otherTeamFocus ? otherRecords : records;

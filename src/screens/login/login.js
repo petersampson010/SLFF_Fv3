@@ -10,6 +10,7 @@ import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
 import { input, inputFieldLarge, inputFieldContainerCenter } from '../../styles/input';
 import { updateStack } from '../../Navigation';
+import { getLastAndAllGWs } from '../../functions/reusable';
 
 
 class LoginScreen extends Component {
@@ -86,29 +87,22 @@ class LoginScreen extends Component {
     try {
       if (user !== undefined && user !== null) {
         const { admin_user_id, user_id } = user;
-        let gameweeks = await getAllGameweeksFromAdminUserId(admin_user_id);
-        gameweeks.filter(g=>g.complete===true);
-        gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-        let lastGW = gameweeks[0].gameweek>0 ? gameweeks[0] : null;
+        let { lastGW } = await getLastAndAllGWs(admin_user_id);
         let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
         let adminUser = await getAdminUserById(admin_user_id);
         let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
         let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
         let records = await getAllRecordsByUserId(user_id);
         let league = await getLeague(admin_user_id);
-        console.log('last gw');
-        console.log(lastGW);
         if (lastGW) {
           const { gameweek_id } = lastGW;
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
           let allPGJs = await getAllPGJFromUserId(user_id);
-          console.log(lastPGJs);
           if (lastPGJs.length<1) {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
-            console.log('hitting section');
             let allLastUGJs = await getUGJs(admin_user_id, gameweek_id);
             let lastUGJ = await getUGJ(user_id, gameweek_id);
             let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
@@ -117,7 +111,6 @@ class LoginScreen extends Component {
               pg,
               player: await getPlayerById(pg.player_id)
             } : null;
-            console.log(topPlayer);
             let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
             let topUser = ug ? {
               ug,
@@ -151,8 +144,8 @@ class LoginScreen extends Component {
       if (adminUser !== undefined && adminUser !== null) {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
-        let games = await getAllGamesByAdminUserId(adminUser.admin_user_id);
-        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, games);
+        let { lastGW, gameweeks } = await getLastAndAllGWs(adminUser.admin_user_id);
+        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
         showMessage({
@@ -214,7 +207,7 @@ class LoginScreen extends Component {
   const mapDispatchToProps = dispatch => {
     return {
       loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
-      loginAdminUser: (adminUser, clubPlayers, allUsers, games) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, games)),
+      loginAdminUser: (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW)),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }
   }

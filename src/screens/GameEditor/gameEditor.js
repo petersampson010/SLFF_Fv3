@@ -10,7 +10,7 @@ import { tableElement1, tableElement9, tableRow } from '../../styles/table';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine } from '../../styles/input';
-import { calculateScore } from '../../functions/reusable';
+import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import MyModal from '../../components/Modal/myModal';
 
@@ -28,10 +28,6 @@ class GameEditorScreen extends Component {
      }
 
     componentDidMount() {
-        console.log('on game editor screen, setting player_gameweek_joiners gameweek_id to: ');
-        console.log(this.props.userFocusGW.gameweek_id);
-        console.log(this.props.userFocusGW);
-        console.log(this.props.clubFocusGW);
         let players = {};
         for (let i=0;i<this.props.clubPlayers.length;i++) {
             let player = this.props.clubPlayers[i];
@@ -40,7 +36,7 @@ class GameEditorScreen extends Component {
                 [player.player_id]: {
                     name: player.first_name + ' ' + player.last_name,
                     player_id: player.player_id,
-                    gameweek_id: this.props.userFocusGW.gameweek_id,
+                    gameweek_id: this.props.clubFocusGW.gameweek_id,
                     minutes: '0',
                     assists: '',
                     goals: '',
@@ -164,8 +160,11 @@ class GameEditorScreen extends Component {
             let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
+            console.log('last gw below');
+            console.log(lastGW);
             await completeGame(clubFocusGW.gameweek_id, this.state.score, lastGW ? lastGW.gameweek+1 : 1);
-            completeGameState(clubFocusGW.gameweek_id);
+            let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
+            completeGameState(returnObj.gameweeks, returnObj.lastGW);
             this.setState({...this.state, spinner: false});
             showMessage({
                 message: "Success",
@@ -274,7 +273,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        completeGameState: id => dispatch(completeGameState(id))
+        completeGameState: (newAllGames, newLastGW) => dispatch(completeGameState(newAllGames, newLastGW))
     }
 }
  

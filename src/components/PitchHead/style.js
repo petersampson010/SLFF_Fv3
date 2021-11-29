@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $darkBlue, $seaBlue } from "../../styles/global";
+import { $darkBlue, $electricBlue, $electricBlueHighlight, $seaBlue } from "../../styles/global";
 import { gwTEXT, headers, labelText, pointsBannerTEXT, team_nameTEXT } from "../../styles/textStyle";
 
 export const pitchHead = {
@@ -29,9 +29,6 @@ export const pickTeamX = {
 
 export const pointsY = {
     width: vw(92),
-    marginHorizontal: vw(2),
-    paddingVertical: vw(3),
-    flexDirection: 'row',
 }
 
 export const pointsYComp = {
@@ -66,8 +63,27 @@ export const team_nameText = {
 }
 
 export const gameweekBanner = {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     ...gwTEXT, 
-    width: vw(52),
+    width: vw(96),
+    height: vh(4),
+    marginHorizontal: vw(2),
+    borderRadius: 7,
+    backgroundColor: 'rgba(249,249,249,0.1)'
+}
+
+export const gwArrow = {
+    width: vw(10), 
+    paddingHorizontal: vw(2), 
+    height: vh(4),
+    justifyContent: 'center',
+    backgroundColor: $electricBlue
+}
+
+export const gwText = {
+    height: vh(4),
+    justifyContent: 'center',
 }
 
 export const pointsBanner = {

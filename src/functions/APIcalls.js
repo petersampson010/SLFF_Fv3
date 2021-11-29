@@ -36,13 +36,11 @@ export const postUser = (userObj) => axiosPost('users', {
     password: userObj.password,
     transfers: 0,
     budget: userObj.budget,
-    gw_start: 0,
+    gw_start: userObj.gw_start,
     admin_user_id: userObj.clubId
 });
 
 export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
-
-export const patchUserGWSTART = (userId, gw_start) => axiosPatch(`users/${userId}`, {gw_start});
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 
@@ -130,7 +128,8 @@ export const getRecord = (userId, gwId, playerId) => axiosGet(`records?user_id=$
 
 export const getRecordsByUserIdGWIdSub = (userId, gwId, sub) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&sub=${sub}`);
 
-export const postRecord = (player, userId, count) => axiosPost('records', {
+export const postRecord = (player, userId, count) => {
+    return axiosPost('records', {
     sub: count>5 ? true : false,
     captain: count===2 ? true : false,
     vice_captain: count===5 ? true : false,
@@ -138,7 +137,7 @@ export const postRecord = (player, userId, count) => axiosPost('records', {
     player_id: player.player_id,
     gameweek_id: 0,
     admin_user_id: player.admin_user_id
-});
+})};
 
 export const postRecordDUPLICATE = (record) => axiosPost('records', {
     sub: record.sub,
@@ -202,7 +201,7 @@ export const completeGame = (id, score, gameweek) => axiosPatch(`gameweeks/${id}
 
 export const getAllGameweeksFromAdminUserId = auId => axiosGet(`gameweeks?admin_user_id=${auId}`);
 
-export const getGameweekFromAdminUserIdAndGameweek = (adminUserId, gameweek) => axiosGet(`gameweeks?admin_user_id=${adminUserId}&gameweek=${gameweek}`);
+export const getGameweekFromAdminUserIdAndGameweek = (adminUserId, gameweek) => axiosGet(`gameweeks?admin_user_id=${adminUserId}&gameweek=${gameweek}`, true);
 
 
 // PLAYER-GAMEWEEK-JOINERS

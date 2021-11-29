@@ -1,36 +1,42 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, Modal } from 'react-native';
 import { vh, vw } from 'react-native-expo-viewport-units';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
-import { setOtherTeamPoints, setTeamPoints } from '../../actions';
+import { changeGWOther, setTeamPoints } from '../../actions';
 import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
-import { getTeamPointsInfo } from '../../functions/reusable';
+import { getTeamPointsInfo, getTeamPointsInfoGWChange } from '../../functions/reusable';
 import { gwTEXT, headers, labelText, pointsBannerTEXT, pointsTEXT, standardText } from '../../styles/textStyle';
 import Button from '../button';
 import GWScore from '../gwScore/gwScore';
 import pitch from '../Pitch/pitch';
-import { gameweekBanner, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
+import { gameweekBanner, gwArrow, gwText, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
 
 
 class PitchHead extends Component {
-    state = {  }
+    state = { 
+
+    }
 
     changeGWPoints = async(direction) => {
-        const { otherTeam, otherUser, setOtherTeamPoints, setTeamPoints,user } = this.props;
-        if (otherTeam) {
-            const clubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? clubFocusGW.gameweek-1 : clubFocusGW.gameweek+1)
-            const { starters, subs, records, otherUGJ, allPGJs } = await getTeamPointsInfo(otherUser.user_id, clubFocusGW.gameweek_id, otherUser);
-            setOtherTeamPoints(starters, subs, records, otherUGJ, allPGJs, otherUser, clubFocusGW);
+        const { otherTeamFocus, otherUser, changeGWOther, setTeamPoints, user, userFocusGW, clubFocusGW, lastGW } = this.props;
+        let GW = otherTeamFocus ? 
+        (clubFocusGW ? clubFocusGW : lastGW) :
+        (userFocusGW ? userFocusGW : lastGW);
+        if (otherTeamFocus) {
+            const newClubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1)
+            const { starters, subs, records, otherUGJ } = await getTeamPointsInfoGWChange(otherUser.user_id, newClubFocusGW.gameweek_id, otherTeamFocus);
+            console.log('above undefined');
+            changeGWOther(starters, subs, otherUGJ, newClubFocusGW);
         } else {
-            const userFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? userFocusGW.gameweek-1 : userFocusGW.gameweek+1)
-            const { starters, subs, UGJ } = await getTeamPointsInfo(user.user_id, userFocusGW.gameweek_id, otherUser);
-            setTeamPoints(starters, subs, UGJ, userFocusGW);
+            const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1);
+            const { starters, subs, UGJ } = await getTeamPointsInfoGWChange(user.user_id, newUserFocusGW.gameweek_id, otherTeamFocus);
+            setTeamPoints(starters, subs, UGJ, newUserFocusGW);
         }
     }
 
     compX = () => {
-        const { type, otherTeam, otherUGJ, UGJ, update } = this.props;
+        const { type, update } = this.props;
         switch(type) {
             case 'points': 
                 return <GWScore/>;
@@ -56,28 +62,28 @@ class PitchHead extends Component {
         const { type, UGJ, otherUser, otherUGJ, otherTeamFocus, lastGW, userFocusGW, clubFocusGW, user } = this.props;
         switch(type) {
             case 'points':
-                console.log(userFocusGW);
-                console.log(clubFocusGW);
-                console.log(UGJ);
-                return <View style={pointsY}>
-                    <TouchableOpacity onPress={() => this.changeGWPoints('L')}>
-                        <Text style={{...gwTEXT, width: vw(20), textAlign: 'left'}}>{otherTeamFocus ? 
-                        (clubFocusGW.gameweek>otherUser.gw_start ? '<--' : '') 
-                        :
-                        (userFocusGW.gameweek>user.gw_start ? '<--' : '')}</Text>
+                let GW = otherTeamFocus ? 
+                (clubFocusGW ? clubFocusGW : lastGW) :
+                (userFocusGW ? userFocusGW : lastGW);
+                let arrowLeft = otherTeamFocus ? GW.gameweek>otherUser.gw_start : GW.gameweek>user.gw_start;
+                let arrowRight = GW.gameweek<lastGW.gameweek;
+                console.log('arrow left: ' + arrowLeft);
+                console.log('arrow right: ' + arrowRight);
+                return <View style={gameweekBanner}>
+                    <TouchableOpacity style={{...gwArrow, borderBottomLeftRadius: 7, borderTopLeftRadius: 7}} onPress={arrowLeft ? () => this.changeGWPoints('L') : null}>
+                        <Text style={{...gwTEXT, textAlign: 'left'}}>{arrowLeft ? '<--' : ''}</Text>
                     </TouchableOpacity>
-                    <Text style={gameweekBanner}>Gameweek {otherTeamFocus ? clubFocusGW.gameweek : userFocusGW.gameweek}</Text>
-                    <TouchableOpacity onPress={() => this.changeGWPoints('R')}>
-                        <Text style={{...gwTEXT, width: vw(20), textAlign: 'right'}}>{otherTeamFocus ? 
-                        (clubFocusGW.gameweek<lastGW.gameweek ? '-->' : '') 
-                        :
-                        (userFocusGW.gameweek<lastGW.gameweek ? '-->' : '')}</Text>
+                    <View style={gwText}><Text style={gwTEXT}>Gameweek {GW.gameweek}</Text></View>
+                    <TouchableOpacity style={{...gwArrow, borderBottomRightRadius: 7, borderTopRightRadius: 7}} onPress={arrowRight ? () => this.changeGWPoints('R') : null}>
+                        <Text style={{...gwTEXT, textAlign: 'right'}}>{arrowRight ? '-->' : ''}</Text>
                     </TouchableOpacity>
                 </View>
             default: 
             return;
         }
     }
+
+    // style={{width: vw(20), height: vh(10), paddingVertical: vh(1) backgroundColor: 'white'}}
 
     compZ = () => {
         const { type, otherTeamFocus, otherUGJ, UGJ } = this.props;
@@ -100,9 +106,7 @@ class PitchHead extends Component {
         return (
             <View>
                 <View style={team_nameContainer}><Text style={team_nameText}>{this.props.otherTeamFocus ? this.props.otherUser.team_name : this.props.user.team_name}</Text></View>
-            <View style={pitchHead}>
                 {this.compY()}
-            </View>
                 {this.compX()}
                 {this.compZ()}
             </View>
@@ -126,8 +130,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, team) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, team)),
-        setTeamPoints: (starters, subs, UGJ) => dispatch(setTeamPoints(starters, subs, UGJ))
+        changeGWOther: (starters, subs, UGJ, clubFocusGW) => dispatch(changeGWOther(starters, subs, UGJ, clubFocusGW)),
+        setTeamPoints: (starters, subs, UGJ, newUserFocusGW) => dispatch(setTeamPoints(starters, subs, UGJ, newUserFocusGW))
     }
 }
  

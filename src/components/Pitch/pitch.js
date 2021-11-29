@@ -28,8 +28,17 @@ class Pitch extends Component {
     }
 
     playerPG = (playerId) => {
-        return this.props.type==="points" ? this.props.allPGJs.filter(pg=>{
-        return pg.player_id===playerId && pg.gameweek_id===this.props.UGJ.gameweek_id})[0] : false;}
+        const { otherTeamFocus, UGJ, otherUGJ, allPGJs, type } = this.props;
+        if (otherTeamFocus) {
+            return type==="points" ? allPGJs.filter(pg=>{
+                return pg.player_id===playerId && pg.gameweek_id===otherUGJ.gameweek_id
+            })[0] : false;
+        } else {
+            return type==="points" ? allPGJs.filter(pg=>{
+                return pg.player_id===playerId && pg.gameweek_id===UGJ.gameweek_id
+            })[0] : false;
+        }
+    }
 
     team = () => playersArrayToObj(this.props.team);
 
@@ -114,7 +123,9 @@ class Pitch extends Component {
 const mapStateToProps = state => {
     return {
         UGJ: state.user.focusedGWTeam.UGJ,
-        records: state.user.records
+        records: state.user.records,
+        otherTeamFocus: state.boolDeciders.otherTeamFocus,
+        otherUGJ: state.club.focusedGWTeam.UGJ
     }
 }
  

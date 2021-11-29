@@ -7,7 +7,6 @@
  */
 
 import React from 'react';
-import type {Node} from 'react';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import Navigation from './src/Navigation';
@@ -17,7 +16,7 @@ import SpinnerOverlay from './src/components/spinner/spinner';
 
 const store = createStore(rootReducer);
 
-const App: () => Node = () => {
+const App = () => {
 
   return (
     <Provider store={store}>

@@ -1,4 +1,4 @@
-import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGameweeksFromAdminUserId } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
 
@@ -144,12 +144,12 @@ export const calculateScore = async(records, gwId) => {
 
 export const getTeamPointsInfo = async(userId, gwId, otherUser) => {
     if (otherUser) {
-        let UGJ = await getUGJ(userId, gwId);
+        let otherUGJ = await getUGJ(userId, gwId);
         let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
         let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
         let records = await getAllRecordsByUserId(userId);
         let allPGJs = await getAllPGJFromUserId(userId);
-        return { starters, subs, records, UGJ, allPGJs };
+        return { starters, subs, records, otherUGJ, allPGJs };
     } else {
         let UGJ = await getUGJ(userId, gwId);
         let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
@@ -158,6 +158,24 @@ export const getTeamPointsInfo = async(userId, gwId, otherUser) => {
     }
 }
 
-// export const getPlayerStats = asnyc(player) => {
-//     let 
-// }
+export const getTeamPointsInfoGWChange = async(userId, gwId, otherUser) => {
+    if (otherUser) {
+        let otherUGJ = await getUGJ(userId, gwId);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
+        return { starters, subs, otherUGJ };
+    } else {
+        let UGJ = await getUGJ(userId, gwId);
+        let starters = await getPlayersByUserIdGWIdSub(userId, gwId, false);
+        let subs = await getPlayersByUserIdGWIdSub(userId, gwId, true);
+        return { starters, subs, UGJ };
+    }
+}
+
+export const getLastAndAllGWs = async(adminUserId) => {
+    let gameweeks = await getAllGameweeksFromAdminUserId(adminUserId);
+    gameweeks = gameweeks.filter(g=>g.complete===true);
+    gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+    let lastGW = gameweeks[0];
+    return { lastGW, gameweeks };
+}

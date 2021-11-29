@@ -1,4 +1,6 @@
+import { ActionSheetIOS } from "react-native";
 import { playersObjToArray } from "./functions/reusable";
+import { syncGWs } from "./functions/sync/syncGWs";
 
 const initialState = {
     boolDeciders: {
@@ -63,6 +65,7 @@ const initialState = {
 }
 
 const rootReducer = (state = initialState, action) => {
+    console.log('changing redux state with action: ' + action.type);
     switch (action.type) {
         case 'LOGINUSER':
             return {
@@ -125,7 +128,8 @@ const rootReducer = (state = initialState, action) => {
                     adminUser: action.adminUser,
                     allUsers: action.allUsers,
                     clubPlayers: action.clubPlayers,
-                    allGames: action.games
+                    allGames: action.gameweeks,
+                    lastGW: action.lastGW
                 }
             }
         case 'NTS2LOGIN':
@@ -158,12 +162,13 @@ const rootReducer = (state = initialState, action) => {
                     adminUser: action.adminUser
                 }
             };
-        case 'SETCLUBPLAYERS':
+        case 'SETCLUBPLAYERSANDLASTGW':
             return {
                 ...state, 
                 club: {
                     ...state.club,
-                    clubPlayers: action.players
+                    clubPlayers: action.players,
+                    lastGW: action.lastGW
                 }
             };
         case 'SETUSER':
@@ -198,7 +203,7 @@ const rootReducer = (state = initialState, action) => {
                     }
                 }
             };
-        case 'SETGWSELECT':
+        case 'SETCLUBFOCUSGW':
             return {
                 ...state, 
                 club: {
@@ -207,18 +212,14 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case 'COMPLETEGAME':
-            let newGames = state.club.allGames.map(game=>{
-                if (game.gameweek_id===action.id) {
-                    return {...game, complete: true};
-                } else {
-                    return game;
-                }
-            });
+            console.log(action.newAllGames);
+            console.log(action.newLastGW);
             return {
                 ...state, 
                 club: {
                     ...state.club,
-                    allGames: newGames
+                    allGames: action.newAllGames,
+                    lastGW: action.newLastGW
                 }
             };
         case 'ADDGAME':
@@ -352,7 +353,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETOTHERTEAMPOINTS": 
-        console.log('setting other team points');
             return {
                 ...state, 
                 boolDeciders: {
@@ -368,7 +368,20 @@ const rootReducer = (state = initialState, action) => {
                         records: action.records,
                         UGJ: action.UGJ,
                         allPGJs: action.allPGJs,
-                        user: action.team
+                        user: action.otherUser
+                    }
+                }
+            }
+        case "CHANGEGWOTHER": 
+            return {
+                ...state, 
+                club: {
+                    ...state.club, 
+                    focusedGWTeam: {
+                        ...state.club.focusedGWTeam,
+                        starters: action.starters,
+                        subs: action.subs,
+                        UGJ: action.UGJ
                     },
                     clubFocusGW: action.clubFocusGW
                 }
@@ -388,7 +401,7 @@ const rootReducer = (state = initialState, action) => {
                         subs: action.subs,
                         UGJ: action.UGJ
                     },
-                    userFocusGW: action.userFocusGW
+                    userFocusGW: action.newUserFocusGW
                 }
             }
         default:

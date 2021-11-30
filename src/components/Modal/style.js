@@ -42,3 +42,8 @@ export const captainBox = {
     alignItems: 'center',
     paddingVertical: 10,
 }
+
+export const subImage = {
+    height: vh(2),
+    width: vw(5),
+}

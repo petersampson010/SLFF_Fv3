@@ -29,10 +29,11 @@ export const updateStack = (navigation, stackIndex, page) => {
 function Navigation() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Opener">
+      <Stack.Navigator initialRouteName="Opener" screenOptions={{headerTitleAlign: 'center'}}>
         <Stack.Screen name="Opener" component={OpenerScreen} 
         options={{
           title: 'Sunday',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -40,6 +41,7 @@ function Navigation() {
         <Stack.Screen name="Login" component={LoginScreen} 
         options={{
           title: 'Login',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -47,6 +49,7 @@ function Navigation() {
         <Stack.Screen name="AdminAccountSetup" component={AdminAccountSetupScreen} 
         options={{
           title: 'Admin Account Setup',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -54,6 +57,7 @@ function Navigation() {
         <Stack.Screen name="nts1" component={ntsScreen1} 
         options={{
           title: 'Team Sign Up',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -61,6 +65,7 @@ function Navigation() {
         <Stack.Screen name="nts2" component={ntsScreen2} 
         options={{
           title: 'Team Set Up',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -68,6 +73,7 @@ function Navigation() {
         <Stack.Screen name="ContactUs" component={ContactUsScreen} 
         options={{
           title: 'Contact Us',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -75,6 +81,7 @@ function Navigation() {
         <Stack.Screen name="Home" component={HomeScreen} 
         options={{
           title: 'Home',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -82,6 +89,7 @@ function Navigation() {
         <Stack.Screen name="Transfers" component={TransfersScreen} 
         options={{
           title: 'Transfers',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -89,6 +97,7 @@ function Navigation() {
         <Stack.Screen name="Points" component={PointsScreen} 
         options={{
           title: 'Points',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -96,6 +105,7 @@ function Navigation() {
         <Stack.Screen name="ClubSetup" component={ClubSetupScreen} 
         options={{
           title: 'Club Setup',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -103,6 +113,7 @@ function Navigation() {
         <Stack.Screen name="PickTeam" component={PickTeamScreen} 
         options={{
           title: 'Pick Team',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -111,6 +122,7 @@ function Navigation() {
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} 
         options={{
           title: 'Club Home',
+          headerLeft: ()=>false,
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -118,6 +130,7 @@ function Navigation() {
         <Stack.Screen name="GameEditor" component={GameEditorScreen} 
         options={{
           title: 'Game Editor',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
@@ -125,12 +138,11 @@ function Navigation() {
         <Stack.Screen name="AdminPlayerEdit" component={AdminPlayerEditScreen} 
         options={{
           title: 'Player Edit',
+          headerTintColor: 'white',
           headerStyle: {backgroundColor: $darkBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
-
-
       </Stack.Navigator>
     </NavigationContainer>
     );

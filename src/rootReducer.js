@@ -143,7 +143,18 @@ const rootReducer = (state = initialState, action) => {
                         starters: action.starters,
                         subs: action.subs
                     },
+                    PGJs: {
+                        last: action.lastPGJs,
+                        all: action.allPGJs
+                    },
                     records: action.records
+                },
+                club: {
+                    ...state.club, 
+                    allLastUGJs: action.allLastUGJs,
+                    league: action.league, 
+                    topPlayer: action.topPlayer,
+                    topUser: action.topUser
                 },
                 stateChanges: {
                     updatedNotPersistedTeam: {
@@ -212,8 +223,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case 'COMPLETEGAME':
-            console.log(action.newAllGames);
-            console.log(action.newLastGW);
             return {
                 ...state, 
                 club: {
@@ -404,6 +413,28 @@ const rootReducer = (state = initialState, action) => {
                     userFocusGW: action.newUserFocusGW
                 }
             }
+        case "LEAVINGCLUBPOINTSPAGE": 
+            return {
+                ...state, 
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                club: {
+                    ...state.club,
+                    focusedGWTeam: {
+                        starters: [],
+                        subs: [],
+                        otherClubFocusRecords: [],
+                        UGJ: null,
+                        user: null, 
+                        allPGJs: [],
+                        captain: null,
+                        vCaptain: null
+                    },
+                    clubFocusGW: null
+                }
+            };
         default:
             return state;
     }

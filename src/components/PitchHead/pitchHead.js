@@ -26,7 +26,6 @@ class PitchHead extends Component {
         if (otherTeamFocus) {
             const newClubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1)
             const { starters, subs, records, otherUGJ } = await getTeamPointsInfoGWChange(otherUser.user_id, newClubFocusGW.gameweek_id, otherTeamFocus);
-            console.log('above undefined');
             changeGWOther(starters, subs, otherUGJ, newClubFocusGW);
         } else {
             const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1);
@@ -67,8 +66,6 @@ class PitchHead extends Component {
                 (userFocusGW ? userFocusGW : lastGW);
                 let arrowLeft = otherTeamFocus ? GW.gameweek>otherUser.gw_start : GW.gameweek>user.gw_start;
                 let arrowRight = GW.gameweek<lastGW.gameweek;
-                console.log('arrow left: ' + arrowLeft);
-                console.log('arrow right: ' + arrowRight);
                 return <View style={gameweekBanner}>
                     <TouchableOpacity style={{...gwArrow, borderBottomLeftRadius: 7, borderTopLeftRadius: 7}} onPress={arrowLeft ? () => this.changeGWPoints('L') : null}>
                         <Text style={{...gwTEXT, textAlign: 'left'}}>{arrowLeft ? '<--' : ''}</Text>

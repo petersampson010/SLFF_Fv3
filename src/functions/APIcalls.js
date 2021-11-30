@@ -37,7 +37,7 @@ export const postUser = (userObj) => axiosPost('users', {
     transfers: 0,
     budget: userObj.budget,
     gw_start: userObj.gw_start,
-    admin_user_id: userObj.clubId
+    admin_user_id: userObj.admin_user_id
 });
 
 export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});

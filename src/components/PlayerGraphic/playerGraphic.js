@@ -99,9 +99,9 @@ class PlayerGraphic extends Component {
                     {type!=='points' ?
                     <View>
                     <Text style={capText}>{this.isCaptain()}</Text>
-                    <TouchableOpacity onPress={()=>clickFcn(player)}>
+                    {/* <TouchableOpacity onPress={()=>clickFcn(player)}>
                         <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     </View>
                     : null}
                 </View>

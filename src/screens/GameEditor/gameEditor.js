@@ -160,8 +160,6 @@ class GameEditorScreen extends Component {
             let records = await getAllRecordsByGWId(0);
             await this.patchCurrentRecords(records);
             await this.postNewRecords(records);
-            console.log('last gw below');
-            console.log(lastGW);
             await completeGame(clubFocusGW.gameweek_id, this.state.score, lastGW ? lastGW.gameweek+1 : 1);
             let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
             completeGameState(returnObj.gameweeks, returnObj.lastGW);

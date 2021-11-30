@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../components/header/header';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
-import { patchUserBUDGET, postRecord } from '../../functions/APIcalls';
+import { getAllPGJFromUserId, getAllPGJsFromGameweekId, getLeague, getPlayerById, getUGJs, getUserById, patchUserBUDGET, postRecord, postUser } from '../../functions/APIcalls';
 import Pitch from '../../components/Pitch/pitch';
 import PlayersList from '../../components/playersList/playersList';
 import { showMessage } from 'react-native-flash-message';
@@ -120,9 +120,28 @@ class ntsScreen2 extends Component {
                             let record = await postRecord(teamPlayers[i], user.user_id, i);
                             records.push(record);
                         }
-                        let returnUser = await patchUserBUDGET(
-                        user.user_id, budget);
-                        nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records);
+                        let returnUser = await postUser({...user, gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
+                        let lastPGJs = await getAllPGJsFromGameweekId(lastGW.gameweek_id);
+                        let league = await getLeague(user.admin_user_id);
+                        console.log(league);
+                        if (lastPGJs<1) {
+                            nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null);
+                        } else {
+                            let allPGJs = await getAllPGJFromUserId(user.user_id);
+                            let allLastUGJs = await getUGJs(user.admin_user_id, lastGW.gameweek_id);
+                            let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
+                            pg = pg[0];
+                            let topPlayer = pg ? {
+                                pg,
+                                player: await getPlayerById(pg.player_id)
+                            } : null;
+                            let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
+                            let topUser = ug ? {
+                                ug,
+                                user: await getUserById(ug.user_id)
+                            } : null;
+                            nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser);
+                        }
                         updateStack(navigation, 0, 'Home');
                     } else {
                         showMessage({
@@ -176,7 +195,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        nts2Login: (user, starters, subs, records) => dispatch(nts2Login(user, starters, subs, records)),
+        nts2Login: (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => dispatch(nts2Login(user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser)),
         transferOut: player => dispatch(transferOut(player)),
         transferIn: player => dispatch(transferIn(player)),
         addSpinner: () => dispatch(addSpinner()),

@@ -99,10 +99,10 @@ class LoginScreen extends Component {
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
-          let allPGJs = await getAllPGJFromUserId(user_id);
           if (lastPGJs.length<1) {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
+            let allPGJs = await getAllPGJFromUserId(user_id);
             let allLastUGJs = await getUGJs(admin_user_id, gameweek_id);
             let lastUGJ = await getUGJ(user_id, gameweek_id);
             let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);

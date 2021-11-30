@@ -85,13 +85,19 @@ export const resetTeamPlayers = () => {
     }
 }
 
-export const nts2Login = (user, starters, subs, records) => {
+export const nts2Login = (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => {
     return {
         type: 'NTS2LOGIN',
         user,
         starters, 
         subs,
-        records
+        records,
+        league,
+        allPGJs,  
+        lastPGJs, 
+        allLastUGJs, 
+        topPlayer, 
+        topUser
     }
 }
 
@@ -220,5 +226,11 @@ export const setTeamPoints = (starters, subs, UGJ, newUserFocusGW) => {
         subs,
         UGJ,
         newUserFocusGW
+    }
+}
+
+export const leavingClubPointsPage = () => {
+    return {
+        type: 'LEAVINGCLUBPOINTSPAGE'
     }
 }

@@ -8,7 +8,7 @@ import { buttonText, buttonContainerFullWidth } from '../../styles/button';
 import { $arylideYellow, $chocolateBlack, $standardWhite, $zaGreen } from '../../styles/global';
 import { checkBox, labelText, standardText } from '../../styles/textStyle';
 import Button from '../button';
-import { playerImage, playerImageLarge } from '../PlayerGraphic/style';
+import { playerImage, playerImageLarge, subImage } from '../PlayerGraphic/style';
 import { button, buttons, captainBox, closeButton, closeModalContainer, modal, modalSplitContainer, modalTextContainer } from './style';
 
 
@@ -43,6 +43,7 @@ class MyModal extends Component {
 
     modalJSX = () => {
         const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         if (this.props.jsx) {
             return this.props.jsx
         } else {
@@ -82,12 +83,20 @@ class MyModal extends Component {
                         <Text style={standardText}>MAYBE SOME STATS AT SOME POINT</Text>
                         {(!sub) ?
                         <View>
-                            <TouchableOpacity style={this.props.captain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setCaptain(player)}>
+                            <Button text='Captain' func={()=>this.setCaptain(player)} width={vw(35)}/>
+                            <Button text='Vice Captain' func={()=>this.setVCaptain(player)} width={vw(35)}/>
+                            <Button text={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>this.props.subTransferFcn(player)} width={vw(35)}/>
+
+                            {/* <TouchableOpacity style={this.props.captain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setCaptain(player)}>
                                 <Text style={this.props.captain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Captain</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={this.props.vCaptain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setVCaptain(player)}>
+                            </TouchableOpacity> */}
+                            {/* <TouchableOpacity style={this.props.vCaptain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setVCaptain(player)}>
                                 <Text style={this.props.vCaptain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Vice Captain</Text>
                             </TouchableOpacity>
+                            <TouchableOpacity style={{...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.props.subTransferFcn(player)}>
+                            <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
+                                {/* <Text style={{...checkBox, color: $chocolateBlack}}>Vice Captain</Text> */}
+                            {/* </TouchableOpacity> */}
                         </View>
                         : null}
                     </View>

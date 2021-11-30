@@ -12,6 +12,7 @@ import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/
 import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
 import { getLastAndAllGWs } from '../../functions/reusable';
+import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 
 
@@ -71,18 +72,13 @@ class ntsScreen1 extends Component {
   handleSubmit = async(adminUser, lastGW) => {
     const { userObj } = this.state;
     try {
-        let userReturn = await postUser({...userObj, gw_start: lastGW ? lastGW.gameweek+1 : 1});
-        let userData = userReturn;
-          if (userData.transfers===0) {
-            this.setState({signedUp: true});
-            this.props.setUser(userData);
-            this.props.setAdminUser(adminUser);
-            getAllPlayersByAdminUserId(adminUser.admin_user_id)
-            .then(players => this.props.setClubPlayersAndLastGW(players, lastGW))
-            .then(() => updateStack(this.props.navigation, 0, 'nts2'));
-          } else {
-            console.warn("get return: ", userData);
-          }
+        let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: 0, budget: globalConfig.startBudget};
+          this.setState({signedUp: true});
+          this.props.setUser(userData);
+          this.props.setAdminUser(adminUser);
+          getAllPlayersByAdminUserId(adminUser.admin_user_id)
+          .then(players => this.props.setClubPlayersAndLastGW(players, lastGW))
+          .then(() => updateStack(this.props.navigation, 0, 'nts2'));
     } catch(e) {
       showMessage({
         message: "Fail: Network Issue, please try again later",

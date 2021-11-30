@@ -1,6 +1,7 @@
 import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGameweeksFromAdminUserId } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
+import { createIconSetFromFontello } from "react-native-vector-icons";
 
 export const positionString = (num) => {
     switch(num) {
@@ -125,9 +126,7 @@ export const subOrTransfer = type => {
     }
 }
 
-export const getNameOfNavPage = navState => {
-    return navState.routes[navState.index].name;
-}
+export const getNameOfNavPage = navState => navState.routes[navState.index].name;
 
 export const calculateScore = async(records, gwId) => {
     let score = 0;

@@ -104,12 +104,13 @@ class Pitch extends Component {
                         </ImageBackground>
                         <MyModal 
                         visible={this.state.modal.active}
-                        height={vh(33)}
+                        height={vh(45)}
                         width={vw(80)}
                         closeModalFcn={()=>this.setState({modal: {...this.state.modal, active: false}})}
                         modalType={this.props.modalType}
                         entry={this.state.modal.player}
                         buttonOptions={[]}
+                        subTransferFcn={this.props.clickFcn}
                         />
                 </View>
                 {this.props.type!=='transfers' ? <View style={subs}>

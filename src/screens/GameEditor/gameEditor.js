@@ -12,7 +12,7 @@ import { standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine } from '../../styles/input';
 import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
-import MyModal from '../../components/Modal/myModal';
+import MyModal from '../../components/Modal/MyModal';
 
 class GameEditorScreen extends Component {
     state = { 
@@ -207,7 +207,7 @@ class GameEditorScreen extends Component {
         return (
             <View style={{backgroundColor: $darkBlue}}>
                 {this.state.spinner ? <SpinnerOverlay/> : null}
-                <Button title="Confirm" onPress={()=>this.setState({...this.state, dialog: {active: true}})}/>
+                <Button clickable title="Confirm" onPress={()=>this.setState({...this.state, dialog: {active: true}})}/>
                 <View style={inputFieldContainerInLine}>
                     <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
                     <View style={inputFieldSmall}>

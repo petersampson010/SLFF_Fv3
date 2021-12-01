@@ -160,7 +160,7 @@ class AdminAccountSetupScreen extends Component {
               <Switch 
               value={this.state.adminUserObj.terms} 
               onValueChange={this.toggleSwitch}/>
-              <Button title="Sign up" onPress={this.handleSubmit}/>
+              <Button clickable title="Sign up" onPress={this.handleSubmit}/>
             </View>
           </View>
     );

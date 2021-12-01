@@ -165,7 +165,7 @@ class ClubSetupScreen extends Component {
                         <Text style={labelText}>Average Player Price: £{this.averagePrice()}m</Text>
                         <Text style={labelText}>Reccommended: £74m</Text>
                         </View>
-                        <Button title="Submit Club Players" onPress={this.submitPlayers}/>
+                        <Button clickable title="Submit Club Players" onPress={this.submitPlayers}/>
                     </View>
                     <View>
                         <View style={tableRow}>

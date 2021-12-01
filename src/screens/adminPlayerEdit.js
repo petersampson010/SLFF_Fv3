@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Picker, Switch } from 'react-native';
+import { ScrollView, View, Switch } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { Input } from 'react-native-elements';
-import MyModal from '../components/Modal/myModal';
+import MyModal from '../components/Modal/MyModal';
 import PlayersList from '../components/playersList/playersList';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { availability, fullName, positionString } from '../functions/reusable';

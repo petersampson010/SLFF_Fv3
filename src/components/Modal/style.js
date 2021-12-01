@@ -47,3 +47,7 @@ export const subImage = {
     height: vh(2),
     width: vw(5),
 }
+
+export const pickTeamStats = {
+    width: vw(35)
+}

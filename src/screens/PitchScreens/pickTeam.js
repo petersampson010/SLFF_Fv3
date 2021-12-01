@@ -36,7 +36,9 @@ class PickTeamScreen extends Component {
     updateTeam = async() => {
         const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest } = this.props;
         let startToSub = _.difference(originalStarters, starters);
+        console.log(startToSub);
         let subToStart = _.difference(originalSubs, subs);
+        console.log(subToStart);
         try {
             addSpinner();
             for (let i=0;i<startToSub.length;i++) {
@@ -44,10 +46,12 @@ class PickTeamScreen extends Component {
                 await patchRecordSUBS(false, subToStart[i].player_id);
             }
             if (originalCaptain!==captain) {
+                console.log('changing captain');
                 await patchRecordCAPTAINS(true, false, getRecordId(captain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalCaptain, records));
             } 
             if (originalVCaptain!==vCaptain) {
+                console.log('changing vice captain');
                 await patchRecordCAPTAINS(false, true, getRecordId(vCaptain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalVCaptain, records));
             }
@@ -104,11 +108,11 @@ const mapStateToProps = state => {
         starters: state.stateChanges.updatedNotPersistedTeam.starters,
         originalSubs: state.user.currentTeam.subs,
         originalStarters: state.user.currentTeam.starters,
-        records: state.user.focusedGWTeam.records,
+        records: state.user.records,
         captain: state.stateChanges.updatedNotPersistedTeam.captain,
-        vCaptain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
         originalCaptain: state.user.currentTeam.captain,
-        originalVCaptain: state.user.currentTeam.captain,
+        originalVCaptain: state.user.currentTeam.vCaptain,
     }
 }
 

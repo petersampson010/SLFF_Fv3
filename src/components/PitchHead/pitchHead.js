@@ -7,7 +7,7 @@ import { changeGWOther, setTeamPoints } from '../../actions';
 import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
 import { getTeamPointsInfo, getTeamPointsInfoGWChange } from '../../functions/reusable';
 import { gwTEXT, headers, labelText, pointsBannerTEXT, pointsTEXT, standardText } from '../../styles/textStyle';
-import Button from '../button';
+import Button from '../Button/button';
 import GWScore from '../gwScore/gwScore';
 import pitch from '../Pitch/pitch';
 import { gameweekBanner, gwArrow, gwText, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
@@ -40,7 +40,7 @@ class PitchHead extends Component {
             case 'points': 
                 return <GWScore/>;
             case 'pickTeam':
-                return <View style={pickTeamX}><Button text='Confirm' func={update} width={vw(30)}/></View>;
+                return <View style={pickTeamX}><Button clickable text='Confirm' func={update} width={vw(30)}/></View>;
             case 'transfers':
                 return <View style={transfersX}>
                         <View >
@@ -50,7 +50,7 @@ class PitchHead extends Component {
                                 <Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text>
                             </View>
                         </View>
-                        <Button text='Confirm' func={update} width={vw(30)}/>
+                        <Button clickable text='Confirm' func={update} width={vw(30)}/>
                     </View>
             default: 
                 return;

@@ -7,47 +7,26 @@ import { fullName, getRecord, positionString } from '../../functions/reusable';
 import { buttonText, buttonContainerFullWidth } from '../../styles/button';
 import { $arylideYellow, $chocolateBlack, $standardWhite, $zaGreen } from '../../styles/global';
 import { checkBox, labelText, standardText } from '../../styles/textStyle';
-import Button from '../button';
+import Button from '../Button/button';
 import { playerImage, playerImageLarge, subImage } from '../PlayerGraphic/style';
-import { button, buttons, captainBox, closeButton, closeModalContainer, modal, modalSplitContainer, modalTextContainer } from './style';
+import PickTeamModal from './PickTeamModal';
+import { buttons, closeButton, modal, modalSplitContainer, modalTextContainer } from './style';
 
 
 class MyModal extends Component {
     state = {  }
 
-    renderButtons = () => {
-        return this.props.buttonOptions.map((x,i)=><Button key={i} text={x.text} func={x.fcn} width={vw(35)}/>)
-    }
+    // renderButtons = () => {
+    //     return this.props.buttonOptions.map((x,i)=><Button key={i} text={x.text} func={x.fcn} width={vw(35)}/>)
+    // }
 
-    setCaptain = player => {
-        if (this.props.vCaptain===player) {
-            showMessage({
-                message: "Player is already a captain",
-                type: 'warning'
-            })
-        } else {
-            this.props.setCaptain(player);
-        }
-    }
-
-    setVCaptain = player => {
-        if (this.props.captain===player) {
-            showMessage({
-                message: "Player is already a captain",
-                type: 'warning'
-            })
-        } else {
-            this.props.setVCaptain(player);
-        }
-    }
 
     modalJSX = () => {
         const playerImg = require('../../../images/profile.jpg');
-        const subImg = require('../../../images/subIcon.png');
         if (this.props.jsx) {
             return this.props.jsx
         } else {
-            const { modalType, entry } = this.props;
+            const { modalType, entry, width } = this.props;
             let player;
             switch(modalType) {
                 case 'userProfile':
@@ -76,30 +55,7 @@ class MyModal extends Component {
                     player = entry.pg ? entry.player : entry;
                     const rec = getRecord(player, this.props.records);
                     const sub = rec ? rec.sub : true;
-                    return <View style={modalTextContainer}>
-                        <Text style={standardText}>{fullName(player)}</Text>
-                        <Text style={standardText}>{positionString(player.position)}</Text>
-                        <Text style={standardText}>£{player.price}m</Text>
-                        <Text style={standardText}>MAYBE SOME STATS AT SOME POINT</Text>
-                        {(!sub) ?
-                        <View>
-                            <Button text='Captain' func={()=>this.setCaptain(player)} width={vw(35)}/>
-                            <Button text='Vice Captain' func={()=>this.setVCaptain(player)} width={vw(35)}/>
-                            <Button text={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>this.props.subTransferFcn(player)} width={vw(35)}/>
-
-                            {/* <TouchableOpacity style={this.props.captain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setCaptain(player)}>
-                                <Text style={this.props.captain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Captain</Text>
-                            </TouchableOpacity> */}
-                            {/* <TouchableOpacity style={this.props.vCaptain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setVCaptain(player)}>
-                                <Text style={this.props.vCaptain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Vice Captain</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={{...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.props.subTransferFcn(player)}>
-                            <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-                                {/* <Text style={{...checkBox, color: $chocolateBlack}}>Vice Captain</Text> */}
-                            {/* </TouchableOpacity> */}
-                        </View>
-                        : null}
-                    </View>
+                    return <PickTeamModal player={player} sub={sub}/>;
                 case 'gwStatsSubmit': 
                     return <View style={modalTextContainer}>
                         <Text style={standardText}>Please review your stats before submission! Once submitted, stats cannot be changed. Clicking confirm will submit these stats and set this 'Game' to complete.</Text>
@@ -114,14 +70,9 @@ class MyModal extends Component {
         return ( 
             <Modal visible={this.props.visible} 
             transparent={true}>
-                <View style={{...modal, height:this.props.height, width:this.props.width, left:(vw(100)-(this.props.width))/2}}>
+                <View style={{...modal, width:this.props.width, left:(vw(100)-(this.props.width))/2}}>
                     {this.modalJSX()}
-                    <View style={closeButton}>
-                        <View style={buttons}>
-                            {this.renderButtons()}
-                        </View>
-                        <Button text='Close' func={this.props.closeModalFcn} width={vw(35)}/>
-                    </View>
+                    <Button clickable text='Close' func={this.props.closeModalFcn} width={vw(35)}/>
                 </View>
             </Modal>
          );

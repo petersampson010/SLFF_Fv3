@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $arylideYellow, $zaGreen } from "./global";
+import { $arylideYellow, $zaGreen } from "../../styles/global";
 
 export const buttonText = {
     color: $arylideYellow,
@@ -11,10 +11,9 @@ export const buttonText = {
 export const buttonContainer = {
     paddingVertical: vh(2),
     borderRadius: 20,
-    borderLeftWidth: 0.2, 
-    borderLeftColor: $zaGreen,
-    borderRightWidth: 0.2, 
-    borderRightColor: $zaGreen
+    borderWidth: 0.2, 
+    borderColor: $zaGreen,
+    margin: vw(0.5)
 }
 
 export const buttonSplit = {

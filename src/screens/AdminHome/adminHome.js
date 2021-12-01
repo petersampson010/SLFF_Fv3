@@ -10,13 +10,13 @@ import { showMessage } from 'react-native-flash-message';
 import TouchableScale from 'react-native-touchable-scale'
 import { setClubFocusGW, addGameState } from '../../actions';
 import { displayDate } from '../../functions/reusable';
-import MyModal from '../../components/Modal/myModal';
+import MyModal from '../../components/Modal/MyModal';
 import { TouchableOpacity } from 'react-native';
 import { gameContainer, gameScore } from './style';
 import { headers, standardText } from '../../styles/textStyle';
 import { $arylideYellow, $chocolateBlack, $darkBlue, $luminousGreen, $zaGreen, screenContainer } from '../../styles/global';
-import { buttonSplit } from '../../styles/button';
-import Button from '../../components/button';
+import { buttonSplit } from '../../components/Button/style';
+import Button from '../../components/Button/button';
 
 class AdminHomeScreen extends Component {
     state = { 
@@ -126,8 +126,8 @@ class AdminHomeScreen extends Component {
         return ( 
             <ScrollView style={screenContainer}>
                 <View style={buttonSplit}>
-                    <Button text='Add Event/Game' func={()=>this.setState({...this.state, modal: {...this.state.modal, active: true}})} width={vw(40)} />
-                    <Button text='Edit Player(s)' func={()=>this.props.navigation.navigate('AdminPlayerEdit')} width={vw(40)} />
+                    <Button clickable text='Add Event/Game' func={()=>this.setState({...this.state, modal: {...this.state.modal, active: true}})} width={vw(40)} />
+                    <Button clickable text='Edit Player(s)' func={()=>this.props.navigation.navigate('AdminPlayerEdit')} width={vw(40)} />
                 </View>
                 <ScrollView>
                     {this.renderGames()}
@@ -151,8 +151,8 @@ class AdminHomeScreen extends Component {
                     value={this.state.modal.game.date}
                     onChange={(event, date)=>this.formChange('date', date)}
                     />
+                    <Button clickable text={this.state.modal.update ? "Update Game" : "Submit Game"} func={this.state.modal.update ? this.updateGame : this.addGame} width={vw(35)}/>
                 </View>}
-                buttonOptions={[{text: this.state.modal.update ? "Update Game" : "Submit Game", fcn: this.state.modal.update ? this.updateGame : this.addGame}]}
                 />
                 <MyModal 
                 visible={this.state.modal2.active}

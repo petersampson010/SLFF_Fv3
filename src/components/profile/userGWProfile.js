@@ -7,7 +7,7 @@ import { Image } from 'react-native';
 import { standardText } from '../../styles/textStyle';
 import { centerHorizontally } from '../../styles/align';
 import { modalTextContainer } from '../Modal/style';
-import MyModal from '../Modal/myModal';
+import MyModal from '../Modal/MyModal';
 import { vh, vw } from 'react-native-expo-viewport-units';
 
 
@@ -35,7 +35,6 @@ class UserGWProfile extends Component {
                         closeModalFcn={()=>this.props.closeModal('topUser')}
                         modalType="userProfile"
                         entry={user}
-                        buttonOptions={[]}
                         />
             </TouchableOpacity>
          );

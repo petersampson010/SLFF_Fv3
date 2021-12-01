@@ -26,11 +26,6 @@ export const playerImageLarge = {
     borderRadius: 500
 }
 
-export const subImage = {
-    height: vh(2),
-    width: vw(5),
-}
-
 export const capText = {
     color: $arylideYellow,
     textAlign: 'center',

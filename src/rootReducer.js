@@ -86,6 +86,8 @@ const rootReducer = (state = initialState, action) => {
                     focusedGWTeam: {
                         ...state.user.focusedGWTeam,
                         starters: action.lastGWStarters,
+                        captain: action.captain, 
+                        vCaptain: action.vCaptain,
                         subs: action.lastGWSubs, 
                         UGJ: action.lastUGJ
                     },
@@ -111,7 +113,9 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.currentStarters,
                         subs: action.currentSubs, 
-                        budget: action.user.budget
+                        budget: action.user.budget,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     }
                 }
             }
@@ -317,10 +321,10 @@ const rootReducer = (state = initialState, action) => {
         case "SETCAPTAIN":
             return {
                 ...state,
-                user: {
-                    ...state.user, 
-                    currentTeam: {
-                        ...state.user.currentTeam,
+                stateChanges: {
+                    ...state.stateChanges,
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         captain: action.player
                     }
                 }
@@ -328,10 +332,10 @@ const rootReducer = (state = initialState, action) => {
         case "SETVCAPTAIN":
             return {
                 ...state,
-                user: {
-                    ...state.user, 
-                    currentTeam: {
-                        ...state.user.currentTeam,
+                stateChanges: {
+                    ...state.stateChanges,
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         vCaptain: action.player
                     }
                 }

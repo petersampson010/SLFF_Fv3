@@ -20,8 +20,8 @@ class PlayerProfile extends Component {
                     <Text>STATS</Text>
                 </View>
                 <View style={buttons}>
-                    <Button title="Remove/Sub"/>
-                    <Button title="Close"/>
+                    <Button clickable title="Remove/Sub"/>
+                    <Button clickable title="Close"/>
                 </View>
             </View>
          );

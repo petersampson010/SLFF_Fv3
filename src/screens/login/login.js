@@ -191,7 +191,7 @@ class LoginScreen extends Component {
                 />
               </View>
               
-              <Button title="Sign in" onPress={this.handleSubmit}/>
+              <Button clickable title="Sign in" onPress={this.handleSubmit}/>
             </View>
           </View>
         );

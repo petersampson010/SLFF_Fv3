@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PlayerGraphic from '../PlayerGraphic/playerGraphic';
 import { View, ImageBackground } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
-import MyModal from '../Modal/myModal';
+import MyModal from '../Modal/MyModal';
 import { connect } from 'react-redux';
 import PitchHead from '../PitchHead/pitchHead';
 import { pitch, pitchContainer, starters, subs, positionRow, pitchImage, pitchClassContainer } from './style';
@@ -67,7 +67,6 @@ class Pitch extends Component {
             />)
 
     openModal = async(player) => {
-        // let playerStats = 
         this.setState({
             modal: {
                 active: true, 
@@ -109,7 +108,6 @@ class Pitch extends Component {
                         closeModalFcn={()=>this.setState({modal: {...this.state.modal, active: false}})}
                         modalType={this.props.modalType}
                         entry={this.state.modal.player}
-                        buttonOptions={[]}
                         subTransferFcn={this.props.clickFcn}
                         />
                 </View>

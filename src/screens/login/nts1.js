@@ -144,7 +144,7 @@ class ntsScreen1 extends Component {
                 autoCapitalize="none"
                 />
               </View>
-              <Button title="Sign Up" onPress={this.getInfo}/>
+              <Button clickable title="Sign Up" onPress={this.getInfo}/>
             </View>
           </View>
     );

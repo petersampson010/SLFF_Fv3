@@ -7,8 +7,9 @@ import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
 import { labelText, standardText } from '../../styles/textStyle';
 import { tableElement3, tableElement4, tableRow } from '../../styles/table';
-import MyModal from '../Modal/myModal';
+import MyModal from '../Modal/MyModal';
 import { subImage } from '../PlayerGraphic/style';
+import { playersListModal } from '../Modal/PlayersListModal';
 
 
 
@@ -59,9 +60,6 @@ class PlayersList extends Component {
     playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
 
     tableRow = (player, key) => {
-        const subImg = require('../../../images/subIcon.png');
-        const icon = this.playerSelected(player) ? null : <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-        const { clickFcn } = this.props;
         return <TouchableOpacity key={key}
         style={tableRow}
         onPress={()=>this.openModal(player)}
@@ -69,13 +67,11 @@ class PlayersList extends Component {
             <Text style={{...tableElement3, ...standardText}}>{fullName(player)}</Text>
             <Text style={{...tableElement3, ...standardText}}>{positionString(player.position)}</Text>
             <Text style={{...tableElement3, ...standardText}}>£{player.price}m</Text>
-            <TouchableOpacity style={tableElement4} onPress={()=>clickFcn(player)}>
-                {icon}
-            </TouchableOpacity>
         </TouchableOpacity>;
     }
 
     render() { 
+        const subImg = require('../../../images/subIcon.png');
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>
@@ -97,7 +93,7 @@ class PlayersList extends Component {
                         closeModalFcn={()=>this.setState({...this.state, modal: {...this.state.modal, active: false}})}
                         modalType={this.props.modalType}
                         entry={this.state.modal.player}
-                        buttonOptions={[]}
+                        jsx={() => playersListModal()}
                         />
                 <View >
                     <View>

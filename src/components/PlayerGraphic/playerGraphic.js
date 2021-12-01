@@ -68,40 +68,47 @@ class PlayerGraphic extends Component {
     }
 
     isCaptain = () => {
-        const { player, type, lastGWCaptain, lastGWVCaptain, latestCaptain, latestVCaptain } = this.props;
+        const { player, captain, vCaptain, pointsCaptain, pointsVCaptain, otherCaptain, otherVCaptain, type, otherTeamFocus } = this.props;
         if (type==='points') {
-            if (player===lastGWCaptain) {
-                return 'C';
-            } else if (lastGWVCaptain) {
-                return 'VC';
-            }
-        } else if (type==='pickTeam') {
-            if (player===latestCaptain) {
-                return 'C';
-            } else if (player===latestVCaptain) {
-                return 'VC';
+            if (otherTeamFocus) {
+                if (player.player_id===otherCaptain.player_id) {
+                    return 'C';
+                } else if (player.player_id===otherVCaptain.player_id) {                
+                    return 'VC';
+                }
+            } else {
+                if (player.player_id===pointsCaptain.player_id) {
+                    return 'C';
+                } else if (player.player_id===pointsVCaptain.player_id) {                
+                    return 'VC';
+                }
             }
         } else {
-            return;
+            if (player.player_id===captain.player_id) {
+                return 'C';
+            } else if (player.player_id===vCaptain.player_id) {                
+                return 'VC';
+            }
         }
+        return;
     }
 
     render() {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
         const { player, openModal, type, clickFcn } = this.props;
+        // console.log(this.props.pointsCaptain);
+        // console.log('inbetween');
+        // console.log(this.props.pointsVCaptain);
       return ( 
             <View style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
                 <View style={ type!=="points" ? {...subContainer, paddingLeft: vw(5)} : subContainer}>
                     <TouchableOpacity onPress={()=>openModal(player)}>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </TouchableOpacity>
-                    {type!=='points' ?
+                    {type!=='transfers' ?
                     <View>
                     <Text style={capText}>{this.isCaptain()}</Text>
-                    {/* <TouchableOpacity onPress={()=>clickFcn(player)}>
-                        <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-                    </TouchableOpacity> */}
                     </View>
                     : null}
                 </View>
@@ -117,10 +124,13 @@ class PlayerGraphic extends Component {
 const mapStateToProps = state => {
     return {
         records: state.user.records,
-        latestCaptain: state.user.currentTeam.captain,
-        latestVCaptain: state.user.currentTeam.vCaptain,
-        lastGWCaptain: state.user.focusedGWTeam.captain,
-        lastGWVCaptain: state.user.focusedGWTeam.vCaptain,
+        captain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
+        pointsCaptain: state.user.focusedGWTeam.captain,
+        pointsVCaptain: state.user.focusedGWTeam.vCaptain,
+        otherCaptain: state.club.focusedGWTeam.captain,
+        otherVCaptain: state.club.focusedGWTeam.vCaptain,
+        otherTeamFocus: state.boolDeciders.otherTeamFocus
     }
 }
  

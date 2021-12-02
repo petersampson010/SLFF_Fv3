@@ -234,3 +234,16 @@ export const leavingClubPointsPage = () => {
         type: 'LEAVINGCLUBPOINTSPAGE'
     }
 }
+
+export const setModal = (player, jsx, width, height, bottomBtn, closeFcn) => {
+    return {
+        type: "SETMODAL",
+        player, jsx, width, height, bottomBtn, closeFcn
+    }
+}
+
+export const closeModal = () => {
+    return {
+        type: "CLOSEMODAL"
+    }
+}

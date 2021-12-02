@@ -13,7 +13,9 @@ export const buttonContainer = {
     borderRadius: 20,
     borderWidth: 0.2, 
     borderColor: $zaGreen,
-    margin: vw(0.5)
+    margin: vw(0.5),
+    flexDirection: 'row',
+    justifyContent: 'center'
 }
 
 export const buttonSplit = {

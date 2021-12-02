@@ -7,7 +7,8 @@ const initialState = {
         spinner: false, 
         otherTeamFocus: false, 
         adminActive: false, 
-        loginComplete: false
+        loginComplete: false,
+        modal: false
     },
     user: {
         user: {},
@@ -61,6 +62,14 @@ const initialState = {
             vCaptain: null,
             budget: null
         }
+    },
+    modal: {
+        player: null,
+        jsx: null, 
+        width: null,
+        height: null, 
+        bottomBtn: null,
+        closeFcn: null
     }
 }
 
@@ -439,6 +448,38 @@ const rootReducer = (state = initialState, action) => {
                     clubFocusGW: null
                 }
             };
+        case "SETMODAL":
+            return {
+                ...state,
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    modal: true
+                },
+                modal: {
+                    player: action.player,
+                    jsx: action.jsx,
+                    width: action.width, 
+                    height: action.height,
+                    bottomBtn: action.bottomBtn,
+                    closeFcn: action.closeFcn
+                }
+            }
+        case "CLOSEMODAL": 
+            return {
+                ...state,
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    modal: false
+                },
+                modal: {
+                    player: null,
+                    jsx: null, 
+                    width: null,
+                    height: null, 
+                    bottomBtn: null,
+                    closeFcn: null
+                }
+            }
         default:
             return state;
     }

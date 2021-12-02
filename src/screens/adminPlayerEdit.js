@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Switch } from 'react-native';
+import { ScrollView, View, Switch, Text } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Input } from 'react-native-elements';
 import MyModal from '../components/Modal/MyModal';
@@ -106,32 +106,34 @@ class AdminPlayerEditScreen extends Component {
                     "created_at": "2020-11-23T13:03:11.328Z",
                     "updated_at": "2020-11-23T13:03:11.328Z"
                     }}})}
-                jsx={<View>
-                    <Input value={this.state.modal.player.first_name}
-                    onChangeText={value=>this.formChange('first_name', value)}
-                    label="First Name"
-                    autoCapitalize="words"
-                    />
-                    <Input value={this.state.modal.player.last_name}
-                    onChangeText={value=>this.formChange('last_name', value)}
-                    label="Last Name"
-                    autoCapitalize="words"
-                    />
-                    <Input value={this.state.modal.player.price.toString()}
-                    onChangeText={value=>this.updatePrice(value)}
-                    label="Price"
-                    />
-                    <Picker 
-                    selectedValue={this.state.modal.player.position} 
-                    onValueChange={value=>this.formChange('position', value)}>
-                        <Picker.Item label="GK" value='1'/>
-                        <Picker.Item label="DEF" value='2'/>
-                        <Picker.Item label="MID" value='3'/>
-                        <Picker.Item label="FWD" value='4'/>
-                    </Picker>
-                    <Switch value={availability(this.state.modal.player.availability)} 
-                    onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
-                    </View>}
+                jsx={<Text>Hi im here</Text>
+                // <View>
+                //     <Input value={this.state.modal.player.first_name}
+                //     onChangeText={value=>this.formChange('first_name', value)}
+                //     label="First Name"
+                //     autoCapitalize="words"
+                //     />
+                //     <Input value={this.state.modal.player.last_name}
+                //     onChangeText={value=>this.formChange('last_name', value)}
+                //     label="Last Name"
+                //     autoCapitalize="words"
+                //     />
+                //     <Input value={this.state.modal.player.price.toString()}
+                //     onChangeText={value=>this.updatePrice(value)}
+                //     label="Price"
+                //     />
+                //     <Picker 
+                //     selectedValue={this.state.modal.player.position} 
+                //     onValueChange={value=>this.formChange('position', value)}>
+                //         <Picker.Item label="GK" value='1'/>
+                //         <Picker.Item label="DEF" value='2'/>
+                //         <Picker.Item label="MID" value='3'/>
+                //         <Picker.Item label="FWD" value='4'/>
+                //     </Picker>
+                //     <Switch value={availability(this.state.modal.player.availability)} 
+                //     onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
+                //     </View>
+                    }
                 buttonOptions={[{text: 'Update Player', fcn: this.updatePlayer}, 
             {text: 'Remove Player', fcn: this.removePlayer}]}
                 height={vh(60)}

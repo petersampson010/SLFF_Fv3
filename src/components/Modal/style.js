@@ -2,7 +2,7 @@ import { $baseBlue, $chocolateBlack, $coral, $darkBlue, $electricBlue, $electric
 import {vw, vh} from 'react-native-expo-viewport-units';
 
 
-export const modal  = {
+export const modalContainer = {
     position: "absolute",
     top: vh(20),
     backgroundColor: $darkBlue,
@@ -10,7 +10,14 @@ export const modal  = {
     borderRadius: 12,
     borderColor: $zaGreen,
     alignItems: 'center', 
-    padding: vh(3)
+    padding: vh(3),
+    // paddingTop: vh(20),
+    zIndex: 999
+}
+
+export const modalJSX = {
+    flexDirection: 'row',
+    justifyContent: 'center'
 }
 
 export const buttons = {

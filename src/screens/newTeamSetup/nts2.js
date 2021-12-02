@@ -176,7 +176,6 @@ class ntsScreen2 extends Component {
                     />
                     <PlayersList
                     clickFcn={this.transfer}
-                    modalType="playerProfile"
                     />
                 </ScrollView>
             </View>

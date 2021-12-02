@@ -8,37 +8,40 @@ import { filter, itemPositionPicker, pickerItem, playersListContainer, positionP
 import { labelText, standardText } from '../../styles/textStyle';
 import { tableElement3, tableElement4, tableRow } from '../../styles/table';
 import MyModal from '../Modal/MyModal';
-import { subImage } from '../PlayerGraphic/style';
+import { playerImageLarge } from '../PlayerGraphic/style';
 import { playersListModal } from '../Modal/PlayersListModal';
+import Button from '../Button/button';
+import { setModal } from '../../actions';
+import { subImage } from '../Modal/style';
 
 
 
 class PlayersList extends Component {
     state = { 
         positionFilter: '0',
-        modal: {
-            active: false,
-            player: {
-                player_id: 1,
-                first_name: "Steve",
-                last_name: "Dunno",
-                position: "1",
-                price: 80,
-                availability: "a",
-                admin_user_id: 1
-            }
-        }
+        // modal: {
+        //     active: false,
+        //     player: {
+        //         player_id: 1,
+        //         first_name: "Steve",
+        //         last_name: "Dunno",
+        //         position: "1",
+        //         price: 80,
+        //         availability: "a",
+        //         admin_user_id: 1
+        //     }
+        // }
     }
 
-    openModal = player => {
-        this.setState({
-            ...this.state,
-            modal: {
-                active: true,
-                player
-            }
-        })
-    }
+    // openModal = player => {
+    //     this.setState({
+    //         ...this.state,
+    //         modal: {
+    //             active: true,
+    //             player
+    //         }
+    //     })
+    // }
 
     table = () => {
         switch(this.state.positionFilter) {
@@ -60,10 +63,11 @@ class PlayersList extends Component {
     playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
 
     tableRow = (player, key) => {
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         return <TouchableOpacity key={key}
         style={tableRow}
-        onPress={()=>this.openModal(player)}
-        onLongPress={()=>this.setState({...this.state, modal: {active: true, player}})}>
+        onPress={()=>this.props.setModal(player, <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>, vw(80), vh(50), <Button width={vw(35)} clickable comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={() => this.props.clickFcn(player)}/>)}>
             <Text style={{...tableElement3, ...standardText}}>{fullName(player)}</Text>
             <Text style={{...tableElement3, ...standardText}}>{positionString(player.position)}</Text>
             <Text style={{...tableElement3, ...standardText}}>£{player.price}m</Text>
@@ -72,6 +76,7 @@ class PlayersList extends Component {
 
     render() { 
         const subImg = require('../../../images/subIcon.png');
+        const { clickFcn } = this.props.clickFcn
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>
@@ -86,15 +91,16 @@ class PlayersList extends Component {
                         <Picker.Item color="white" label="FWD" value='4'/>
                     </Picker>
                 </View>
-                <MyModal
+                {/* <MyModal
                         visible={this.state.modal.active}
                         height={vh(33)}
                         width={vw(80)}
                         closeModalFcn={()=>this.setState({...this.state, modal: {...this.state.modal, active: false}})}
-                        modalType={this.props.modalType}
-                        entry={this.state.modal.player}
-                        jsx={() => playersListModal()}
-                        />
+                        playerProfile
+                        player={this.state.modal.player}
+                        jsx={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>}
+                        bottomButton={<Button func={()=>clickFcn(this.state.modal.player)} text={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>}/>}
+                        /> */}
                 <View >
                     <View>
                         <View style={tableRow}>
@@ -116,5 +122,11 @@ const mapStateToProps = state => {
         teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)
     }
 }
- 
-export default connect(mapStateToProps)(PlayersList);
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setModal: (player, jsx, width, height, bottomBtn, closeFcn) => dispatch(setModal(player, jsx, width, height, bottomBtn, closeFcn))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlayersList);

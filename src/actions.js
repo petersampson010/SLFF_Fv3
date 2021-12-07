@@ -86,6 +86,14 @@ export const resetTeamPlayers = () => {
 }
 
 export const nts2Login = (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => {
+    let captain, vCaptain;
+    for (let i=0;i<starters.length;i++) {
+        if (isCaptain(starters[i], records)) {
+            captain = starters[i];
+        } else if (isVCaptain(starters[i], records)) {
+            vCaptain = starters[i];
+        }
+    }
     return {
         type: 'NTS2LOGIN',
         user,
@@ -97,7 +105,9 @@ export const nts2Login = (user, starters, subs, records, league, allPGJs, lastPG
         lastPGJs, 
         allLastUGJs, 
         topPlayer, 
-        topUser
+        topUser,
+        captain, 
+        vCaptain
     }
 }
 
@@ -142,17 +152,19 @@ export const removeSpinner = () => {
     }
 }
 
-export const setCaptain = player => {
+export const setCaptain = (player, jsx) => {
     return {
         type: 'SETCAPTAIN',
-        player
+        player,
+        jsx
     }
 }
 
-export const setVCaptain = player => {
+export const setVCaptain = (player, jsx) => {
     return {
         type: 'SETVCAPTAIN',
-        player
+        player,
+        jsx
     }
 }
 
@@ -235,10 +247,10 @@ export const leavingClubPointsPage = () => {
     }
 }
 
-export const setModal = (player, jsx, width, height, bottomBtn, closeFcn) => {
+export const setModal = (modalObj) => {
     return {
         type: "SETMODAL",
-        player, jsx, width, height, bottomBtn, closeFcn
+        modalObj
     }
 }
 

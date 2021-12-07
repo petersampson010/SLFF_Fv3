@@ -17,7 +17,9 @@ export const modalContainer = {
 
 export const modalJSX = {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    marginBottom: vh(2),
+    width: '100%'
 }
 
 export const buttons = {

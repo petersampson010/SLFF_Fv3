@@ -8,6 +8,7 @@ import {vw, vh} from 'react-native-expo-viewport-units';
 import { availability, fullName, positionString } from '../functions/reusable';
 import { patchPlayer } from '../functions/APIcalls';
 import { showMessage } from 'react-native-flash-message';
+import Button from '../components/Button/button';
 
 class AdminPlayerEditScreen extends Component {
     state = { 
@@ -92,47 +93,38 @@ class AdminPlayerEditScreen extends Component {
                 <PlayersList
                 allSelectedPlayerIds={[]}
                 clickFcn={this.editPlayer}
-                />
-                <MyModal 
-                visible={this.state.modal.active}
-                closeModalFcn={()=>this.setState({...this.state, modal: {active: false, player: {
-                    "player_id": 1,
-                    "first_name": "G",
-                    "last_name": "H",
-                    "position": "1",
-                    "price": 1,
-                    "availability": "a",
-                    "admin_user_id": 1,
-                    "created_at": "2020-11-23T13:03:11.328Z",
-                    "updated_at": "2020-11-23T13:03:11.328Z"
-                    }}})}
-                jsx={<Text>Hi im here</Text>
-                // <View>
-                //     <Input value={this.state.modal.player.first_name}
-                //     onChangeText={value=>this.formChange('first_name', value)}
-                //     label="First Name"
-                //     autoCapitalize="words"
-                //     />
-                //     <Input value={this.state.modal.player.last_name}
-                //     onChangeText={value=>this.formChange('last_name', value)}
-                //     label="Last Name"
-                //     autoCapitalize="words"
-                //     />
-                //     <Input value={this.state.modal.player.price.toString()}
-                //     onChangeText={value=>this.updatePrice(value)}
-                //     label="Price"
-                //     />
-                //     <Picker 
-                //     selectedValue={this.state.modal.player.position} 
-                //     onValueChange={value=>this.formChange('position', value)}>
-                //         <Picker.Item label="GK" value='1'/>
-                //         <Picker.Item label="DEF" value='2'/>
-                //         <Picker.Item label="MID" value='3'/>
-                //         <Picker.Item label="FWD" value='4'/>
-                //     </Picker>
-                //     <Switch value={availability(this.state.modal.player.availability)} 
-                //     onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
-                //     </View>
+                jsx={
+                <View>
+                    <Input value={this.state.modal.player.first_name}
+                    onChangeText={value=>this.formChange('first_name', value)}
+                    label="First Name"
+                    autoCapitalize="words"
+                    />
+                    <Input value={this.state.modal.player.last_name}
+                    onChangeText={value=>this.formChange('last_name', value)}
+                    label="Last Name"
+                    autoCapitalize="words"
+                    />
+                    <Input value={this.state.modal.player.price.toString()}
+                    onChangeText={value=>this.updatePrice(value)}
+                    label="Price"
+                    />
+                    <Picker 
+                    selectedValue={this.state.modal.player.position} 
+                    onValueChange={value=>this.formChange('position', value)}>
+                        <Picker.Item label="GK" value='1'/>
+                        <Picker.Item label="DEF" value='2'/>
+                        <Picker.Item label="MID" value='3'/>
+                        <Picker.Item label="FWD" value='4'/>
+                    </Picker>
+                    <Switch value={availability(this.state.modal.player.availability)} 
+                    onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
+                    </View>
+                    }
+                    bottomButton={
+                        <View>
+                            <Button width={vw(35)} clickable text="Update Player" func={(player)=>this.updatePlayer(player)}/>
+                        </View>
                     }
                 buttonOptions={[{text: 'Update Player', fcn: this.updatePlayer}, 
             {text: 'Remove Player', fcn: this.removePlayer}]}

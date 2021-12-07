@@ -13,6 +13,8 @@ import { playersListModal } from '../Modal/PlayersListModal';
 import Button from '../Button/button';
 import { setModal } from '../../actions';
 import { subImage } from '../Modal/style';
+import { set1 } from '../Modal/modalSetting';
+import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 
 
@@ -60,20 +62,21 @@ class PlayersList extends Component {
         }
     }
 
-    playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
+    playerSelected = player => {
+        return playerIds(this.props.teamPlayers).includes(player.player_id);
+    }
 
     tableRow = (player, key) => {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
         return <TouchableOpacity key={key}
-        style={tableRow}
-        onPress={()=>this.props.setModal(player, <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>, vw(80), vh(50), <Button width={vw(35)} clickable comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={() => this.props.clickFcn(player)}/>)}>
+        style={{...tableRow, opacity: this.playerSelected(player) ? 0.2 : 1}}
+        onPress={()=>this.props.clickFcn(player)}>
             <Text style={{...tableElement3, ...standardText}}>{fullName(player)}</Text>
             <Text style={{...tableElement3, ...standardText}}>{positionString(player.position)}</Text>
             <Text style={{...tableElement3, ...standardText}}>£{player.price}m</Text>
         </TouchableOpacity>;
     }
-
     render() { 
         const subImg = require('../../../images/subIcon.png');
         const { clickFcn } = this.props.clickFcn
@@ -91,17 +94,7 @@ class PlayersList extends Component {
                         <Picker.Item color="white" label="FWD" value='4'/>
                     </Picker>
                 </View>
-                {/* <MyModal
-                        visible={this.state.modal.active}
-                        height={vh(33)}
-                        width={vw(80)}
-                        closeModalFcn={()=>this.setState({...this.state, modal: {...this.state.modal, active: false}})}
-                        playerProfile
-                        player={this.state.modal.player}
-                        jsx={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>}
-                        bottomButton={<Button func={()=>clickFcn(this.state.modal.player)} text={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>}/>}
-                        /> */}
-                <View >
+                <View>
                     <View>
                         <View style={tableRow}>
                             <Text style={{...tableElement3, ...labelText}}>Name</Text>
@@ -125,7 +118,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setModal: (player, jsx, width, height, bottomBtn, closeFcn) => dispatch(setModal(player, jsx, width, height, bottomBtn, closeFcn))
+        setModal: (modalObj) => dispatch(setModal(modalObj))
     }
 }
 

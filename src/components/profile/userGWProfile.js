@@ -20,7 +20,7 @@ class UserGWProfile extends Component {
         return ( 
             <TouchableOpacity style={profileContainer}
             onPress={() => this.props.openModal('topUser')}>
-                <Text style={title}>Club</Text>
+                {/* <Text style={title}>Club</Text>
                 <Text style={standardText}>{user.user.team_name ? user.user.team_name : ''}</Text>
                 <View style={centerHorizontally}>
                     <Image
@@ -35,7 +35,7 @@ class UserGWProfile extends Component {
                         closeModalFcn={()=>this.props.closeModal('topUser')}
                         modalType="userProfile"
                         entry={user}
-                        />
+                        /> */}
             </TouchableOpacity>
          );
     }

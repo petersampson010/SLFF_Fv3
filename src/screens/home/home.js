@@ -105,11 +105,13 @@ class HomeScreen extends Component {
                         <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
                         : null}
                     </View>
+                    {lastGW ? 
                     <ScrollView style={''}>
                         <View style={{paddingBottom: vh(20)}}>
                             {this.renderRows()}
                         </View>
                     </ScrollView>
+                    : null}
                     <BottomNav navigation={this.props.navigation}/>
 
                 </View>

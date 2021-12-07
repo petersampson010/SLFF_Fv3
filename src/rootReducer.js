@@ -68,8 +68,7 @@ const initialState = {
         jsx: null, 
         width: null,
         height: null, 
-        bottomBtn: null,
-        closeFcn: null
+        btn: null
     }
 }
 
@@ -77,6 +76,7 @@ const rootReducer = (state = initialState, action) => {
     console.log('changing redux state with action: ' + action.type);
     switch (action.type) {
         case 'LOGINUSER':
+            console.log(action.currentStarters);
             return {
                 ...state,
                 boolDeciders: {
@@ -154,7 +154,9 @@ const rootReducer = (state = initialState, action) => {
                     currentTeam: {
                         ...state.user.currentTeam,
                         starters: action.starters,
-                        subs: action.subs
+                        subs: action.subs,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     },
                     PGJs: {
                         last: action.lastPGJs,
@@ -174,7 +176,9 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.starters,
                         subs: action.subs,
-                        budget: action.user.budget
+                        budget: action.user.budget,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     }
                 }
             };
@@ -336,6 +340,10 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         captain: action.player
                     }
+                },
+                modal: {
+                    ...state.modal, 
+                    jsx: action.jsx
                 }
             }
         case "SETVCAPTAIN":
@@ -347,6 +355,10 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         vCaptain: action.player
                     }
+                },
+                modal: {
+                    ...state.modal, 
+                    jsx: action.jsx
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
@@ -449,20 +461,14 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETMODAL":
+            console.log('setting modal');
             return {
                 ...state,
                 boolDeciders: {
                     ...state.boolDeciders,
                     modal: true
                 },
-                modal: {
-                    player: action.player,
-                    jsx: action.jsx,
-                    width: action.width, 
-                    height: action.height,
-                    bottomBtn: action.bottomBtn,
-                    closeFcn: action.closeFcn
-                }
+                modal: action.modalObj
             }
         case "CLOSEMODAL": 
             return {
@@ -476,8 +482,7 @@ const rootReducer = (state = initialState, action) => {
                     jsx: null, 
                     width: null,
                     height: null, 
-                    bottomBtn: null,
-                    closeFcn: null
+                    btn: null
                 }
             }
         default:

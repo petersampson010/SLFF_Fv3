@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, StyleSheet, Button, Picker, Modal, TouchableHighlight } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { getCaptain, getVCaptain, positionString, fullName, playersObjToArray, getRecordId, playersArrayToObj } from '../../functions/reusable';
 import { connect } from 'react-redux';
-import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
+import { addSpinner, closeModal, removeSpinner, setCaptain, setLatestToTransferring, setModal, setTransferringBackToLatest, setVCaptain, subIn, subOut } from '../../actions';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
@@ -12,6 +12,8 @@ import Pitch from '../../components/Pitch/pitch';
 import BottomNav from '../../components/bottomNav/bottomNav';
 import { screenContainer } from '../../styles/global';
 import PitchHead from '../../components/PitchHead/pitchHead';
+import Button from '../../components/Button/button';
+import { set2 } from '../../components/Modal/modalSetting';
 
 
 
@@ -19,11 +21,20 @@ class PickTeamScreen extends Component {
 
 
     transfer = player => {
-        const { subs, subIn, subOut } = this.props;
+        const { subs, subIn, subOut, closeModal, captain, vCaptain } = this.props;
         if (subs.includes(player)) {
-            subIn(player)
+            subIn(player);
+            closeModal();
         } else {
-            subOut(player);
+            if (player.player_id===captain.player_id || player.player_id===vCaptain.player_id) {
+                showMessage({
+                    type: 'warning',
+                    message: `Cannot sub out a captain`
+                })
+            } else {
+                subOut(player);
+                closeModal();
+            }
         }
     }
 
@@ -36,9 +47,7 @@ class PickTeamScreen extends Component {
     updateTeam = async() => {
         const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest } = this.props;
         let startToSub = _.difference(originalStarters, starters);
-        console.log(startToSub);
         let subToStart = _.difference(originalSubs, subs);
-        console.log(subToStart);
         try {
             addSpinner();
             for (let i=0;i<startToSub.length;i++) {
@@ -46,12 +55,10 @@ class PickTeamScreen extends Component {
                 await patchRecordSUBS(false, subToStart[i].player_id);
             }
             if (originalCaptain!==captain) {
-                console.log('changing captain');
                 await patchRecordCAPTAINS(true, false, getRecordId(captain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalCaptain, records));
             } 
             if (originalVCaptain!==vCaptain) {
-                console.log('changing vice captain');
                 await patchRecordCAPTAINS(false, true, getRecordId(vCaptain, records));
                 await patchRecordCAPTAINS(false, false, getRecordId(originalVCaptain, records));
             }
@@ -81,17 +88,51 @@ class PickTeamScreen extends Component {
         false : true;
     }
 
-        
+    setCaptain = player => {
+        const { vCaptain, setCaptain } = this.props;
+        if (vCaptain===player) {
+            showMessage({
+                message: "Player is already a captain",
+                type: 'warning'
+            })
+        } else {
+            setCaptain(player, <View>
+                <Button text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
+                <Button clickable={player.player_id!==vCaptain.player_id} text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
+            </View>);
+        }
+    }
+
+    setVCaptain = player => {
+        const { captain, setVCaptain } = this.props;
+        if (captain===player) {
+            showMessage({
+                message: "Player is already a captain",
+                type: 'warning'
+            })
+        } else {
+            setVCaptain(player, <View>
+                <Button clickable={player.player_id!==captain.player_id} text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
+                <Button text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
+            </View>);
+            // this.props.setModal(set2(player, this.transfer, captain, player, this.setCaptain, this.setVCaptain))
+        }
+    }
+
+    setModal = (player, sub) => {
+        const { captain, vCaptain, setModal } = this.props;
+        setModal(set2(player, sub, this.transfer, captain, vCaptain, this.setCaptain, this.setVCaptain))
+    }
+
     render() { 
+        console.log(this.props.starters);
         return (
             <View style={screenContainer}>
                 <PitchHead type='pickTeam' update={this.validateTeam}/>
                 <ScrollView>
                     <Pitch
                     type="pickTeam"
-                    modalType="pickTeam"
-                    update={this.validateTeam}
-                    clickFcn={this.transfer}
+                    playerGraphicClickFcn={this.setModal}
                     team={this.props.starters}
                     subs={this.props.subs}
                     />
@@ -112,7 +153,7 @@ const mapStateToProps = state => {
         captain: state.stateChanges.updatedNotPersistedTeam.captain,
         vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
         originalCaptain: state.user.currentTeam.captain,
-        originalVCaptain: state.user.currentTeam.vCaptain,
+        originalVCaptain: state.user.currentTeam.vCaptain
     }
 }
 
@@ -123,7 +164,12 @@ const mapDispatchToProps = dispatch => {
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
         setLatestToTransferring: () => dispatch(setLatestToTransferring()),
         addSpinner: () => dispatch(addSpinner()),
-        removeSpinner: () => dispatch(removeSpinner())
+        removeSpinner: () => dispatch(removeSpinner()),
+        setModal: (modalObj) => dispatch(setModal(modalObj)),
+        closeModal: () => dispatch(closeModal()),
+        setCaptain: (player, jsx) => dispatch(setCaptain(player, jsx)),
+        setVCaptain: (player, jsx) => dispatch(setVCaptain(player, jsx))
+
     }
 }
  

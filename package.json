@@ -23,6 +23,7 @@
     "react-native-expo-viewport-units": "0.0.8",
     "react-native-flash-message": "^0.2.0",
     "react-native-gesture-handler": "^1.10.3",
+    "react-native-modal-datetime-picker": "^13.0.0",
     "react-native-safe-area-context": "^3.3.2",
     "react-native-screens": "^3.9.0",
     "react-native-svg": "^12.1.1",

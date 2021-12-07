@@ -91,6 +91,7 @@ class LoginScreen extends Component {
         let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
         let adminUser = await getAdminUserById(admin_user_id);
         let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
+        console.log(currentStarters);
         let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
         let records = await getAllRecordsByUserId(user_id);
         let league = await getLeague(admin_user_id);
@@ -119,6 +120,7 @@ class LoginScreen extends Component {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
           }
         } else {
+          console.log('hit here');
           await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
         }
         updateStack(this.props.navigation, 0, 'Home');

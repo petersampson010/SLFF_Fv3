@@ -39,12 +39,12 @@ class PlayerGraphic extends Component {
 
     horizontalMargin = () => {
         switch(this.props.player.position) {
-            case '2':
-                return 7;
-            case '3':
-                return 1;
-            case '4':
-                return 0;
+            // case '2':
+            //     return 7;
+            // case '3':
+            //     return 1;
+            // case '4':
+            //     return 0;
             default: 
             return 0;
         }
@@ -96,27 +96,20 @@ class PlayerGraphic extends Component {
     render() {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        const { player, openModal, type, clickFcn } = this.props;
-        // console.log(this.props.pointsCaptain);
-        // console.log('inbetween');
-        // console.log(this.props.pointsVCaptain);
+        const { player, type, playerGraphicClickFcn, sub } = this.props;
+        console.log('rendering a player graphic');
       return ( 
-            <View style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
-                <View style={ type!=="points" ? {...subContainer, paddingLeft: vw(5)} : subContainer}>
-                    <TouchableOpacity onPress={()=>openModal(player)}>
-                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
-                    </TouchableOpacity>
-                    {type!=='transfers' ?
+            <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
+                <View style={ subContainer }>
                     <View>
-                    <Text style={capText}>{this.isCaptain()}</Text>
+                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
-                    : null}
                 </View>
-                <TouchableOpacity onPress={()=>openModal(player)}>
-                    <Text style={playerNamePoints}>{player.last_name}</Text>
-                </TouchableOpacity>
+                <View>
+                    <Text style={playerNamePoints}>{player.last_name} {type!=='transfers' ? <Text style={capText}>{this.isCaptain()}</Text> : null}</Text>
+                </View>
                     {this.renderPoints()}
-            </View>
+            </TouchableOpacity>
       );
     }
 }
@@ -133,5 +126,10 @@ const mapStateToProps = state => {
         otherTeamFocus: state.boolDeciders.otherTeamFocus
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+    }
+}
  
-export default connect(mapStateToProps)(PlayerGraphic);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerGraphic);

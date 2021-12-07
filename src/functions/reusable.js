@@ -1,7 +1,6 @@
 import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGameweeksFromAdminUserId } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
-import { createIconSetFromFontello } from "react-native-vector-icons";
 
 export const positionString = (num) => {
     switch(num) {

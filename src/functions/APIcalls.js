@@ -164,10 +164,6 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
 export const patchRecordSUBS = (sub, playerId) => axiosPatch(`records?player_id=${playerId}&gameweek_id=0`, {sub});
 
 export const patchRecordCAPTAINS = (captain, vice_captain, record_id) => {
-    console.log('patching record captain');
-    console.log(record_id);
-    console.log(captain);
-    console.log(vice_captain);
     return axiosPatch(`records/${record_id}`, {
     captain,
     vice_captain

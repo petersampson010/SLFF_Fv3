@@ -15,18 +15,18 @@ import PickTeamModal from './PickTeamModal';
 import { buttons, closeButton, modal, modalContainer, modalJSX, modalSplitContainer, modalTextContainer } from './style';
 
 
-class MyModal extends Component {
+class StateModal extends Component {
 
 
     render() { 
-        const { modalActive, modal, closeModal } = this.props;
-        const { player, jsx, width, height, btn } = modal;
+        const { jsx, modalActive, btn, width, height } = this.props;
+        // const { player, jsx, width, height, btn } = modal;
         return ( 
             <Modal visible={modalActive} 
             transparent={true}>
                 <View style={{...modalContainer, height:height, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
-                        {player ? playerProfile(player) : null}
+                        {/* {player ? playerProfile(player) : null} */}
                         {jsx}
                     </View>
                     <View style={modalJSX}>
@@ -41,11 +41,11 @@ class MyModal extends Component {
  
 const mapStateToProps = state => {
     return {
-        records: state.user.records,
-        captain: state.user.currentTeam.captain,
-        vCaptain: state.user.currentTeam.vCaptain,
-        modal: state.modal,
-        modalActive: state.boolDeciders.modal
+        // records: state.user.records,
+        // captain: state.user.currentTeam.captain,
+        // vCaptain: state.user.currentTeam.vCaptain,
+        // modal: state.modal,
+        // modalActive: state.boolDeciders.modal
     }
 }
 
@@ -55,12 +55,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyModal);
-
-
-
-// props we need: 
-// visible
-// closeModalFcn
-// jsx: *OPTIONAL*
-// array of button options at bottom, each element needs text and an onPress fcn
+export default connect(mapStateToProps, mapDispatchToProps)(StateModal);

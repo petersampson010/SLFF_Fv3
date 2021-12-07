@@ -19,6 +19,16 @@ class PointsScreen extends Component {
 
     }
 
+    openModal = player => {
+        // const { captain, vCaptain };
+        this.props.setModal(player, 
+        <View>
+            <Text>GW Points</Text>
+        </View>,
+        vw(70), vh(50), null
+        )
+    }
+
     render() {
         const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeamFocus, otherAllPGJs, allPGJs } = this.props;
         const selectStarters = otherTeamFocus ? otherStarters : starters;
@@ -32,9 +42,7 @@ class PointsScreen extends Component {
                     {this.props.lastGW ? 
                     <Pitch
                     type="points"
-                    modalType="playerProfile"
-                    update={()=>console.log('do nothing')}
-                    clickFcn={()=>console.log('do nothing')}
+                    playerGraphicClickFcn={()=>this.openModal(player)}
                     captain={getCaptain(selectStarters, selectRecords)}
                     vCaptain={getVCaptain(selectStarters, selectRecords)}
                     team={selectStarters}

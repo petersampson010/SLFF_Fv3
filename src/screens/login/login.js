@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Switch, TouchableHighlightBase, TextInput } from 'react-native';
+import { View, Text, Switch, TouchableHighlightBase, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
@@ -11,6 +11,8 @@ import { loginHead, switchText, textLabel } from './style';
 import { input, inputFieldLarge, inputFieldContainerCenter } from '../../styles/input';
 import { updateStack } from '../../Navigation';
 import { getLastAndAllGWs } from '../../functions/reusable';
+import Button from '../../components/Button/button';
+import { vw } from 'react-native-expo-viewport-units';
 
 
 class LoginScreen extends Component {
@@ -91,7 +93,6 @@ class LoginScreen extends Component {
         let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
         let adminUser = await getAdminUserById(admin_user_id);
         let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
-        console.log(currentStarters);
         let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
         let records = await getAllRecordsByUserId(user_id);
         let league = await getLeague(admin_user_id);
@@ -120,7 +121,6 @@ class LoginScreen extends Component {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
           }
         } else {
-          console.log('hit here');
           await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
         }
         updateStack(this.props.navigation, 0, 'Home');
@@ -147,8 +147,6 @@ class LoginScreen extends Component {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
         let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
-        console.log(lastGW);
-        console.log(GWs);
         this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
@@ -194,8 +192,7 @@ class LoginScreen extends Component {
                 secureTextEntry
                 />
               </View>
-              
-              <Button clickable title="Sign in" onPress={this.handleSubmit}/>
+              <Button clickable width={vw(35)} text="Sign in" func={this.handleSubmit}/>
             </View>
           </View>
         );

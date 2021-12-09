@@ -22,7 +22,6 @@ import { subImage } from '../../components/Modal/style';
 import { playerImage, playerImageLarge } from '../../components/PlayerGraphic/style';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
-import { set1 } from '../../components/Modal/modalSetting';
 
 
 class TransfersScreen extends Component {
@@ -122,16 +121,8 @@ class TransfersScreen extends Component {
         }
     }
 
-    // openModal = player => {
-    //     const playerImg = require('../../../images/profile.jpg');
-    //     const subImg = require('../../../images/subIcon.png');
-    //     this.props.setModal({player, jsx: <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>,
-    //         width: vw(80), height: vh(50), btn: <Button clickable comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>this.transfer(player)} width={vw(35)}/>
-    //         })
-    // }
-
     setModal = player => {
-        this.props.setModal(set1(player, this.transfer));
+        this.props.setModal({modalSet: set1, player, btnClick: this.transfer, width: vw(80), height: vh(50)});
     }
 
     render() { 

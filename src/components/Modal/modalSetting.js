@@ -12,42 +12,6 @@ import Checkbox from '../Checkbox/checkbox';
 const playerImg = require('../../../images/profile.jpg');
 const subImg = require('../../../images/subIcon.png');
 
-export const set1 = (player, btnClick) => {
-    return {
-        player, 
-        jsx: <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>, 
-        width: vw(80), 
-        height: vh(50), 
-        btn: <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
-    }
-}
-
-export const set2 = (player, sub, btnClick, captain, vCaptain, setCaptain, setVCaptain) => {
-    return {
-        player, 
-        jsx: <View style={{flexDirection: 'row', width: vw(76), justifyContent: 'center'}}>
-                <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
-            {!sub ? <View style={captainCheckboxContainer}>
-                <Checkbox clickable active={player.player_id===captain.player_id} text="C" func={()=>setCaptain(player)}/>
-                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="VC" func={()=>setCaptain(player)}/>
-            </View> : null} 
-            </View>,
-        width: vw(80), 
-        height: vh(50), 
-        btn: <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
-    }
-}
-
-export const set3 = (player) => {
-    return {
-        player, 
-        jsx: <Text>GW Points</Text>, 
-        width: vw(80), 
-        height: vh(50), 
-        btn: null
-    }
-}
-
 export const submitOrEditGame = (openEditGameModal, openSubmitGameStats, game) => {
     return {
         player: false, 

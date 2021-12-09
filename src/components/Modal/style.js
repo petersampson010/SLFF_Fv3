@@ -4,7 +4,7 @@ import {vw, vh} from 'react-native-expo-viewport-units';
 
 export const modalContainer = {
     position: "absolute",
-    top: vh(20),
+    top: vh(15),
     backgroundColor: '#C5C5C5',
     // borderWidth: 1,
     borderRadius: 12,

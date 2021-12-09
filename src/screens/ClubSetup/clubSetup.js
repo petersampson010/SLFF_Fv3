@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, SectionList, ScrollView, Picker } from 'react-native';
+import { View, Text, Button, StyleSheet, SectionList, ScrollView } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { Table, Row, Rows } from 'react-native-table-component';
 import { postPlayer } from '../../functions/APIcalls';
@@ -18,6 +18,7 @@ import { TouchableHighlightBase } from 'react-native';
 import { TouchableNativeFeedbackBase } from 'react-native';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import { showMessage } from 'react-native-flash-message';
+import { Picker } from '@react-native-picker/picker';
 
 
 class ClubSetupScreen extends Component {

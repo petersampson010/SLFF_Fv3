@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $arylideYellow, $chocolateBlack, $platinum, $zaGreen } from "../../styles/global";
+import { $arylideYellow, $chocolateBlack, $darkBlue, $platinum, $zaGreen } from "../../styles/global";
 
 export const buttonText = {
     fontSize: 15,
@@ -16,6 +16,14 @@ export const buttonContainer = {
     margin: vw(0.5),
     flexDirection: 'row',
     justifyContent: 'center'
+}
+
+export const absoluteButton = {
+    zIndex: 99999,
+    position: 'absolute',
+    bottom: vh(30),
+    right: vh(3),
+    backgroundColor: $darkBlue
 }
 
 export const buttonSplit = {

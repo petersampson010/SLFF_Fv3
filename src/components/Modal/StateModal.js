@@ -11,7 +11,6 @@ import { checkBox, labelText, standardText } from '../../styles/textStyle';
 import Button from '../Button/button';
 import { playerImage, playerImageLarge, subImage } from '../PlayerGraphic/style';
 import { playerProfile } from '../profile/playerProile';
-import PickTeamModal from './PickTeamModal';
 import { buttons, closeButton, modal, modalContainer, modalJSX, modalSplitContainer, modalTextContainer } from './style';
 
 

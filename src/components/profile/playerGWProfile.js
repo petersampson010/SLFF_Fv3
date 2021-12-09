@@ -29,7 +29,7 @@ class PlayerGWProfile extends Component {
         return ( 
             <TouchableOpacity style={profileContainer}
             onPress={() => this.props.openModal('topPlayer')}>
-                {/* <Text style={title}>Player</Text>
+                <Text style={title}>Player</Text>
                 <Text style={standardText}>{player.player.first_name} {player.player.last_name}</Text>
                 <View style={centerHorizontally}>
                     <Image
@@ -38,14 +38,14 @@ class PlayerGWProfile extends Component {
                 </View>
                 <Text style={standardText}>Total Points: {player.pg.total_points}</Text>
                 {this.renderPointsBreakdown()}
-                <MyModal 
+                {/* <MyModal 
                         visible={this.props.topPlayerModal}
                         height={vh(33)}
                         width={vw(80)}
                         closeModalFcn={()=>this.setState(this.props.closeModal('topPlayer'))}
                         modalType="playerProfile"
                         entry={player}
-                        /> */}
+                        />  */}
             </TouchableOpacity>
          );
     }

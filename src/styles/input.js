@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units"
-import { $arylideYellow, $inputBlue, $luminousGreen, $skobeloff } from "./global"
+import { $arylideYellow, $electricBlueHighlight, $inputBlue, $luminousGreen, $skobeloff } from "./global"
 import { headers, labelText, standardText } from "./textStyle"
 
 export const inputFieldVeryLarge = {
@@ -44,11 +44,23 @@ export const inputFieldContainerCenter = {
 export const inputFieldContainerInLine = {
     flexDirection: 'row',
     width: vw(100),
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
+    marginVertical: vh(2),
+    padding: vh(1),
+    backgroundColor: 'rgba(249,249,249,0.1)'
 }
 
 export const input = {
     ...standardText,
     height: vh(6),
     marginLeft: vw(3)
+}
+
+export const scoreInput = {
+    ...standardText,
+    height: vh(3),
+    width: vw(10),
+    textAlign: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: $electricBlueHighlight
 }

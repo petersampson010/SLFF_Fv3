@@ -44,10 +44,18 @@ class AdminHomeScreen extends Component {
             <Text style={labelText}>{game.opponent}</Text>
             <Text style={sidenote}>{displayDate(game.date)}</Text>
         </View>
+        {game.complete ? 
         <View style={gameScore}>
             <Text style={standardText}>{game.score}</Text>
         </View>
+            : <Button width={vw(35)} clickable text="Submit Stats" func={()=>this.openSubmitGameStats(game)}/>}
     </TouchableOpacity>
+
+    openSubmitGameStats = (game) => {
+        this.props.setClubFocusGW(game);
+        this.props.closeModal();
+        this.props.navigation.navigate('GameEditor');
+    }
 
     renderGames = () => {
         let completedGamesSorted = this.props.games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
@@ -70,8 +78,6 @@ class AdminHomeScreen extends Component {
 
 
     formChange = (id, value) => {
-        console.log(id);
-        console.log(value);
         this.setState({...this.state, 
         game: {...this.state.game,
             [id]: value
@@ -136,10 +142,11 @@ class AdminHomeScreen extends Component {
     }
 
     setModal = (game) => {
-        this.props.setModal(submitOrEditGame(this.openEditGameModal, this.openSubmitGameStats, game))
+        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(50), btnClick: () => this.openEditGameModal(game)});
     }
 
-    openSubmitGameStats = () => {
+    openSubmitGameStats = (game) => {
+        this.props.setClubFocusGW(game);
         this.props.closeModal();
         this.props.navigation.navigate('GameEditor');
     }
@@ -147,7 +154,6 @@ class AdminHomeScreen extends Component {
     openEditGameModal = (game) => {
         this.props.closeModal();
         this.setState({...this.state, modal: {active: true, update: true}, game});
-        this.props.setClubFocusGW(game);
     }
 
     render() {

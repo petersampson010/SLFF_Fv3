@@ -12,9 +12,6 @@ import Pitch from '../../components/Pitch/pitch';
 import BottomNav from '../../components/bottomNav/bottomNav';
 import { screenContainer } from '../../styles/global';
 import PitchHead from '../../components/PitchHead/pitchHead';
-import Button from '../../components/Button/button';
-import { set2 } from '../../components/Modal/modalSetting';
-import StateModal from '../../components/Modal/StateModal';
 
 
 
@@ -97,44 +94,39 @@ class PickTeamScreen extends Component {
         false : true;
     }
 
-    setCaptain = player => {
-        const { vCaptain, setCaptain } = this.props;
-        if (vCaptain===player) {
-            showMessage({
-                message: "Player is already a captain",
-                type: 'warning'
-            })
-        } else {
-            setCaptain(player, <View>
-                <Button text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
-                <Button clickable={player.player_id!==vCaptain.player_id} text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
-            </View>);
-        }
-    }
+    // setCaptain = player => {
+    //     const { vCaptain, setCaptain } = this.props;
+    //     if (vCaptain===player) {
+    //         showMessage({
+    //             message: "Player is already a captain",
+    //             type: 'warning'
+    //         })
+    //     } else {
+    //         setCaptain(player, <View>
+    //             <Button text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
+    //             <Button clickable={player.player_id!==vCaptain.player_id} text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
+    //         </View>);
+    //     }
+    // }
 
-    setVCaptain = player => {
-        const { captain, setVCaptain } = this.props;
-        if (captain===player) {
-            showMessage({
-                message: "Player is already a captain",
-                type: 'warning'
-            })
-        } else {
-            setVCaptain(player, <View>
-                <Button clickable={player.player_id!==captain.player_id} text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
-                <Button text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
-            </View>);
-            this.props.setModal(set2(player, this.transfer, captain, player, this.setCaptain, this.setVCaptain))
-        }
-    }
+    // setVCaptain = player => {
+    //     const { captain, setVCaptain } = this.props;
+    //     if (captain===player) {
+    //         showMessage({
+    //             message: "Player is already a captain",
+    //             type: 'warning'
+    //         })
+    //     } else {
+    //         setVCaptain(player);
+    //     }
+    // }
 
     setModal = (player, sub) => {
-        const { captain, vCaptain, setModal } = this.props;
-        setModal(set2(player, sub, this.transfer, captain, vCaptain, this.setCaptain, this.setVCaptain))
+        const { setModal } = this.props;
+        setModal({modalSet: 'set2', player: {...player, sub}, width: vw(80), height: vh(60), btnClick: this.transfer})
     }
 
     render() { 
-        console.log(this.props.starters);
         return (
             <View style={screenContainer}>
                 <PitchHead type='pickTeam' update={this.validateTeam}/>
@@ -181,9 +173,6 @@ const mapDispatchToProps = dispatch => {
         removeSpinner: () => dispatch(removeSpinner()),
         setModal: (modalObj) => dispatch(setModal(modalObj)),
         closeModal: () => dispatch(closeModal()),
-        setCaptain: (player, jsx) => dispatch(setCaptain(player, jsx)),
-        setVCaptain: (player, jsx) => dispatch(setVCaptain(player, jsx))
-
     }
 }
  

@@ -18,12 +18,11 @@ import MyModal from './src/components/Modal/MyModal';
 const store = createStore(rootReducer);
 
 const App = () => {
-
   return (
     <Provider store={store}>
         <Navigation/>
         <FlashMessage position="top" />
-        <MyModal/>
+        <MyModal />
     </Provider>
   );
 };

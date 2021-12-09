@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Button, ScrollView } from 'react-native';
+import { View, Text, TextInput, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
-import { completeGameState } from '../../actions';
+import { closeModal, completeGameState, setModal } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
 import { tableElement1, tableElement9, tableRow } from '../../styles/table';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { standardText } from '../../styles/textStyle';
-import { inputFieldSmall, input, inputFieldContainerInLine } from '../../styles/input';
+import { inputFieldSmall, input, inputFieldContainerInLine, scoreInput } from '../../styles/input';
 import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import MyModal from '../../components/Modal/MyModal';
+import Button from '../../components/Button/button';
 
 class GameEditorScreen extends Component {
     state = { 
@@ -58,7 +59,7 @@ class GameEditorScreen extends Component {
 
     renderRows = () => {
         return Object.keys(this.state.players).map((x,i) => {
-            return <View key={i} style={{...tableRow, backgroundColor: this.state.players[x].valid ? $inputBlue : 'red'}}>{this.renderRow(x)}</View>})
+            return <View key={i} style={{...tableRow, backgroundColor: this.state.players[x].valid ? 'rgba(249,249,249,0.1)' : 'red'}}>{this.renderRow(x)}</View>})
     }
 
     renderRow = (playerID) => [<View style={tableElement1}><Text style={standardText}>{this.state.players[playerID].name}</Text></View>,
@@ -164,6 +165,7 @@ class GameEditorScreen extends Component {
             let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
             completeGameState(returnObj.GWs, returnObj.lastGW);
             this.setState({...this.state, spinner: false});
+            this.props.closeModal();
             showMessage({
                 message: "Success",
                 type: "success"
@@ -202,31 +204,35 @@ class GameEditorScreen extends Component {
             await patchRecordGAMEWEEK(records[i].record_id, this.props.clubFocusGW.gameweek_id);
         }
     }
+
+    setModal = () => {
+        this.props.setModal({modalSet: 'set5', player: null, btnClick: this.startSpin, width: vw(80), height: vh(30)})
+    }
     
     render() { 
+        console.log(this.props.clubFocusGW);
         return (
             <View style={{backgroundColor: $darkBlue}}>
                 {this.state.spinner ? <SpinnerOverlay/> : null}
-                <Button clickable title="Confirm" onPress={()=>this.setState({...this.state, dialog: {active: true}})}/>
+                <Button clickable absolute text="Confirm" width={vw(35)} func={this.setModal}/>
                 <View style={inputFieldContainerInLine}>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
-                    <View style={inputFieldSmall}>
+                    <Text style={{...standardText, width: vw(30), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
+                    <View>
                         <TextInput
-                        style={input}
+                        style={scoreInput}
                         value={this.state.score.team}
                         onChange={el=>this.setState({...this.state, score: {...this.state.score, team: el.nativeEvent.text}})}
-                        placeholder='your team'
                         />
                     </View>
-                    <View style={inputFieldSmall}>
+                    <Text style={standardText}>-</Text>
+                    <View>
                         <TextInput
-                        style={input}
+                        style={scoreInput}
                         value={this.state.score.oppo}
                         onChange={el=>this.setState({...this.state, score: {...this.state.score, oppo: el.nativeEvent.text}})}
-                        placeholder='their team'
                         />
                     </View>
-                    <Text style={{...standardText, width: vw(20), textAlign: 'left'}}>{this.props.clubFocusGW.opponent}</Text>
+                    <Text style={{...standardText, width: vw(30), textAlign: 'left'}}>{this.props.clubFocusGW.opponent}</Text>
                 </View>
                 <View style={{...tableRow, backgroundColor: $darkBlue}}>
                     <View style={tableElement1}><Text style={standardText}>Player</Text></View>
@@ -241,18 +247,10 @@ class GameEditorScreen extends Component {
                     <Text style={tableElement9}>GC</Text>
                 </View>
                 <ScrollView style={screenContainer}>
-                    <View style={{paddingBottom: vh(30)}}>
+                    <View style={{paddingBottom: vh(38)}}>
                         {this.renderRows()}
                     </View>
                 </ScrollView>
-                <MyModal
-                    visible={this.state.dialog.active}
-                    height={vh(30)}
-                    width={vw(70)}
-                    closeModalFcn={()=>this.setState({...this.state, dialog:{active: false}})}
-                    jsx={<Text style={standardText}>Pleas ensure statss are correct, once confirmeed they cannot be corrected.</Text>}
-                    buttonOptions={[{text: 'Submit Stats', fcn: this.startSpin}]}
-                />
             </View> 
         );
     }
@@ -271,7 +269,9 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        completeGameState: (newAllGames, newLastGW) => dispatch(completeGameState(newAllGames, newLastGW))
+        completeGameState: (newAllGames, newLastGW) => dispatch(completeGameState(newAllGames, newLastGW)),
+        setModal: modalObj => dispatch(setModal(modalObj)),
+        closeModal: () => dispatch(closeModal())
     }
 }
  

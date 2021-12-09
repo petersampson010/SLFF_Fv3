@@ -11,13 +11,10 @@ import { screenContainer } from '../../styles/global';
 import { pitchContainer } from '../PitchScreens/style';
 import { nts2Login, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut, closeModal, setModal } from '../../actions';
 import { addSubAttributeToPlayersArray, playerIds, fullName, getRecordId, playersArrayToObj, playersObjToArray, positionString } from '../../functions/reusable';
-import { popToStack, resetStackAndGoHome, updateStack } from '../../Navigation';
-import { StackActions, NavigationAction } from '@react-navigation/routers';
-import { CommonActions } from '@react-navigation/native';
 import PitchHead from '../../components/PitchHead/pitchHead';
 import { validateTransfers } from '../../functions/validity';
 import globalConfig from '../../config/globalConfig.json';
-import { set1 } from '../../components/Modal/modalSetting';
+import { vh, vw } from 'react-native-expo-viewport-units';
 
 class ntsScreen2 extends Component {
     state = {}
@@ -115,7 +112,6 @@ class ntsScreen2 extends Component {
         try {
             addSpinner();
             if (validateTransfers(budget, teamPlayersObj)) {
-                console.log(user);
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
                         let returnUser = await postUser({...user, gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
@@ -167,7 +163,7 @@ class ntsScreen2 extends Component {
     }
 
     setModal = player => {
-        this.props.setModal(set1(player, this.transfer));
+        this.props.setModal({modalSet: 'set1', player, btnClick: this.transfer, width: vw(80), height: vh(30)});
     }
 
     render() { 

@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { View, Text } from 'react-native';
-import { headers, labelText, scoreTeamsTEXT, scoreTEXT } from '../../styles/textStyle';
+import { headers, labelText, scoreTeamsTEXT, scoreTEXT, standardText } from '../../styles/textStyle';
 import { headerText } from '../header/style';
 import { team_nameContainer } from '../PitchHead/style';
 import { vw } from 'react-native-expo-viewport-units';
 import { gwScoreContainer } from './style';
+import { inputFieldContainerInLine, scoreInput } from '../../styles/input';
 
 class GWScore extends Component {
     state = {  }

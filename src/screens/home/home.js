@@ -5,7 +5,7 @@ import Header from '../../components/header/header';
 import { displayDate, getTeamPointsInfo, topPlayer, topUser } from '../../functions/reusable';
 import BottomNav from '../../components/bottomNav/bottomNav';
 import { $arylideYellow, screenContainer } from '../../styles/global';
-import { gwInfo, leagueTable, topPerformers, topPlayerStyle } from './style';
+import { gwInfo, leagueTable, topPerformers } from './style';
 import PlayerGWProfile from '../../components/profile/playerGWProfile';
 import UserGWProfile from '../../components/profile/userGWProfile';
 import GWScore from '../../components/gwScore/gwScore';
@@ -90,12 +90,8 @@ class HomeScreen extends Component {
                         <GWScore />
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
-                            <View style={topPlayer}>
-                                <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
-                            </View>
-                            <View style={topPlayerStyle}>
-                                <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/>
-                            </View>
+                            <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
+                            <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/>
                         </View>
                     </View> : <NoScoreGW/>}
                     {lastGW ? 
@@ -114,9 +110,7 @@ class HomeScreen extends Component {
                         </ScrollView>
                     </View>
                     : null}
-
                     <BottomNav navigation={this.props.navigation}/>
-
                 </View>
             </View>
          );

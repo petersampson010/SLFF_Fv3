@@ -7,14 +7,7 @@ import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
 import { labelText, standardText } from '../../styles/textStyle';
 import { tableElement3, tableElement4, tableRow } from '../../styles/table';
-import MyModal from '../Modal/MyModal';
-import { playerImageLarge } from '../PlayerGraphic/style';
-import { playersListModal } from '../Modal/PlayersListModal';
-import Button from '../Button/button';
 import { setModal } from '../../actions';
-import { subImage } from '../Modal/style';
-import { set1 } from '../Modal/modalSetting';
-import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 
 

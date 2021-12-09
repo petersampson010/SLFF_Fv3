@@ -1,5 +1,5 @@
 import {vw, vh} from 'react-native-expo-viewport-units';
-import { $darkBlue, $pitchGreen, $standardWhite } from '../../styles/global';
+import { $darkBlue, $pitchGreen, $platinum, $standardWhite } from '../../styles/global';
 
 export const subHead= {
     flex: 1,
@@ -14,10 +14,8 @@ export const subHead= {
 // }
 
 export const subs = {
-    width: vw(96),
-    marginHorizontal: vw(2),
-    borderRadius: 5,
-    backgroundColor: 'rgba(249,249,249,0.3)',
+    width: vw(100),
+    backgroundColor: '#C2C2C2',
     paddingTop: 10,
     flexDirection: 'row',
     justifyContent: "space-evenly",

@@ -130,10 +130,21 @@ export const getNameOfNavPage = navState => navState.routes[navState.index].name
 export const calculateScore = async(records, gwId) => {
     let score = 0;
     for (let i=0; i<records.length; i++) {
-        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(records[i]['player_id'], gwId);
+        let record = records[i];
+        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(record['player_id'], gwId);
         if (pgJoiner) {
-            if (!records[i].sub) {
-                score += pgJoiner["total_points"];
+            if (!record.sub) {
+                if (record.captain) {
+                    score += (2*pgJoiner["total_points"]);
+                } else if (record.vCaptain) {
+                    if (record.captain["minutes"] === 0) {
+                        score += (2*pgJoiner["total_points"]);
+                    } else {
+                        score += pgJoiner["total_points"];
+                    }
+                } else {
+                    score += pgJoiner["total_points"];
+                }
             }
         }
     }
@@ -172,7 +183,6 @@ export const getTeamPointsInfoGWChange = async(userId, gwId, otherUser) => {
 
 export const getLastAndAllGWs = async(adminUserId) => {
     let GWs = await getAllGWsFromAdminUserId(adminUserId);
-    console.log(GWs);
     completeGWs = GWs.filter(g=>g.complete===true);
     completeGWs.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
     let lastGW = completeGWs[0];

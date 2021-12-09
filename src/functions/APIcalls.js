@@ -155,7 +155,7 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     sub: count>0 ? true : false,
     captain,
     vice_captain,
-    record_id: player.record_id,
+    player_id: player.player_id,
     user_id: userId,
     gameweek_id: gwId,
     admin_user_id: player.admin_user_id

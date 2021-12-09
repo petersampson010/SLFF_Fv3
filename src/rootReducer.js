@@ -1,5 +1,5 @@
 import { ActionSheetIOS } from "react-native";
-import { playersObjToArray } from "./functions/reusable";
+import { getCaptain, getVCaptain, isCaptain, isVCaptain, playersObjToArray } from "./functions/reusable";
 import { syncGWs } from "./functions/sync/syncGWs";
 
 const initialState = {
@@ -64,8 +64,8 @@ const initialState = {
         }
     },
     modal: {
+        modalSet: null,
         player: null,
-        jsx: null, 
         width: null,
         height: null, 
         btnClick: null
@@ -76,7 +76,6 @@ const rootReducer = (state = initialState, action) => {
     console.log('changing redux state with action: ' + action.type);
     switch (action.type) {
         case 'LOGINUSER':
-            console.log(action.currentStarters);
             return {
                 ...state,
                 boolDeciders: {
@@ -349,10 +348,6 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         captain: action.player
                     }
-                },
-                modal: {
-                    ...state.modal, 
-                    jsx: action.jsx
                 }
             }
         case "SETVCAPTAIN":
@@ -364,10 +359,6 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         vCaptain: action.player
                     }
-                },
-                modal: {
-                    ...state.modal, 
-                    jsx: action.jsx
                 }
             }
         case "SETTRANSFERRINGBACKTOLATEST":
@@ -411,7 +402,9 @@ const rootReducer = (state = initialState, action) => {
                         records: action.records,
                         UGJ: action.UGJ,
                         allPGJs: action.allPGJs,
-                        user: action.otherUser
+                        user: action.otherUser,
+                        captain: action.captain, 
+                        vCaptain: action.vCaptain
                     }
                 }
             }
@@ -430,6 +423,8 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case "SETTEAMPOINTS":
+            let captain = getCaptain(action.starters, state.user.records);
+            let vCaptain = getVCaptain(action.starters, state.user.records);
             return {
                 ...state, 
                 boolDeciders: {
@@ -442,7 +437,9 @@ const rootReducer = (state = initialState, action) => {
                         ...state.user.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
-                        UGJ: action.UGJ
+                        UGJ: action.UGJ,
+                        captain, 
+                        vCaptain
                     },
                     userFocusGW: action.newUserFocusGW
                 }
@@ -470,7 +467,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETMODAL":
-            console.log('setting modal');
             return {
                 ...state,
                 boolDeciders: {
@@ -487,11 +483,11 @@ const rootReducer = (state = initialState, action) => {
                     modal: false
                 },
                 modal: {
+                    modalSet: null,
                     player: null,
-                    jsx: null, 
                     width: null,
                     height: null, 
-                    btn: null
+                    btnClick: null
                 }
             }
         default:

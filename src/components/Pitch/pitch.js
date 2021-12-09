@@ -26,7 +26,7 @@ class Pitch extends Component {
         }
     }
 
-    team = () => {console.log(this.props.team);return playersArrayToObj(this.props.team)};
+    team = () => playersArrayToObj(this.props.team);
 
     renderPlayers = (position) => {
         return this.team()[position].map((player, i) => {
@@ -36,7 +36,7 @@ class Pitch extends Component {
             key={i}
             type={this.props.type}
             playerGraphicClickFcn={this.props.playerGraphicClickFcn}
-            playerPG={this.playerPG(player.player_id)}
+            playerPG={this.playerPG}
             />})
         
     }
@@ -48,7 +48,7 @@ class Pitch extends Component {
             key={i}
             type={this.props.type}
             playerGraphicClickFcn={this.props.playerGraphicClickFcn}
-            playerPG={this.playerPG(player.player_id)}
+            playerPG={this.playerPG}
             />)
 
     render() { 

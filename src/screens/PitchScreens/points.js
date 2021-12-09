@@ -8,6 +8,8 @@ import BottomNav from '../../components/bottomNav/bottomNav';
 import { pitchContainer } from '../../components/Pitch/style';
 import { screenContainer } from '../../styles/global';
 import PitchHead from '../../components/PitchHead/pitchHead';
+import { vh, vw } from 'react-native-expo-viewport-units';
+import { setModal } from '../../actions';
 
 
 
@@ -20,13 +22,7 @@ class PointsScreen extends Component {
     }
 
     openModal = player => {
-        // const { captain, vCaptain };
-        this.props.setModal(player, 
-        <View>
-            <Text>GW Points</Text>
-        </View>,
-        vw(70), vh(50), null
-        )
+        this.props.setModal({modalSet: 'set3', player, width: vw(80), height: vh(30), btnClick: null})
     }
 
     render() {
@@ -42,7 +38,7 @@ class PointsScreen extends Component {
                     {this.props.lastGW ? 
                     <Pitch
                     type="points"
-                    playerGraphicClickFcn={()=>this.openModal(player)}
+                    playerGraphicClickFcn={this.openModal}
                     captain={getCaptain(selectStarters, selectRecords)}
                     vCaptain={getVCaptain(selectStarters, selectRecords)}
                     team={selectStarters}
@@ -71,5 +67,11 @@ const mapStateToProps = state => {
         otherTeamFocus: state.boolDeciders.otherTeamFocus
     }
 }
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setModal: modalObj => dispatch(setModal(modalObj))
+    }
+}
  
-export default connect(mapStateToProps)(PointsScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(PointsScreen);

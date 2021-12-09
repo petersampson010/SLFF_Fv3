@@ -1,14 +1,8 @@
-import { isCaptain, isVCaptain } from "./functions/reusable"
+import { getCaptain, getVCaptain, isCaptain, isVCaptain } from "./functions/reusable"
 
 export const loginUser = (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs) => {
-    let captain, vCaptain;
-    for (let i=0;i<currentStarters.length;i++) {
-        if (isCaptain(currentStarters[i], records)) {
-            captain = currentStarters[i];
-        } else if (isVCaptain(currentStarters[i], records)) {
-            vCaptain = currentStarters[i];
-        }
-    }
+    let captain = getCaptain(currentStarters, records);
+    let vCaptain = getVCaptain(currentStarters, records);
     return {
         type: 'LOGINUSER',
         user,
@@ -86,14 +80,8 @@ export const resetTeamPlayers = () => {
 }
 
 export const nts2Login = (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => {
-    let captain, vCaptain;
-    for (let i=0;i<starters.length;i++) {
-        if (isCaptain(starters[i], records)) {
-            captain = starters[i];
-        } else if (isVCaptain(starters[i], records)) {
-            vCaptain = starters[i];
-        }
-    }
+    let captain = getCaptain(starters, records);
+    let vCaptain = getVCaptain(starters, records);
     return {
         type: 'NTS2LOGIN',
         user,
@@ -159,19 +147,17 @@ export const removeSpinner = () => {
     }
 }
 
-export const setCaptain = (player, jsx) => {
+export const setCaptain = (player,) => {
     return {
         type: 'SETCAPTAIN',
-        player,
-        jsx
+        player
     }
 }
 
-export const setVCaptain = (player, jsx) => {
+export const setVCaptain = (player) => {
     return {
         type: 'SETVCAPTAIN',
-        player,
-        jsx
+        player
     }
 }
 
@@ -216,6 +202,8 @@ export const setLatestToTransferring = () => {
 }
 
 export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, otherUser, clubFocusGW) => {
+    let captain = getCaptain(starters, records);
+    let vCaptain = getVCaptain(starters, records);
     return {
         type: 'SETOTHERTEAMPOINTS',
         starters, 
@@ -224,7 +212,9 @@ export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, otherU
         UGJ, 
         allPGJs,
         otherUser,
-        clubFocusGW
+        clubFocusGW,
+        captain, 
+        vCaptain
     }
 }
 

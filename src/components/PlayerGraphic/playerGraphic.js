@@ -19,36 +19,6 @@ class PlayerGraphic extends Component {
         }
     }
 
-    renderPoints = () => {
-        if (this.props.type==='points') {
-            return <Text style={playerNamePoints}>{this.points()}</Text>
-        }
-    }
-
-    points = () => {
-        let PG = this.props.playerPG;
-        if (PG===undefined) {
-            return '0';
-        } else if (!PG)  {
-            return '';
-        } else {
-            return this.props.playerPG.total_points;
-        }
-    }
-
-
-    horizontalMargin = () => {
-        switch(this.props.player.position) {
-            // case '2':
-            //     return 7;
-            // case '3':
-            //     return 1;
-            // case '4':
-            //     return 0;
-            default: 
-            return 0;
-        }
-    }
 
     containerWidth = () => {
         if (this.props.sub) {
@@ -67,27 +37,36 @@ class PlayerGraphic extends Component {
         }
     }
 
-    isCaptain = () => {
-        const { player, captain, vCaptain, pointsCaptain, pointsVCaptain, otherCaptain, otherVCaptain, type, otherTeamFocus } = this.props;
+    getPointsAndCaptain = () =>  {
+        const { player, captain, vCaptain, pointsCaptain, pointsVCaptain, otherCaptain, otherVCaptain, type, otherTeamFocus, playerPG } = this.props;
         if (type==='points') {
+            let PG = playerPG(player.player_id)
             if (otherTeamFocus) {
+                let captainPlayed = playerPG(otherCaptain.player_id).minutes > 0;
                 if (player.player_id===otherCaptain.player_id) {
-                    return 'C';
-                } else if (player.player_id===otherVCaptain.player_id) {                
-                    return 'VC';
+                    return { captain: 'C', points: 2*PG.total_points }
+                } else if (player.player_id===otherVCaptain.player_id) {
+                    if (captainPlayed) {
+                        return { captain: 'vc', points: PG.total_points }
+                    } else {
+                        return { captain: 'vc', points: 2*PG.total_points }
+                    }
+                } else {
+                    return { captain: null, points: PG.total_points }
                 }
             } else {
+                let captainPlayed = playerPG(pointsCaptain.player_id).minutes > 0;
                 if (player.player_id===pointsCaptain.player_id) {
-                    return 'C';
-                } else if (player.player_id===pointsVCaptain.player_id) {                
-                    return 'VC';
+                    return { captain: 'C', points: 2*PG.total_points }
+                } else if (player.player_id===pointsVCaptain.player_id) {
+                    if (captainPlayed) {
+                        return { captain: 'vc', points: PG.total_points }
+                    } else {
+                        return { captain: 'vc', points: 2*PG.total_points }
+                    }
+                } else {
+                    return { captain: null, points: PG.total_points }
                 }
-            }
-        } else {
-            if (player.player_id===captain.player_id) {
-                return 'C';
-            } else if (player.player_id===vCaptain.player_id) {                
-                return 'VC';
             }
         }
         return;
@@ -97,18 +76,18 @@ class PlayerGraphic extends Component {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
         const { player, type, playerGraphicClickFcn, sub } = this.props;
-        console.log('rendering a player graphic');
+        const { captain, points } = this.getPointsAndCaptain();
       return ( 
-            <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
+            <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, width: this.containerWidth()}}>
                 <View style={ subContainer }>
                     <View>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
                 </View>
                 <View>
-                    <Text style={playerNamePoints}>{player.last_name} {type!=='transfers' ? <Text style={capText}>{this.isCaptain()}</Text> : null}</Text>
+                    <Text style={playerNamePoints}>{player.last_name} {type!=='transfers' ? <Text style={capText}>{captain}</Text> : null}</Text>
                 </View>
-                    {this.renderPoints()}
+                    <Text style={playerNamePoints}>{points}</Text>
             </TouchableOpacity>
       );
     }

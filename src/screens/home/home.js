@@ -98,20 +98,23 @@ class HomeScreen extends Component {
                             </View>
                         </View>
                     </View> : <NoScoreGW/>}
-                    <View style={tableRowHead}>
-                        <Text style={{...tableElement3, ...standardText}}>Team</Text>
-                        <Text style={{...tableElement3, ...standardText}}>Total</Text>
-                        {lastGW ? 
-                        <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
-                        : null}
-                    </View>
                     {lastGW ? 
-                    <ScrollView style={''}>
-                        <View style={{paddingBottom: vh(20)}}>
-                            {this.renderRows()}
+                    <View>
+                        <View style={tableRowHead}>
+                            <Text style={{...tableElement3, ...standardText}}>Team</Text>
+                            <Text style={{...tableElement3, ...standardText}}>Total</Text>
+                            {lastGW ? 
+                            <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
+                            : null}
                         </View>
-                    </ScrollView>
+                        <ScrollView style={''}>
+                            <View style={{paddingBottom: vh(20)}}>
+                                {this.renderRows()}
+                            </View>
+                        </ScrollView>
+                    </View>
                     : null}
+
                     <BottomNav navigation={this.props.navigation}/>
 
                 </View>

@@ -32,13 +32,13 @@ export const loginUser = (user, adminUser, clubPlayers, currentStarters, current
     }
 }
 
-export const loginAdminUser = (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => {
+export const loginAdminUser = (adminUser, clubPlayers, allUsers, GWs, lastGW) => {
     return {
         type: 'LOGINADMINUSER',
         adminUser, 
         clubPlayers,
         allUsers,
-        gameweeks,
+        GWs,
         lastGW
     }
 }
@@ -129,6 +129,13 @@ export const completeGameState = (newAllGames, newLastGW) => {
 export const addGameState = game => {
     return {
         type: 'ADDGAME',
+        game
+    }
+}
+
+export const updateGameState = game => {
+    return {
+        type: 'UPDATEGAME',
         game
     }
 }

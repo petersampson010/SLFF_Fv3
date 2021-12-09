@@ -201,7 +201,7 @@ export const completeGame = (id, score, gameweek) => axiosPatch(`gameweeks/${id}
     gameweek
 });
 
-export const getAllGameweeksFromAdminUserId = auId => axiosGet(`gameweeks?admin_user_id=${auId}`);
+export const getAllGWsFromAdminUserId = auId => axiosGet(`gameweeks?admin_user_id=${auId}`);
 
 export const getGameweekFromAdminUserIdAndGameweek = (adminUserId, gameweek) => axiosGet(`gameweeks?admin_user_id=${adminUserId}&gameweek=${gameweek}`, true);
 

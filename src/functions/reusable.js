@@ -1,4 +1,4 @@
-import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGameweeksFromAdminUserId } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGWsFromAdminUserId } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
 
@@ -171,9 +171,10 @@ export const getTeamPointsInfoGWChange = async(userId, gwId, otherUser) => {
 }
 
 export const getLastAndAllGWs = async(adminUserId) => {
-    let gameweeks = await getAllGameweeksFromAdminUserId(adminUserId);
-    gameweeks = gameweeks.filter(g=>g.complete===true);
-    gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-    let lastGW = gameweeks[0];
-    return { lastGW, gameweeks };
+    let GWs = await getAllGWsFromAdminUserId(adminUserId);
+    console.log(GWs);
+    completeGWs = GWs.filter(g=>g.complete===true);
+    completeGWs.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+    let lastGW = completeGWs[0];
+    return { lastGW, GWs };
 }

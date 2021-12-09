@@ -1,14 +1,14 @@
-import { $baseBlue, $chocolateBlack, $coral, $darkBlue, $electricBlue, $electricBlueHighlight, $luminousGreen, $standardWhite, $zaGreen } from "../../styles/global";
+import { $baseBlue, $cadetBlue, $chocolateBlack, $col1, $coral, $darkBlue, $darkElectricBlue, $electricBlue, $electricBlueHighlight, $luminousGreen, $mellowApricot, $offWhite, $onyx, $platinum, $sage, $spaceCadet, $standardWhite, $zaGreen } from "../../styles/global";
 import {vw, vh} from 'react-native-expo-viewport-units';
 
 
 export const modalContainer = {
     position: "absolute",
     top: vh(20),
-    backgroundColor: $darkBlue,
-    borderWidth: 1,
+    backgroundColor: '#C5C5C5',
+    // borderWidth: 1,
     borderRadius: 12,
-    borderColor: $zaGreen,
+    // borderColor: $zaGreen,
     alignItems: 'center', 
     padding: vh(3),
     // paddingTop: vh(20),
@@ -59,4 +59,16 @@ export const subImage = {
 
 export const pickTeamStats = {
     width: vw(35)
+}
+
+export const captainCheckbox = {
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    width: vh(3), 
+    height: vh(3), 
+}
+
+export const captainCheckboxContainer = {
+    height: vh(18),
+    justifyContent: 'space-evenly'
 }

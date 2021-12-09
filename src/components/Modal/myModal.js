@@ -21,18 +21,25 @@ class MyModal extends Component {
     render() { 
         const { modalActive, modal, closeModal } = this.props;
         const { player, jsx, width, height, btn } = modal;
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         return ( 
             <Modal visible={modalActive} 
             transparent={true}>
+                <View style={{height: vh(100), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+
                 <View style={{...modalContainer, height:height, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         {player ? playerProfile(player) : null}
                         {jsx}
                     </View>
                     <View style={modalJSX}>
-                        {btn}
-                        <Button clickable text='Close' func={closeModal} width={vw(35)}/>
+                        {modalSet === set3 ? null : 
+                        <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
+                        }
+                        <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
                     </View>
+                </View>
                 </View>
             </Modal>
          );

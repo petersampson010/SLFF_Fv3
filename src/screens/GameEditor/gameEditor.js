@@ -162,7 +162,7 @@ class GameEditorScreen extends Component {
             await this.postNewRecords(records);
             await completeGame(clubFocusGW.gameweek_id, this.state.score, lastGW ? lastGW.gameweek+1 : 1);
             let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
-            completeGameState(returnObj.gameweeks, returnObj.lastGW);
+            completeGameState(returnObj.GWs, returnObj.lastGW);
             this.setState({...this.state, spinner: false});
             showMessage({
                 message: "Success",

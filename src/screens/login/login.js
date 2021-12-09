@@ -4,7 +4,7 @@ import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
-  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -146,8 +146,10 @@ class LoginScreen extends Component {
       if (adminUser !== undefined && adminUser !== null) {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
-        let { lastGW, gameweeks } = await getLastAndAllGWs(adminUser.admin_user_id);
-        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW);
+        let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
+        console.log(lastGW);
+        console.log(GWs);
+        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
         showMessage({
@@ -208,8 +210,8 @@ class LoginScreen extends Component {
 
   const mapDispatchToProps = dispatch => {
     return {
-      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
-      loginAdminUser: (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW)),
+      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
+      loginAdminUser: (adminUser, clubPlayers, allUsers, GWs, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW)),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }
   }

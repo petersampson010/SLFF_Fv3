@@ -14,10 +14,19 @@ import { screenContainer } from '../../styles/global';
 import PitchHead from '../../components/PitchHead/pitchHead';
 import Button from '../../components/Button/button';
 import { set2 } from '../../components/Modal/modalSetting';
+import StateModal from '../../components/Modal/StateModal';
 
 
 
 class PickTeamScreen extends Component {
+    state = { 
+        modal: {
+            active: false
+        },
+        player: {
+            
+        }
+     }
 
 
     transfer = player => {
@@ -115,7 +124,7 @@ class PickTeamScreen extends Component {
                 <Button clickable={player.player_id!==captain.player_id} text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
                 <Button text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
             </View>);
-            // this.props.setModal(set2(player, this.transfer, captain, player, this.setCaptain, this.setVCaptain))
+            this.props.setModal(set2(player, this.transfer, captain, player, this.setCaptain, this.setVCaptain))
         }
     }
 
@@ -137,6 +146,11 @@ class PickTeamScreen extends Component {
                     subs={this.props.subs}
                     />
                 </ScrollView>
+                {/* <StateModal
+                modalActive={this.state.modal.active}
+                height={vh(50)}
+                width={vw(80)}
+                jsx={} */}
                 <BottomNav navigation={this.props.navigation}/>
             </View>
          );

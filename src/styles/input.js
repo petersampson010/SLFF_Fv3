@@ -20,7 +20,7 @@ export const inputFieldLarge = {
     backgroundColor: $inputBlue,
     height: vh(6), 
     width: vw(70),
-    marginBottom: vh(3)
+    marginBottom: vh(3),
 }
 
 export const inputFieldSmall = {

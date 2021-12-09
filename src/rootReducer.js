@@ -68,7 +68,7 @@ const initialState = {
         jsx: null, 
         width: null,
         height: null, 
-        btn: null
+        btnClick: null
     }
 }
 
@@ -141,7 +141,7 @@ const rootReducer = (state = initialState, action) => {
                     adminUser: action.adminUser,
                     allUsers: action.allUsers,
                     clubPlayers: action.clubPlayers,
-                    allGames: action.gameweeks,
+                    allGames: action.GWs,
                     lastGW: action.lastGW
                 }
             }
@@ -256,6 +256,15 @@ const rootReducer = (state = initialState, action) => {
                     allGames: [...state.club.allGames, action.game]
                 }
             };
+        case 'UPDATEGAME':
+            let removeGame = state.club.allGames.filter(g => g.gameweek_id!==action.game.gameweek_id);
+            return {
+                ...state, 
+                club: {
+                    ...state.club, 
+                    allGames: [...removeGame, action.game]
+                }
+            }
         case 'SETTRANSFERS':
             let starters = action.team.filter(player=>player.sub===false);
             let subs = action.team.filter(player=>player.sub===true);

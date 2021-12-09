@@ -1,24 +1,26 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $arylideYellow, $zaGreen } from "../../styles/global";
+import { $arylideYellow, $chocolateBlack, $platinum, $zaGreen } from "../../styles/global";
 
 export const buttonText = {
-    color: $arylideYellow,
-    fontSize: 14,
+    fontSize: 15,
+    fontWeight: '700',
     fontFamily: 'Avenir Next',
     textAlign: 'center'
 }
 
 export const buttonContainer = {
-    paddingVertical: vh(2),
+    // backgroundColor: '#378f00',
+    paddingVertical: vh(1),
     borderRadius: 20,
-    borderWidth: 0.2, 
-    borderColor: $zaGreen,
+    borderWidth: 2,
     margin: vw(0.5),
     flexDirection: 'row',
     justifyContent: 'center'
 }
 
 export const buttonSplit = {
+    position: 'absolute',
+    bottom: vh(15),
     padding: vh(1),
     width: vw(100),
     flexDirection: 'row',

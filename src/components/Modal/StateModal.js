@@ -19,21 +19,23 @@ class StateModal extends Component {
 
 
     render() { 
-        const { jsx, modalActive, btn, width, height } = this.props;
+        const { jsx, modalActive, btn, width, height, closeFcn } = this.props;
         // const { player, jsx, width, height, btn } = modal;
         return ( 
             <Modal visible={modalActive} 
-            transparent={true}>
+            transparent={true}
+            >
+                <View style={{height: vh(100), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View style={{...modalContainer, height:height, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
-                        {/* {player ? playerProfile(player) : null} */}
                         {jsx}
                     </View>
                     <View style={modalJSX}>
                         {btn}
-                        <Button clickable text='Close' func={closeModal} width={vw(35)}/>
+                        <Button clickable modal text='Close' func={closeFcn} width={vw(35)}/>
                     </View>
                 </View>
+                    </View>
             </Modal>
          );
     }

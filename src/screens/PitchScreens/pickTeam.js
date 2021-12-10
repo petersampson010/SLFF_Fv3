@@ -28,7 +28,10 @@ class PickTeamScreen extends Component {
 
     transfer = player => {
         const { subs, subIn, subOut, closeModal, captain, vCaptain } = this.props;
-        if (subs.includes(player)) {
+        console.log(subs);
+        console.log(player);
+        let subsIds = subs.map(s => s.player_id);
+        if (subsIds.includes(player.player_id)) {
             subIn(player);
             closeModal();
         } else {
@@ -94,33 +97,6 @@ class PickTeamScreen extends Component {
         false : true;
     }
 
-    // setCaptain = player => {
-    //     const { vCaptain, setCaptain } = this.props;
-    //     if (vCaptain===player) {
-    //         showMessage({
-    //             message: "Player is already a captain",
-    //             type: 'warning'
-    //         })
-    //     } else {
-    //         setCaptain(player, <View>
-    //             <Button text='Captain' func={()=>setCaptain(player)} width={vw(35)}/>
-    //             <Button clickable={player.player_id!==vCaptain.player_id} text='Vice Captain' func={()=>setVCaptain(player)} width={vw(35)}/>
-    //         </View>);
-    //     }
-    // }
-
-    // setVCaptain = player => {
-    //     const { captain, setVCaptain } = this.props;
-    //     if (captain===player) {
-    //         showMessage({
-    //             message: "Player is already a captain",
-    //             type: 'warning'
-    //         })
-    //     } else {
-    //         setVCaptain(player);
-    //     }
-    // }
-
     setModal = (player, sub) => {
         const { setModal } = this.props;
         setModal({modalSet: 'set2', player: {...player, sub}, width: vw(80), height: vh(60), btnClick: this.transfer})
@@ -138,11 +114,6 @@ class PickTeamScreen extends Component {
                     subs={this.props.subs}
                     />
                 </ScrollView>
-                {/* <StateModal
-                modalActive={this.state.modal.active}
-                height={vh(50)}
-                width={vw(80)}
-                jsx={} */}
                 <BottomNav navigation={this.props.navigation}/>
             </View>
          );

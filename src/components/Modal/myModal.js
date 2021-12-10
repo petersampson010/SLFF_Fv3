@@ -47,7 +47,7 @@ class MyModal extends Component {
         const { modalSet } = this.props.modal;
         const playerImg = require('../../../images/profile.jpg');
         switch(modalSet) {
-            case ('set1' && 'set2'):
+            case 'set1': case 'set2':
                 return <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
             case 'set3':
                 return <View>
@@ -59,7 +59,7 @@ class MyModal extends Component {
             case 'set4': 
                 return <Text style={modalLabelText}>Would you like to edit the game or submit the stats and complete it?</Text>;
             case 'set5':
-                return <Text style={modalLabelText}>Please ensure statss are correct, once confirmeed they cannot be corrected.</Text>;
+                return <Text style={modalLabelText}>Please ensure stats are correct, once confirmeed they cannot be corrected.</Text>;
             default: 
                 return;
         }
@@ -69,7 +69,7 @@ class MyModal extends Component {
         const { modalSet, btnClick, player } = this.props.modal;
         const subImg = require('../../../images/subIcon.png');
         switch(modalSet) {
-            case ('set1' && 'set2'):
+            case 'set1': case 'set2':
                 return <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
             case 'set4':
                 return <Button width={vw(35)} clickable modal text="Edit Game" func={btnClick}/>;
@@ -85,6 +85,7 @@ class MyModal extends Component {
         const { player, width, height, btnClick, modalSet } = modal;
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
+        console.log(player);
         return ( 
             <Modal visible={modalActive} 
             transparent={true}>
@@ -93,7 +94,7 @@ class MyModal extends Component {
                     <View style={modalJSX}>
                         <View>
                             {player ? playerProfile(player) : null}
-                            {modalSet === 'set2' ? 
+                            {modalSet === 'set2' && !player.sub ? 
                             <View style={captainCheckboxContainer}>
                                 <Checkbox clickable active={player.player_id===captain.player_id} text="C" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
                                 <Checkbox clickable active={player.player_id===vCaptain.player_id} text="VC" func={()=>this.setVCaptain(player)} style={captainCheckbox}/> 

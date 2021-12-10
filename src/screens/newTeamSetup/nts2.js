@@ -15,6 +15,7 @@ import PitchHead from '../../components/PitchHead/pitchHead';
 import { validateTransfers } from '../../functions/validity';
 import globalConfig from '../../config/globalConfig.json';
 import { vh, vw } from 'react-native-expo-viewport-units';
+import { updateStack } from '../../Navigation';
 
 class ntsScreen2 extends Component {
     state = {}

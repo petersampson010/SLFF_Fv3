@@ -68,8 +68,16 @@ class PlayerGraphic extends Component {
                     return { captain: null, points: PG.total_points }
                 }
             }
+        } else if (type==='pickTeam') {
+            if (player.player_id===captain.player_id) {
+                return { captain: 'C', points: null }
+            } else if (player.player_id===vCaptain.player_id) {
+                return { captain: 'vc', points: null }
+            } else {
+                return { captain: null, points: null }
+            }
         }
-        return;
+        return  { captain: null, points: null };
     }
 
     render() {
@@ -81,11 +89,12 @@ class PlayerGraphic extends Component {
             <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, width: this.containerWidth()}}>
                 <View style={ subContainer }>
                     <View>
+                    <Text style={capText}>{captain}</Text>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
                 </View>
                 <View>
-                    <Text style={playerNamePoints}>{player.last_name} {type!=='transfers' ? <Text style={capText}>{captain}</Text> : null}</Text>
+                    <Text style={playerNamePoints}>{player.last_name}</Text>
                 </View>
                     <Text style={playerNamePoints}>{points}</Text>
             </TouchableOpacity>

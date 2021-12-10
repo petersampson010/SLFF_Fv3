@@ -34,6 +34,17 @@ export const inputFieldSmall = {
     marginVertical: vh(0.5)
 }
 
+export const inputFieldMedium = {
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
+    borderRadius: 8,
+    backgroundColor: $inputBlue,
+    height: vh(6), 
+    width: vw(40),
+    marginVertical: vh(0.5)
+}
+
 export const inputFieldContainerCenter = {
     alignItems: 'center',
     flex: 1,

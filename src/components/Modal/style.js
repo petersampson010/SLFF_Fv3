@@ -6,12 +6,9 @@ export const modalContainer = {
     position: "absolute",
     top: vh(15),
     backgroundColor: '#C5C5C5',
-    // borderWidth: 1,
     borderRadius: 12,
-    // borderColor: $zaGreen,
     alignItems: 'center', 
     padding: vh(3),
-    // paddingTop: vh(20),
     zIndex: 999
 }
 

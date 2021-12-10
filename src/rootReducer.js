@@ -301,7 +301,7 @@ const rootReducer = (state = initialState, action) => {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
-                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player)
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x.player_id!==action.player.player_id)
                     }
                 }
             }
@@ -311,7 +311,7 @@ const rootReducer = (state = initialState, action) => {
                 stateChanges: {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
-                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x.player_id!==action.player.player_id),
                         subs: [...state.stateChanges.updatedNotPersistedTeam.subs, action.player]
                     }
                 }
@@ -488,6 +488,14 @@ const rootReducer = (state = initialState, action) => {
                     width: null,
                     height: null, 
                     btnClick: null
+                }
+            }
+        case "UPDATECLUBPLAYERS":
+            return {
+                ...state, 
+                club: {
+                    ...state.club,
+                    clubPlayers: state.club.clubPlayers.map(cp => cp.player_id===action.updatedPlayer.player_id ? action.updatedPlayer : cp)
                 }
             }
         default:

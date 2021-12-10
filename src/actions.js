@@ -256,3 +256,10 @@ export const closeModal = () => {
         type: "CLOSEMODAL"
     }
 }
+
+export const updateStateClubPlayers = updatedPlayer => {
+    return {
+        type: "UPDATECLUBPLAYERS",
+        updatedPlayer
+    }
+}

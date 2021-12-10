@@ -21,13 +21,14 @@ export const tableElement3 = {
 }
 
 export const tableElement4 = {
-    width: vw(8),
+    width: vw(18),
+    justifyContent: 'center',
+    padding: vh(1)
 }
 
 export const tableElement9 = {
     width: vw(8),
     height: vh(6),
-    // paddingTop: vh(1),
     fontSize:  16,
     color: $standardWhite,
     borderRightWidth: 1,
@@ -37,10 +38,7 @@ export const tableElement9 = {
 
 export const tableElement1 = {
     flex: 1,
-    height: vh(6),
     justifyContent: 'center',
-    width: vw(20),
-    borderRightWidth: 1,
-    borderRightColor: $electricBlueHighlight,
-    paddingRight: vh(1)
+    padding: vh(1),
+    height: vh(4)
 }

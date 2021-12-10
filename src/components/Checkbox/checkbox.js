@@ -14,7 +14,7 @@ class Checkbox extends Component {
     render() { 
         const { text, func, clickable, active } = this.props;
         return ( 
-            <TouchableOpacity style={{...captainCheckbox, backgroundColor: active ? 'green' : 'white'}} onPress={clickable ? func : null}>
+            <TouchableOpacity style={{...captainCheckbox, backgroundColor: active ? $arylideYellow : 'white'}} onPress={clickable ? func : null}>
                     <Text style={{}}>{text}</Text>
             </TouchableOpacity>
          );

@@ -6,37 +6,16 @@ import { fullName, positionString, playerIds } from '../../functions/reusable';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
 import { labelText, standardText } from '../../styles/textStyle';
-import { tableElement3, tableElement4, tableRow } from '../../styles/table';
+import { tableElement3, tableElement4, tableRow, tableElement1 } from '../../styles/table';
 import { setModal } from '../../actions';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
 class PlayersList extends Component {
     state = { 
         positionFilter: '0',
-        // modal: {
-        //     active: false,
-        //     player: {
-        //         player_id: 1,
-        //         first_name: "Steve",
-        //         last_name: "Dunno",
-        //         position: "1",
-        //         price: 80,
-        //         availability: "a",
-        //         admin_user_id: 1
-        //     }
-        // }
     }
-
-    // openModal = player => {
-    //     this.setState({
-    //         ...this.state,
-    //         modal: {
-    //             active: true,
-    //             player
-    //         }
-    //     })
-    // }
 
     table = () => {
         switch(this.state.positionFilter) {
@@ -65,9 +44,9 @@ class PlayersList extends Component {
         return <TouchableOpacity key={key}
         style={{...tableRow, opacity: this.playerSelected(player) ? 0.2 : 1}}
         onPress={()=>this.props.clickFcn(player)}>
-            <Text style={{...tableElement3, ...standardText}}>{fullName(player)}</Text>
-            <Text style={{...tableElement3, ...standardText}}>{positionString(player.position)}</Text>
-            <Text style={{...tableElement3, ...standardText}}>£{player.price}m</Text>
+            <Text style={{...tableElement1, ...standardText}}>{fullName(player)}</Text>
+            <Text style={{...tableElement1, ...standardText}}>{positionString(player.position)}</Text>
+            <Text style={{...tableElement4, ...standardText}}>£{player.price}m</Text>
         </TouchableOpacity>;
     }
     render() { 
@@ -90,11 +69,13 @@ class PlayersList extends Component {
                 <View>
                     <View>
                         <View style={tableRow}>
-                            <Text style={{...tableElement3, ...labelText}}>Name</Text>
-                            <Text style={{...tableElement3, ...labelText}}>Position</Text>
-                            <Text style={{...tableElement3, ...labelText}}>Price</Text>
+                            <Text style={{...tableElement1, ...labelText}}>Name</Text>
+                            <Text style={{...tableElement1, ...labelText}}>Position</Text>
+                            <Text style={{...tableElement4, ...labelText}}>Price</Text>
                         </View>
-                        {this.table()}
+                        <ScrollView style={{marginBottom: vh(40)}}>
+                            {this.table()}
+                        </ScrollView>
                     </View>
                 </View>
             </View>

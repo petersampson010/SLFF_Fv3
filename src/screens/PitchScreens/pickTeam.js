@@ -28,8 +28,6 @@ class PickTeamScreen extends Component {
 
     transfer = player => {
         const { subs, subIn, subOut, closeModal, captain, vCaptain } = this.props;
-        console.log(subs);
-        console.log(player);
         let subsIds = subs.map(s => s.player_id);
         if (subsIds.includes(player.player_id)) {
             subIn(player);

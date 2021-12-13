@@ -89,12 +89,12 @@ class PlayerGraphic extends Component {
             <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, width: this.containerWidth()}}>
                 <View style={ subContainer }>
                     <View>
-                    <Text style={capText}>{captain}</Text>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
                 </View>
-                <View>
-                    <Text style={playerNamePoints}>{player.last_name}</Text>
+                <View style={{flexDirection: 'row', marginTop: 5}}>
+                    <Text numberOfLines={1} style={playerNamePoints}>{player.last_name} </Text>
+                    <Text style={capText}>{captain}</Text>
                 </View>
                     <Text style={playerNamePoints}>{points}</Text>
             </TouchableOpacity>

@@ -40,5 +40,5 @@ export const tableElement1 = {
     flex: 1,
     justifyContent: 'center',
     padding: vh(1),
-    height: vh(4)
+    // height: vh(5)
 }

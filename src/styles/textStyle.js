@@ -39,7 +39,6 @@ export const checkBox = {
 
 export const playerNamePoints = {
     fontSize: 13,
-    marginTop: 5,
     textAlign: 'center',
     fontWeight: "800",
     color: $chocolateBlack

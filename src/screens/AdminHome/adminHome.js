@@ -22,21 +22,28 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import StateModal from '../../components/Modal/StateModal';
 import { input, inputFieldLarge } from '../../styles/input';
 import { textLabel } from '../login/style';
+import DatePicker from 'react-native-date-picker';
 
 
 class AdminHomeScreen extends Component {
-    state = { 
-        modal: {
-            active: false,
-            update: false,
-        },
-        game: {
-            dateModalVisible: false,
-            opponent: '',
-            date: new Date(),
-            complete: false
-        }
-     }
+
+    constructor(props) {
+        super(props);
+        this.state = { 
+            modal: {
+                active: false,
+                update: false,
+            },
+            game: {
+                dateModalVisible: false,
+                opponent: '',
+                date: new Date(),
+                complete: false
+            }
+         }
+    }
+
+    
 
     renderGame = (game, i) => <TouchableOpacity key={i} style={gameContainer}
     onPress={()=>this.setModal(game)}>
@@ -78,10 +85,13 @@ class AdminHomeScreen extends Component {
 
 
     formChange = (id, value) => {
-        this.setState({...this.state, 
-        game: {...this.state.game,
-            [id]: value
-        }})
+        this.setState({
+            ...this.state, 
+            game: {
+                ...this.state.game,
+                [id]: value
+            }
+        })
     }
 
     addGame = async() => {
@@ -89,16 +99,16 @@ class AdminHomeScreen extends Component {
             let res = await postGame(this.state.game, this.props.adminUser.admin_user_id);
             if (res.date) {
                 this.props.addGameState(res);
-                this.setState({
-                    ...this.state,
-                    modal: {active: false},
-                    game: {
-                        dateModalVisible: false,
-                        opponent: '',
-                        date: new Date(),
-                        complete: false
-                    }
-                });
+                // this.setState({
+                //     ...this.state,
+                //     modal: {active: false},
+                //     game: {
+                //         dateModalVisible: false,
+                //         opponent: '',
+                //         date: new Date(),
+                //         complete: false
+                //     }
+                // });
                 showMessage({
                     message: "Game/Event added",
                     type: 'success'
@@ -119,7 +129,10 @@ class AdminHomeScreen extends Component {
             if (res.date) {
                 this.setState({
                     ...this.state,
-                    modal: {active: false, update: false},
+                    modal: {
+                        active: false, 
+                        update: false
+                    },
                 });
                 this.props.updateGameState(this.state.game);
                 showMessage({
@@ -137,12 +150,17 @@ class AdminHomeScreen extends Component {
     }
 
     openDate = () => {
-        console.log('attempting to open date time picker')
-        this.setState({...this.state, game: {...this.state.game, dateModalVisible: true}})
+        this.setState({
+            ...this.state, 
+            game: {
+                ...this.state.game, 
+                dateModalVisible: true
+            }
+        })
     }
 
     setModal = (game) => {
-        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(50), btnClick: () => this.openEditGameModal(game)});
+        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(25), btnClick: () => this.openEditGameModal(game)});
     }
 
     openSubmitGameStats = (game) => {
@@ -165,8 +183,8 @@ class AdminHomeScreen extends Component {
                     </ScrollView>
                     <StateModal
                     modalActive={this.state.modal.active}
-                    height={vh(40)}
-                    width={vw(80)}
+                    height={vh(55)}
+                    width={vw(90)}
                     jsx={<View>
                         <Text style={modalLabelText}>Opposition</Text>
                         <View style={inputFieldLarge}>
@@ -177,16 +195,22 @@ class AdminHomeScreen extends Component {
                             />
                         </View>
                         <Text style={modalLabelText}>Date</Text>
-                        <TouchableOpacity onPress={this.openDate} style={inputFieldLarge}>
-                            <DateTimePickerModal
+                        {/* <TouchableOpacity onPress={this.openDate} style={inputFieldLarge}> */}
+                            <DatePicker 
+                            mode='date'
+                            date={new Date(this.state.game.date)}
+                            onDateChange={date=>this.setState({...this.state, game: {...this.state.game, date}})}
+                            androidVariant='nativeAndroid'
+                            />
+                            {/* <DateTimePickerModal
                             isVisible={this.state.game.dateModalVisible}
                             mode='date'
                             date={this.state.game.date}
                             onConfirm={date=>this.setState({...this.state, game: {...this.state.game, date, dateModalVisible: false}})}
                             onCancel={()=>this.setState({...this.state, game: {...this.state.game, dateModalVisible: false}})}
-                            />
-                            <Text style={{...input, paddingTop: vh(1.5)}}>{displayDate(this.state.game.date)}</Text>
-                        </TouchableOpacity>
+                            /> */}
+                            {/* <Text style={{...input, paddingTop: vh(1.5)}}>{displayDate(this.state.game.date)}</Text> */}
+                        {/* </TouchableOpacity> */}
                     </View>}
                     btn={<Button clickable modal text={this.state.modal.update ? "Edit Game" : "Submit Game"} func={this.state.modal.update ? this.updateGame : this.addGame} width={vw(35)}/>}
                     closeFcn={()=>this.setState({...this.state, modal: {active: false}})}

@@ -82,15 +82,14 @@ class MyModal extends Component {
 
     render() { 
         const { modal, modalActive, closeModal, captain, vCaptain } = this.props;
-        const { player, width, height, btnClick, modalSet } = modal;
+        const { player, width, modalSet } = modal;
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        console.log(player);
         return ( 
             <Modal visible={modalActive} 
             transparent={true}>
                 <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                <View style={{...modalContainer, height:height, width:width, left:(vw(100)-(width))/2}}>
+                <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
                             {player ? playerProfile(player) : null}

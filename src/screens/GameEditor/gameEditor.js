@@ -210,7 +210,6 @@ class GameEditorScreen extends Component {
     }
     
     render() { 
-        console.log(this.props.clubFocusGW);
         return (
             <View style={{backgroundColor: $darkBlue}}>
                 {this.state.spinner ? <SpinnerOverlay/> : null}

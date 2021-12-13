@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PlayerGraphic from '../PlayerGraphic/playerGraphic';
 import { View, ImageBackground } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
-import MyModal from '../Modal/myModal';
 import { connect } from 'react-redux';
 import PitchHead from '../PitchHead/pitchHead';
 import { pitch, pitchContainer, starters, subs, positionRow, pitchImage, pitchClassContainer } from './style';
@@ -12,20 +11,7 @@ import { fullName, getRecord, playersArrayToObj, positionString } from '../../fu
 
 
 class Pitch extends Component {
-    state = { 
-        modal: {
-            active: false,
-            player: {
-                player_id: 1,
-                first_name: "Steve",
-                last_name: "Dunno",
-                position: "1",
-                price: 80,
-                availability: "a",
-                admin_user_id: 1
-            }
-        }
-    }
+
 
     playerPG = (playerId) => {
         const { otherTeamFocus, UGJ, otherUGJ, allPGJs, type } = this.props;
@@ -43,16 +29,16 @@ class Pitch extends Component {
     team = () => playersArrayToObj(this.props.team);
 
     renderPlayers = (position) => {
-        return this.team()[position].map((player, i) => 
-        <PlayerGraphic 
-        sub={false}
-        player={player} 
-        key={i}
-        type={this.props.type}
-        clickFcn={this.props.clickFcn}
-        openModal={this.openModal}
-        playerPG={this.playerPG(player.player_id)}
-        />)
+        return this.team()[position].map((player, i) => {
+            return <PlayerGraphic 
+            sub={false}
+            player={player} 
+            key={i}
+            type={this.props.type}
+            playerGraphicClickFcn={this.props.playerGraphicClickFcn}
+            playerPG={this.playerPG}
+            />})
+        
     }
 
     renderSubs = () => this.props.subs.map((player, i) => 
@@ -61,20 +47,9 @@ class Pitch extends Component {
             player={player} 
             key={i}
             type={this.props.type}
-            clickFcn={this.props.clickFcn} 
-            openModal={this.openModal}
-            playerPG={this.playerPG(player.player_id)}
+            playerGraphicClickFcn={this.props.playerGraphicClickFcn}
+            playerPG={this.playerPG}
             />)
-
-    openModal = async(player) => {
-        // let playerStats = 
-        this.setState({
-            modal: {
-                active: true, 
-                player
-            }
-        });
-    }
 
     render() { 
         const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
@@ -102,15 +77,6 @@ class Pitch extends Component {
                                 </View>
                             </View>
                         </ImageBackground>
-                        <MyModal 
-                        visible={this.state.modal.active}
-                        height={vh(33)}
-                        width={vw(80)}
-                        closeModalFcn={()=>this.setState({modal: {...this.state.modal, active: false}})}
-                        modalType={this.props.modalType}
-                        entry={this.state.modal.player}
-                        buttonOptions={[]}
-                        />
                 </View>
                 {this.props.type!=='transfers' ? <View style={subs}>
                         {this.renderSubs()}

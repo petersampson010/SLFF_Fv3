@@ -1,4 +1,4 @@
-import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGameweeksFromAdminUserId } from "./APIcalls";
+import { getAllPGJFromUserId, getAllRecordsByUserId, getGWStartersByUserId, getPlayersByUserIdGWIdSub, getGWSubsByUserId, getPGJoinerFromPlayerIdAndGWId, getPlayerById, getUGJ, getUserById, getAllGWsFromAdminUserId } from "./APIcalls";
 import 'intl';
 import "intl/locale-data/jsonp/en";
 
@@ -125,17 +125,26 @@ export const subOrTransfer = type => {
     }
 }
 
-export const getNameOfNavPage = navState => {
-    return navState.routes[navState.index].name;
-}
+export const getNameOfNavPage = navState => navState.routes[navState.index].name;
 
 export const calculateScore = async(records, gwId) => {
     let score = 0;
     for (let i=0; i<records.length; i++) {
-        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(records[i]['player_id'], gwId);
+        let record = records[i];
+        let pgJoiner = await getPGJoinerFromPlayerIdAndGWId(record['player_id'], gwId);
         if (pgJoiner) {
-            if (!records[i].sub) {
-                score += pgJoiner["total_points"];
+            if (!record.sub) {
+                if (record.captain) {
+                    score += (2*pgJoiner["total_points"]);
+                } else if (record.vCaptain) {
+                    if (record.captain["minutes"] === 0) {
+                        score += (2*pgJoiner["total_points"]);
+                    } else {
+                        score += pgJoiner["total_points"];
+                    }
+                } else {
+                    score += pgJoiner["total_points"];
+                }
             }
         }
     }
@@ -173,9 +182,9 @@ export const getTeamPointsInfoGWChange = async(userId, gwId, otherUser) => {
 }
 
 export const getLastAndAllGWs = async(adminUserId) => {
-    let gameweeks = await getAllGameweeksFromAdminUserId(adminUserId);
-    gameweeks = gameweeks.filter(g=>g.complete===true);
-    gameweeks.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-    let lastGW = gameweeks[0];
-    return { lastGW, gameweeks };
+    let GWs = await getAllGWsFromAdminUserId(adminUserId);
+    completeGWs = GWs.filter(g=>g.complete===true);
+    completeGWs.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+    let lastGW = completeGWs[0];
+    return { lastGW, GWs };
 }

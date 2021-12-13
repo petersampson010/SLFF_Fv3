@@ -1,5 +1,5 @@
 import { ActionSheetIOS } from "react-native";
-import { playersObjToArray } from "./functions/reusable";
+import { getCaptain, getVCaptain, isCaptain, isVCaptain, playersObjToArray } from "./functions/reusable";
 import { syncGWs } from "./functions/sync/syncGWs";
 
 const initialState = {
@@ -7,7 +7,8 @@ const initialState = {
         spinner: false, 
         otherTeamFocus: false, 
         adminActive: false, 
-        loginComplete: false
+        loginComplete: false,
+        modal: false
     },
     user: {
         user: {},
@@ -61,6 +62,13 @@ const initialState = {
             vCaptain: null,
             budget: null
         }
+    },
+    modal: {
+        modalSet: null,
+        player: null,
+        width: null,
+        height: null, 
+        btnClick: null
     }
 }
 
@@ -86,6 +94,8 @@ const rootReducer = (state = initialState, action) => {
                     focusedGWTeam: {
                         ...state.user.focusedGWTeam,
                         starters: action.lastGWStarters,
+                        captain: action.captain, 
+                        vCaptain: action.vCaptain,
                         subs: action.lastGWSubs, 
                         UGJ: action.lastUGJ
                     },
@@ -111,7 +121,9 @@ const rootReducer = (state = initialState, action) => {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.currentStarters,
                         subs: action.currentSubs, 
-                        budget: action.user.budget
+                        budget: action.user.budget,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     }
                 }
             }
@@ -128,7 +140,7 @@ const rootReducer = (state = initialState, action) => {
                     adminUser: action.adminUser,
                     allUsers: action.allUsers,
                     clubPlayers: action.clubPlayers,
-                    allGames: action.gameweeks,
+                    allGames: action.GWs,
                     lastGW: action.lastGW
                 }
             }
@@ -141,16 +153,31 @@ const rootReducer = (state = initialState, action) => {
                     currentTeam: {
                         ...state.user.currentTeam,
                         starters: action.starters,
-                        subs: action.subs
+                        subs: action.subs,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
+                    },
+                    PGJs: {
+                        last: action.lastPGJs,
+                        all: action.allPGJs
                     },
                     records: action.records
+                },
+                club: {
+                    ...state.club, 
+                    allLastUGJs: action.allLastUGJs,
+                    league: action.league, 
+                    topPlayer: action.topPlayer,
+                    topUser: action.topUser
                 },
                 stateChanges: {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: action.starters,
                         subs: action.subs,
-                        budget: action.user.budget
+                        budget: action.user.budget,
+                        captain: action.captain,
+                        vCaptain: action.vCaptain
                     }
                 }
             };
@@ -212,8 +239,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case 'COMPLETEGAME':
-            console.log(action.newAllGames);
-            console.log(action.newLastGW);
             return {
                 ...state, 
                 club: {
@@ -230,6 +255,15 @@ const rootReducer = (state = initialState, action) => {
                     allGames: [...state.club.allGames, action.game]
                 }
             };
+        case 'UPDATEGAME':
+            let removeGame = state.club.allGames.filter(g => g.gameweek_id!==action.game.gameweek_id);
+            return {
+                ...state, 
+                club: {
+                    ...state.club, 
+                    allGames: [...removeGame, action.game]
+                }
+            }
         case 'SETTRANSFERS':
             let starters = action.team.filter(player=>player.sub===false);
             let subs = action.team.filter(player=>player.sub===true);
@@ -267,7 +301,7 @@ const rootReducer = (state = initialState, action) => {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
                         starters: [...state.stateChanges.updatedNotPersistedTeam.starters, action.player],
-                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x!==action.player)
+                        subs: state.stateChanges.updatedNotPersistedTeam.subs.filter(x=>x.player_id!==action.player.player_id)
                     }
                 }
             }
@@ -277,7 +311,7 @@ const rootReducer = (state = initialState, action) => {
                 stateChanges: {
                     updatedNotPersistedTeam: {
                         ...state.stateChanges.updatedNotPersistedTeam,
-                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x!==action.player),
+                        starters: state.stateChanges.updatedNotPersistedTeam.starters.filter(x=>x.player_id!==action.player.player_id),
                         subs: [...state.stateChanges.updatedNotPersistedTeam.subs, action.player]
                     }
                 }
@@ -308,10 +342,10 @@ const rootReducer = (state = initialState, action) => {
         case "SETCAPTAIN":
             return {
                 ...state,
-                user: {
-                    ...state.user, 
-                    currentTeam: {
-                        ...state.user.currentTeam,
+                stateChanges: {
+                    ...state.stateChanges,
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         captain: action.player
                     }
                 }
@@ -319,10 +353,10 @@ const rootReducer = (state = initialState, action) => {
         case "SETVCAPTAIN":
             return {
                 ...state,
-                user: {
-                    ...state.user, 
-                    currentTeam: {
-                        ...state.user.currentTeam,
+                stateChanges: {
+                    ...state.stateChanges,
+                    updatedNotPersistedTeam: {
+                        ...state.stateChanges.updatedNotPersistedTeam,
                         vCaptain: action.player
                     }
                 }
@@ -368,7 +402,9 @@ const rootReducer = (state = initialState, action) => {
                         records: action.records,
                         UGJ: action.UGJ,
                         allPGJs: action.allPGJs,
-                        user: action.otherUser
+                        user: action.otherUser,
+                        captain: action.captain, 
+                        vCaptain: action.vCaptain
                     }
                 }
             }
@@ -387,6 +423,8 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case "SETTEAMPOINTS":
+            let captain = getCaptain(action.starters, state.user.records);
+            let vCaptain = getVCaptain(action.starters, state.user.records);
             return {
                 ...state, 
                 boolDeciders: {
@@ -399,9 +437,65 @@ const rootReducer = (state = initialState, action) => {
                         ...state.user.focusedGWTeam,
                         starters: action.starters, 
                         subs: action.subs,
-                        UGJ: action.UGJ
+                        UGJ: action.UGJ,
+                        captain, 
+                        vCaptain
                     },
                     userFocusGW: action.newUserFocusGW
+                }
+            }
+        case "LEAVINGCLUBPOINTSPAGE": 
+            return {
+                ...state, 
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    otherTeamFocus: false
+                },
+                club: {
+                    ...state.club,
+                    focusedGWTeam: {
+                        starters: [],
+                        subs: [],
+                        otherClubFocusRecords: [],
+                        UGJ: null,
+                        user: null, 
+                        allPGJs: [],
+                        captain: null,
+                        vCaptain: null
+                    },
+                    clubFocusGW: null
+                }
+            };
+        case "SETMODAL":
+            return {
+                ...state,
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    modal: true
+                },
+                modal: action.modalObj
+            }
+        case "CLOSEMODAL": 
+            return {
+                ...state,
+                boolDeciders: {
+                    ...state.boolDeciders,
+                    modal: false
+                },
+                modal: {
+                    modalSet: null,
+                    player: null,
+                    width: null,
+                    height: null, 
+                    btnClick: null
+                }
+            }
+        case "UPDATECLUBPLAYERS":
+            return {
+                ...state, 
+                club: {
+                    ...state.club,
+                    clubPlayers: state.club.clubPlayers.map(cp => cp.player_id===action.updatedPlayer.player_id ? action.updatedPlayer : cp)
                 }
             }
         default:

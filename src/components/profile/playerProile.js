@@ -1,31 +1,17 @@
 import React, { Component } from 'react';
 import { Button, Image, View, Text } from 'react-native';
+import { vw, vh } from 'react-native-expo-viewport-units';
+import { fullName, positionString } from '../../functions/reusable';
+import { modalLabelText, standardText } from '../../styles/textStyle';
+import { modalSplitContainer } from '../Modal/style';
 import { buttons, playerBio, playerImg, playerInfo, playerStats, profile, profileContainer, profileFlexContainer } from './style';
 
-class PlayerProfile extends Component {
-    state = {  }
-    render() { 
-        return ( 
-            <View style={profileContainer}>
-                <View syle={profileFlexContainer}></View>
-                <Text>SHOWING</Text>
-                <View style={playerInfo}>
-                    <Image style={playerImg}/>
-                    <View syle={playerBio}>
-                        <Text>Defender</Text>
-                        <Text>Peter Sampson</Text>
-                    </View>
-                </View>
-                <View style={playerStats}>
-                    <Text>STATS</Text>
-                </View>
-                <View style={buttons}>
-                    <Button title="Remove/Sub"/>
-                    <Button title="Close"/>
-                </View>
-            </View>
-         );
-    }
-}
- 
-export default PlayerProfile;
+export const playerProfile = (player) => 
+<View style={{...modalSplitContainer, width: vw(30)}}>
+    <View style={{padding: vh(1)}}>
+        <Text style={modalLabelText}>{fullName(player)}</Text>
+        <Text style={modalLabelText}>{positionString(player.position)}</Text>
+        <Text style={modalLabelText}>£{player.price}</Text>
+        <Text style={modalLabelText}></Text>
+    </View>
+</View>;

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { ScrollView, Text, View, StyleSheet, Button, Picker, Modal, TouchableHighlight } from 'react-native';
+import { ScrollView, Text, View } from 'react-native';
 import { getCaptain, getVCaptain, positionString, fullName, playersObjToArray, getRecordId, playersArrayToObj } from '../../functions/reusable';
 import { connect } from 'react-redux';
-import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, subIn, subOut } from '../../actions';
+import { addSpinner, closeModal, removeSpinner, setCaptain, setLatestToTransferring, setModal, setTransferringBackToLatest, setVCaptain, subIn, subOut } from '../../actions';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
@@ -16,14 +16,32 @@ import PitchHead from '../../components/PitchHead/pitchHead';
 
 
 class PickTeamScreen extends Component {
+    state = { 
+        modal: {
+            active: false
+        },
+        player: {
+            
+        }
+     }
 
 
     transfer = player => {
-        const { subs, subIn, subOut } = this.props;
-        if (subs.includes(player)) {
-            subIn(player)
+        const { subs, subIn, subOut, closeModal, captain, vCaptain } = this.props;
+        let subsIds = subs.map(s => s.player_id);
+        if (subsIds.includes(player.player_id)) {
+            subIn(player);
+            closeModal();
         } else {
-            subOut(player);
+            if (player.player_id===captain.player_id || player.player_id===vCaptain.player_id) {
+                showMessage({
+                    type: 'warning',
+                    message: `Cannot sub out a captain`
+                })
+            } else {
+                subOut(player);
+                closeModal();
+            }
         }
     }
 
@@ -77,7 +95,11 @@ class PickTeamScreen extends Component {
         false : true;
     }
 
-        
+    setModal = (player, sub) => {
+        const { setModal } = this.props;
+        setModal({modalSet: 'set2', player: {...player, sub}, width: vw(80), height: vh(60), btnClick: this.transfer})
+    }
+
     render() { 
         return (
             <View style={screenContainer}>
@@ -85,9 +107,7 @@ class PickTeamScreen extends Component {
                 <ScrollView>
                     <Pitch
                     type="pickTeam"
-                    modalType="pickTeam"
-                    update={this.validateTeam}
-                    clickFcn={this.transfer}
+                    playerGraphicClickFcn={this.setModal}
                     team={this.props.starters}
                     subs={this.props.subs}
                     />
@@ -104,11 +124,11 @@ const mapStateToProps = state => {
         starters: state.stateChanges.updatedNotPersistedTeam.starters,
         originalSubs: state.user.currentTeam.subs,
         originalStarters: state.user.currentTeam.starters,
-        records: state.user.focusedGWTeam.records,
+        records: state.user.records,
         captain: state.stateChanges.updatedNotPersistedTeam.captain,
-        vCaptain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
         originalCaptain: state.user.currentTeam.captain,
-        originalVCaptain: state.user.currentTeam.captain,
+        originalVCaptain: state.user.currentTeam.vCaptain
     }
 }
 
@@ -119,7 +139,9 @@ const mapDispatchToProps = dispatch => {
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
         setLatestToTransferring: () => dispatch(setLatestToTransferring()),
         addSpinner: () => dispatch(addSpinner()),
-        removeSpinner: () => dispatch(removeSpinner())
+        removeSpinner: () => dispatch(removeSpinner()),
+        setModal: (modalObj) => dispatch(setModal(modalObj)),
+        closeModal: () => dispatch(closeModal()),
     }
 }
  

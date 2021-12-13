@@ -7,7 +7,7 @@ import { capitalize } from '../../functions/reusable';
 import profileImg from '../../../images/profile.jpg';
 import { centerHorizontally } from '../../styles/align';
 import { standardText } from '../../styles/textStyle';
-import MyModal from '../Modal/myModal';
+import MyModal from '../Modal/MyModal';
 import { modalTextContainer } from '../Modal/style';
 import { profile, profileContainer, title } from './style';
 
@@ -38,15 +38,14 @@ class PlayerGWProfile extends Component {
                 </View>
                 <Text style={standardText}>Total Points: {player.pg.total_points}</Text>
                 {this.renderPointsBreakdown()}
-                <MyModal 
+                {/* <MyModal 
                         visible={this.props.topPlayerModal}
                         height={vh(33)}
                         width={vw(80)}
                         closeModalFcn={()=>this.setState(this.props.closeModal('topPlayer'))}
                         modalType="playerProfile"
                         entry={player}
-                        buttonOptions={[]}
-                        />
+                        />  */}
             </TouchableOpacity>
          );
     }

@@ -4,6 +4,11 @@ const { vh } = require("react-native-expo-viewport-units");
 
 export const $chocolateBlack = '#19180A';
 
+export const $offWhite = '#EFF5EC'
+
+export const $col1 = '#C2CAD0';
+export const $col2 = '#7E685A';
+
 export const $baseBlue = '#133DAE';
 
 export const $mellowApricot = '#FFC482';

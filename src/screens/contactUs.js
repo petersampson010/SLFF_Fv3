@@ -65,7 +65,7 @@ export default function ContactUsScreen() {
                 multiline
               />
             </View>
-            <Button title="Submit" onPress={()=>submitMessage()}/>
+            <Button clickable title="Submit" onPress={()=>submitMessage()}/>
           </View>
           }
           <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>

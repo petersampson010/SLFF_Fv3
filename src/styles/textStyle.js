@@ -1,5 +1,5 @@
 import { vh } from "react-native-expo-viewport-units"
-import { $arylideYellow, $caretColor, $chocolateBlack, $coral, $darkElectricBlue, $electricBlue, $luminousGreen, $skobeloff, $standardWhite } from "./global"
+import { $arylideYellow, $caretColor, $chocolateBlack, $coral, $darkElectricBlue, $electricBlue, $luminousGreen, $offWhite, $skobeloff, $standardWhite } from "./global"
 
 export const standardText = {
     fontFamily: 'Avenir Next',
@@ -10,6 +10,12 @@ export const standardText = {
 export const labelText = {
     fontFamily: 'Avenir Next',
     color: 'white',
+    fontSize: 18,
+}
+
+export const modalLabelText = {
+    fontFamily: 'Avenir Next',
+    color: '#292929',
     fontSize: 18,
 }
 
@@ -33,7 +39,6 @@ export const checkBox = {
 
 export const playerNamePoints = {
     fontSize: 13,
-    marginTop: 5,
     textAlign: 'center',
     fontWeight: "800",
     color: $chocolateBlack

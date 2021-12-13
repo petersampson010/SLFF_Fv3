@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { ScrollView, View, Text, Button } from 'react-native';
+import { ScrollView, View, Text, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { addSubAttributeToPlayersArray, playerIds, fullName, getRecordId, playersArrayToObj, playersObjToArray, positionString } from '../../functions/reusable';
 import Pitch from '../../components/Pitch/pitch.js';
@@ -15,9 +15,13 @@ import pitch from '../../components/Pitch/pitch.js';
 import _, { remove } from 'lodash';
 import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
 import { TouchableHighlightBase } from 'react-native';
-import { addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
+import { addSpinner, closeModal, removeSpinner, setLatestToTransferring, setModal, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import PitchHead from '../../components/PitchHead/pitchHead';
+import { subImage } from '../../components/Modal/style';
+import { playerImage, playerImageLarge } from '../../components/PlayerGraphic/style';
+import { vh, vw } from 'react-native-expo-viewport-units';
+import Button from '../../components/Button/button';
 
 
 class TransfersScreen extends Component {
@@ -41,6 +45,7 @@ class TransfersScreen extends Component {
         const { transferOut, transferIn, user, teamPlayers } = this.props;
         if (this.playerSelected(player)) {
             transferOut(player);
+            this.props.closeModal();
         } else {
             if (teamPlayers.filter(x=>x.position===position).length>2) {
                 showMessage({
@@ -49,6 +54,8 @@ class TransfersScreen extends Component {
                 })
             } else {
                 transferIn(player);
+                this.props.closeModal();
+
             }
         }
     } 
@@ -114,6 +121,10 @@ class TransfersScreen extends Component {
         }
     }
 
+    setModal = player => {
+        this.props.setModal({modalSet: 'set1', player, btnClick: this.transfer, width: vw(80), height: vh(50)});
+    }
+
     render() { 
         return ( 
             <View style={screenContainer}>
@@ -122,14 +133,11 @@ class TransfersScreen extends Component {
                 <ScrollView style={pitchContainer}>
                     <Pitch 
                     type="transfers"
-                    modalType="playerProfile"
-                    update={this.confirmUpdates}
-                    clickFcn={this.transfer}
+                    playerGraphicClickFcn={this.setModal}
                     team={this.props.teamPlayers}
                     />
                     <PlayersList
-                    clickFcn={this.transfer}
-                    modalType="playerProfile"
+                    clickFcn={this.setModal}
                     />
                 </ScrollView>
                 <BottomNav navigation={this.props.navigation}/>
@@ -156,7 +164,9 @@ export const mapDispatchToProps = dispatch => {
         addSpinner: () => dispatch(addSpinner()),
         removeSpinner: () => dispatch(removeSpinner()),
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
-        setLatestToTransferring: () => dispatch(setLatestToTransferring())
+        setLatestToTransferring: () => dispatch(setLatestToTransferring()),
+        setModal: modalObj => dispatch(setModal(modalObj)),
+        closeModal: () => dispatch(closeModal())
     }
 }
  

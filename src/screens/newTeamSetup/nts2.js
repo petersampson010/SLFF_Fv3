@@ -2,32 +2,30 @@ import React, { Component } from 'react';
 import Header from '../../components/header/header';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
-import { patchUserBUDGET, postRecord } from '../../functions/APIcalls';
+import { getAllPGJFromUserId, getAllPGJsFromGameweekId, getLeague, getPlayerById, getUGJs, getUserById, patchUserBUDGET, postRecord, postUser } from '../../functions/APIcalls';
 import Pitch from '../../components/Pitch/pitch';
 import PlayersList from '../../components/playersList/playersList';
 import { showMessage } from 'react-native-flash-message';
 import { PlayerIds, allSelectedPlayers } from '../../functions/reusable';
 import { screenContainer } from '../../styles/global';
 import { pitchContainer } from '../PitchScreens/style';
-import { nts2Login, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
+import { nts2Login, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, transferIn, transferOut, closeModal, setModal } from '../../actions';
 import { addSubAttributeToPlayersArray, playerIds, fullName, getRecordId, playersArrayToObj, playersObjToArray, positionString } from '../../functions/reusable';
-import { popToStack, resetStackAndGoHome, updateStack } from '../../Navigation';
-import { StackActions, NavigationAction } from '@react-navigation/routers';
-import { CommonActions } from '@react-navigation/native';
 import PitchHead from '../../components/PitchHead/pitchHead';
 import { validateTransfers } from '../../functions/validity';
 import globalConfig from '../../config/globalConfig.json';
-
-
+import { vh, vw } from 'react-native-expo-viewport-units';
+import { updateStack } from '../../Navigation';
 
 class ntsScreen2 extends Component {
     state = {}
 
     transfer = player => {
         let { position, price } = player;
-        const { transferOut, transferIn, user, teamPlayers } = this.props;
+        const { transferOut, transferIn, user, teamPlayers, closeModal } = this.props;
         if (this.playerSelected(player)) {
             transferOut(player);
+            closeModal();
         } else {
             if (teamPlayers.filter(x=>x.position===position).length>2) {
                 showMessage({
@@ -36,6 +34,7 @@ class ntsScreen2 extends Component {
                 })
             } else {
                 transferIn(player);
+                closeModal();
             }
         }
     } 
@@ -116,13 +115,35 @@ class ntsScreen2 extends Component {
             if (validateTransfers(budget, teamPlayersObj)) {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
+                        let returnUser = await postUser({...user, gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
                         for (let i=0;i<globalConfig.numberOfPlayers;i++) {
-                            let record = await postRecord(teamPlayers[i], user.user_id, i);
+                            let record = await postRecord(teamPlayers[i], returnUser.user_id, i);
                             records.push(record);
                         }
-                        let returnUser = await patchUserBUDGET(
-                        user.user_id, budget);
-                        nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records);
+                        if (lastGW) {
+                            let lastPGJs = await getAllPGJsFromGameweekId(lastGW.gameweek_id);
+                            let league = await getLeague(returnUser.admin_user_id);
+                            if (lastPGJs<1) {
+                                nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null);
+                            } else {
+                                let allPGJs = await getAllPGJFromUserId(returnUser.user_id);
+                                let allLastUGJs = await getUGJs(returnUser.admin_user_id, lastGW.gameweek_id);
+                                let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
+                                pg = pg[0];
+                                let topPlayer = pg ? {
+                                    pg,
+                                    player: await getPlayerById(pg.player_id)
+                                } : null;
+                                let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
+                                let topUser = ug ? {
+                                    ug,
+                                    user: await getUserById(ug.user_id)
+                                } : null;
+                                nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser);
+                            }
+                        } else {
+                            nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, null, [], [], [], null, null);
+                        }
                         updateStack(navigation, 0, 'Home');
                     } else {
                         showMessage({
@@ -142,6 +163,10 @@ class ntsScreen2 extends Component {
         }
     }
 
+    setModal = player => {
+        this.props.setModal({modalSet: 'set1', player, btnClick: this.transfer, width: vw(80), height: vh(30)});
+    }
+
     render() { 
         return ( 
             <View style={screenContainer}>
@@ -151,13 +176,12 @@ class ntsScreen2 extends Component {
                     <Pitch
                     update={this.submitTeam}
                     clickFcn={this.transfer}
+                    playerGraphicClickFcn={this.setModal}
                     type='transfers'
-                    modalType="playerProfile"
                     team={this.props.teamPlayers}
                     />
                     <PlayersList
-                    clickFcn={this.transfer}
-                    modalType="playerProfile"
+                    clickFcn={this.setModal}
                     />
                 </ScrollView>
             </View>
@@ -176,13 +200,15 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        nts2Login: (user, starters, subs, records) => dispatch(nts2Login(user, starters, subs, records)),
+        nts2Login: (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => dispatch(nts2Login(user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser)),
         transferOut: player => dispatch(transferOut(player)),
         transferIn: player => dispatch(transferIn(player)),
         addSpinner: () => dispatch(addSpinner()),
         removeSpinner: () => dispatch(removeSpinner()),
         setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
-        setLatestToTransferring: () => dispatch(setLatestToTransferring())
+        setLatestToTransferring: () => dispatch(setLatestToTransferring()),
+        setModal: modalObj => dispatch(setModal(modalObj)),
+        closeModal: () => dispatch(closeModal())
     }
 }
  

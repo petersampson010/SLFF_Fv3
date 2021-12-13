@@ -19,36 +19,6 @@ class PlayerGraphic extends Component {
         }
     }
 
-    renderPoints = () => {
-        if (this.props.type==='points') {
-            return <Text style={playerNamePoints}>{this.points()}</Text>
-        }
-    }
-
-    points = () => {
-        let PG = this.props.playerPG;
-        if (PG===undefined) {
-            return '0';
-        } else if (!PG)  {
-            return '';
-        } else {
-            return this.props.playerPG.total_points;
-        }
-    }
-
-
-    horizontalMargin = () => {
-        switch(this.props.player.position) {
-            case '2':
-                return 7;
-            case '3':
-                return 1;
-            case '4':
-                return 0;
-            default: 
-            return 0;
-        }
-    }
 
     containerWidth = () => {
         if (this.props.sub) {
@@ -67,49 +37,67 @@ class PlayerGraphic extends Component {
         }
     }
 
-    isCaptain = () => {
-        const { player, type, lastGWCaptain, lastGWVCaptain, latestCaptain, latestVCaptain } = this.props;
+    getPointsAndCaptain = () =>  {
+        const { player, captain, vCaptain, pointsCaptain, pointsVCaptain, otherCaptain, otherVCaptain, type, otherTeamFocus, playerPG } = this.props;
         if (type==='points') {
-            if (player===lastGWCaptain) {
-                return 'C';
-            } else if (lastGWVCaptain) {
-                return 'VC';
+            let PG = playerPG(player.player_id)
+            if (otherTeamFocus) {
+                let captainPlayed = playerPG(otherCaptain.player_id).minutes > 0;
+                if (player.player_id===otherCaptain.player_id) {
+                    return { captain: 'C', points: 2*PG.total_points }
+                } else if (player.player_id===otherVCaptain.player_id) {
+                    if (captainPlayed) {
+                        return { captain: 'vc', points: PG.total_points }
+                    } else {
+                        return { captain: 'vc', points: 2*PG.total_points }
+                    }
+                } else {
+                    return { captain: null, points: PG.total_points }
+                }
+            } else {
+                let captainPlayed = playerPG(pointsCaptain.player_id).minutes > 0;
+                if (player.player_id===pointsCaptain.player_id) {
+                    return { captain: 'C', points: 2*PG.total_points }
+                } else if (player.player_id===pointsVCaptain.player_id) {
+                    if (captainPlayed) {
+                        return { captain: 'vc', points: PG.total_points }
+                    } else {
+                        return { captain: 'vc', points: 2*PG.total_points }
+                    }
+                } else {
+                    return { captain: null, points: PG.total_points }
+                }
             }
         } else if (type==='pickTeam') {
-            if (player===latestCaptain) {
-                return 'C';
-            } else if (player===latestVCaptain) {
-                return 'VC';
+            if (player.player_id===captain.player_id) {
+                return { captain: 'C', points: null }
+            } else if (player.player_id===vCaptain.player_id) {
+                return { captain: 'vc', points: null }
+            } else {
+                return { captain: null, points: null }
             }
-        } else {
-            return;
         }
+        return  { captain: null, points: null };
     }
 
     render() {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        const { player, openModal, type, clickFcn } = this.props;
+        const { player, type, playerGraphicClickFcn, sub } = this.props;
+        const { captain, points } = this.getPointsAndCaptain();
       return ( 
-            <View style={{...container, marginHorizontal: this.horizontalMargin(), width: this.containerWidth()}}>
-                <View style={ type!=="points" ? {...subContainer, paddingLeft: vw(5)} : subContainer}>
-                    <TouchableOpacity onPress={()=>openModal(player)}>
-                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
-                    </TouchableOpacity>
-                    {type!=='points' ?
+            <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, width: this.containerWidth()}}>
+                <View style={ subContainer }>
                     <View>
-                    <Text style={capText}>{this.isCaptain()}</Text>
-                    <TouchableOpacity onPress={()=>clickFcn(player)}>
-                        <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-                    </TouchableOpacity>
+                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
-                    : null}
                 </View>
-                <TouchableOpacity onPress={()=>openModal(player)}>
-                    <Text style={playerNamePoints}>{player.last_name}</Text>
-                </TouchableOpacity>
-                    {this.renderPoints()}
-            </View>
+                <View style={{flexDirection: 'row', marginTop: 5}}>
+                    <Text numberOfLines={1} style={playerNamePoints}>{player.last_name} </Text>
+                    <Text style={capText}>{captain}</Text>
+                </View>
+                    <Text style={playerNamePoints}>{points}</Text>
+            </TouchableOpacity>
       );
     }
 }
@@ -117,11 +105,19 @@ class PlayerGraphic extends Component {
 const mapStateToProps = state => {
     return {
         records: state.user.records,
-        latestCaptain: state.user.currentTeam.captain,
-        latestVCaptain: state.user.currentTeam.vCaptain,
-        lastGWCaptain: state.user.focusedGWTeam.captain,
-        lastGWVCaptain: state.user.focusedGWTeam.vCaptain,
+        captain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
+        pointsCaptain: state.user.focusedGWTeam.captain,
+        pointsVCaptain: state.user.focusedGWTeam.vCaptain,
+        otherCaptain: state.club.focusedGWTeam.captain,
+        otherVCaptain: state.club.focusedGWTeam.vCaptain,
+        otherTeamFocus: state.boolDeciders.otherTeamFocus
+    }
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
     }
 }
  
-export default connect(mapStateToProps)(PlayerGraphic);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayerGraphic);

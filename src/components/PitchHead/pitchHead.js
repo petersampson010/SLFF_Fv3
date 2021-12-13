@@ -7,7 +7,7 @@ import { changeGWOther, setTeamPoints } from '../../actions';
 import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
 import { getTeamPointsInfo, getTeamPointsInfoGWChange } from '../../functions/reusable';
 import { gwTEXT, headers, labelText, pointsBannerTEXT, pointsTEXT, standardText } from '../../styles/textStyle';
-import Button from '../button';
+import Button from '../Button/button';
 import GWScore from '../gwScore/gwScore';
 import pitch from '../Pitch/pitch';
 import { gameweekBanner, gwArrow, gwText, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
@@ -26,7 +26,6 @@ class PitchHead extends Component {
         if (otherTeamFocus) {
             const newClubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1)
             const { starters, subs, records, otherUGJ } = await getTeamPointsInfoGWChange(otherUser.user_id, newClubFocusGW.gameweek_id, otherTeamFocus);
-            console.log('above undefined');
             changeGWOther(starters, subs, otherUGJ, newClubFocusGW);
         } else {
             const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1);
@@ -41,7 +40,7 @@ class PitchHead extends Component {
             case 'points': 
                 return <GWScore/>;
             case 'pickTeam':
-                return <View style={pickTeamX}><Button text='Confirm' func={update} width={vw(30)}/></View>;
+                return <View style={pickTeamX}><Button clickable text='Confirm' func={update} width={vw(30)}/></View>;
             case 'transfers':
                 return <View style={transfersX}>
                         <View >
@@ -51,7 +50,7 @@ class PitchHead extends Component {
                                 <Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text>
                             </View>
                         </View>
-                        <Button text='Confirm' func={update} width={vw(30)}/>
+                        <Button clickable text='Confirm' func={update} width={vw(30)}/>
                     </View>
             default: 
                 return;
@@ -67,8 +66,6 @@ class PitchHead extends Component {
                 (userFocusGW ? userFocusGW : lastGW);
                 let arrowLeft = otherTeamFocus ? GW.gameweek>otherUser.gw_start : GW.gameweek>user.gw_start;
                 let arrowRight = GW.gameweek<lastGW.gameweek;
-                console.log('arrow left: ' + arrowLeft);
-                console.log('arrow right: ' + arrowRight);
                 return <View style={gameweekBanner}>
                     <TouchableOpacity style={{...gwArrow, borderBottomLeftRadius: 7, borderTopLeftRadius: 7}} onPress={arrowLeft ? () => this.changeGWPoints('L') : null}>
                         <Text style={{...gwTEXT, textAlign: 'left'}}>{arrowLeft ? '<--' : ''}</Text>

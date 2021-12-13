@@ -6,37 +6,15 @@ import { fullName, positionString, playerIds } from '../../functions/reusable';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { filter, itemPositionPicker, pickerItem, playersListContainer, positionPicker, slidable, tableHead, tableText, tick } from './style';
 import { labelText, standardText } from '../../styles/textStyle';
-import { tableElement3, tableElement4, tableRow } from '../../styles/table';
-import MyModal from '../Modal/myModal';
-import { subImage } from '../PlayerGraphic/style';
+import { tableElement3, tableElement4, tableRow, tableElement1 } from '../../styles/table';
+import { setModal } from '../../actions';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 
 class PlayersList extends Component {
     state = { 
         positionFilter: '0',
-        modal: {
-            active: false,
-            player: {
-                player_id: 1,
-                first_name: "Steve",
-                last_name: "Dunno",
-                position: "1",
-                price: 80,
-                availability: "a",
-                admin_user_id: 1
-            }
-        }
-    }
-
-    openModal = player => {
-        this.setState({
-            ...this.state,
-            modal: {
-                active: true,
-                player
-            }
-        })
     }
 
     table = () => {
@@ -56,26 +34,24 @@ class PlayersList extends Component {
         }
     }
 
-    playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
-
-    tableRow = (player, key) => {
-        const subImg = require('../../../images/subIcon.png');
-        const icon = this.playerSelected(player) ? null : <Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>
-        const { clickFcn } = this.props;
-        return <TouchableOpacity key={key}
-        style={tableRow}
-        onPress={()=>this.openModal(player)}
-        onLongPress={()=>this.setState({...this.state, modal: {active: true, player}})}>
-            <Text style={{...tableElement3, ...standardText}}>{fullName(player)}</Text>
-            <Text style={{...tableElement3, ...standardText}}>{positionString(player.position)}</Text>
-            <Text style={{...tableElement3, ...standardText}}>£{player.price}m</Text>
-            <TouchableOpacity style={tableElement4} onPress={()=>clickFcn(player)}>
-                {icon}
-            </TouchableOpacity>
-        </TouchableOpacity>;
+    playerSelected = player => {
+        return playerIds(this.props.teamPlayers).includes(player.player_id);
     }
 
+    tableRow = (player, key) => {
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
+        return <TouchableOpacity key={key}
+        style={{...tableRow, opacity: this.playerSelected(player) ? 0.2 : 1}}
+        onPress={()=>this.props.clickFcn(player)}>
+            <Text style={{...tableElement1, ...standardText}}>{fullName(player)}</Text>
+            <Text style={{...tableElement1, ...standardText}}>{positionString(player.position)}</Text>
+            <Text style={{...tableElement4, ...standardText}}>£{player.price}m</Text>
+        </TouchableOpacity>;
+    }
     render() { 
+        const subImg = require('../../../images/subIcon.png');
+        const { clickFcn } = this.props.clickFcn
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>
@@ -90,23 +66,16 @@ class PlayersList extends Component {
                         <Picker.Item color="white" label="FWD" value='4'/>
                     </Picker>
                 </View>
-                <MyModal
-                        visible={this.state.modal.active}
-                        height={vh(33)}
-                        width={vw(80)}
-                        closeModalFcn={()=>this.setState({...this.state, modal: {...this.state.modal, active: false}})}
-                        modalType={this.props.modalType}
-                        entry={this.state.modal.player}
-                        buttonOptions={[]}
-                        />
-                <View >
+                <View>
                     <View>
                         <View style={tableRow}>
-                            <Text style={{...tableElement3, ...labelText}}>Name</Text>
-                            <Text style={{...tableElement3, ...labelText}}>Position</Text>
-                            <Text style={{...tableElement3, ...labelText}}>Price</Text>
+                            <Text style={{...tableElement1, ...labelText}}>Name</Text>
+                            <Text style={{...tableElement1, ...labelText}}>Position</Text>
+                            <Text style={{...tableElement4, ...labelText}}>Price</Text>
                         </View>
-                        {this.table()}
+                        <ScrollView style={{marginBottom: vh(40)}}>
+                            {this.table()}
+                        </ScrollView>
                     </View>
                 </View>
             </View>
@@ -120,5 +89,11 @@ const mapStateToProps = state => {
         teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)
     }
 }
- 
-export default connect(mapStateToProps)(PlayersList);
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setModal: (modalObj) => dispatch(setModal(modalObj))
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(PlayersList);

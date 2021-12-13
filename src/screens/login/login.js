@@ -1,16 +1,18 @@
 import React, { Component } from 'react';
-import { View, Text, Button, Switch, TouchableHighlightBase, TextInput } from 'react-native';
+import { View, Text, Switch, TouchableHighlightBase, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
-  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGameweeksFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
 import { input, inputFieldLarge, inputFieldContainerCenter } from '../../styles/input';
 import { updateStack } from '../../Navigation';
 import { getLastAndAllGWs } from '../../functions/reusable';
+import Button from '../../components/Button/button';
+import { vw } from 'react-native-expo-viewport-units';
 
 
 class LoginScreen extends Component {
@@ -99,10 +101,10 @@ class LoginScreen extends Component {
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
-          let allPGJs = await getAllPGJFromUserId(user_id);
           if (lastPGJs.length<1) {
             await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
           } else {
+            let allPGJs = await getAllPGJFromUserId(user_id);
             let allLastUGJs = await getUGJs(admin_user_id, gameweek_id);
             let lastUGJ = await getUGJ(user_id, gameweek_id);
             let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
@@ -144,8 +146,8 @@ class LoginScreen extends Component {
       if (adminUser !== undefined && adminUser !== null) {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
-        let { lastGW, gameweeks } = await getLastAndAllGWs(adminUser.admin_user_id);
-        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW);
+        let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
+        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
         showMessage({
@@ -190,8 +192,7 @@ class LoginScreen extends Component {
                 secureTextEntry
                 />
               </View>
-              
-              <Button title="Sign in" onPress={this.handleSubmit}/>
+              <Button clickable width={vw(35)} text="Sign in" func={this.handleSubmit}/>
             </View>
           </View>
         );
@@ -206,8 +207,8 @@ class LoginScreen extends Component {
 
   const mapDispatchToProps = dispatch => {
     return {
-      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, gameweek, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
-      loginAdminUser: (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, gameweeks, lastGW)),
+      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
+      loginAdminUser: (adminUser, clubPlayers, allUsers, GWs, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW)),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }
   }

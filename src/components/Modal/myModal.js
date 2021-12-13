@@ -1,118 +1,112 @@
 import React, { Component } from 'react';
 import { Modal, TouchableOpacity, View, Text, Image } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
+import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
-import { setCaptain } from '../../actions';
-import { fullName, getRecord, positionString } from '../../functions/reusable';
-import { buttonText, buttonContainerFullWidth } from '../../styles/button';
-import { $arylideYellow, $chocolateBlack, $standardWhite, $zaGreen } from '../../styles/global';
-import { checkBox, labelText, standardText } from '../../styles/textStyle';
-import Button from '../button';
+import { closeModal, setCaptain, setVCaptain } from '../../actions';
+import Button from '../Button/button';
+import Checkbox from '../Checkbox/checkbox';
 import { playerImage, playerImageLarge } from '../PlayerGraphic/style';
-import { button, buttons, captainBox, closeButton, closeModalContainer, modal, modalSplitContainer, modalTextContainer } from './style';
+import { playerProfile } from '../profile/playerProile';
+import { buttons, captainCheckbox, captainCheckboxContainer, closeButton, modal, modalContainer, modalJSX, modalSplitContainer, modalTextContainer, subImage } from './style';
+import { useNavigation } from '@react-navigation/native';
+import { modalLabelText } from '../../styles/textStyle';
+import { playerImg } from '../profile/style';
+
 
 
 class MyModal extends Component {
-    state = {  }
 
-    renderButtons = () => {
-        return this.props.buttonOptions.map((x,i)=><Button key={i} text={x.text} func={x.fcn} width={vw(35)}/>)
-    }
+    // navigation = (useNavigation();
 
     setCaptain = player => {
-        if (this.props.vCaptain===player) {
+        const { vCaptain, setCaptain } = this.props;
+        if (vCaptain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            this.props.setCaptain(player);
+            setCaptain(player);
         }
     }
 
     setVCaptain = player => {
-        if (this.props.captain===player) {
+        const { captain, setVCaptain } = this.props;
+        if (captain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            this.props.setVCaptain(player);
+            setVCaptain(player);
         }
     }
 
-    modalJSX = () => {
+    topRightJSX = () => {
+        const { modalSet } = this.props.modal;
         const playerImg = require('../../../images/profile.jpg');
-        if (this.props.jsx) {
-            return this.props.jsx
-        } else {
-            const { modalType, entry } = this.props;
-            let player;
-            switch(modalType) {
-                case 'userProfile':
-                    const { user, ug } = entry;
-                    return <View style={modalTextContainer}>
-                        <Text style={standardText}>{user.team_name}</Text>
-                        <Text style={standardText}>GW Points: {ug.total_points}</Text>
-                        <Text style={standardText}>maybe total score</Text>
+        switch(modalSet) {
+            case 'set1': case 'set2':
+                return <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
+            case 'set3':
+                return <View>
+                    <View style={{width: vw(25), flexDirection: 'row', justifyContent: 'center'}}>
+                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
                     </View>
-                case 'playerProfile':
-                    player = entry.pg ? entry.player : entry;
-                    return <View style={{...modalSplitContainer, width:this.props.width}}>
-                        <View style={{padding: vh(1)}}>
-                            <Text style={standardText}>{fullName(player)}</Text>
-                            <Text style={standardText}>{positionString(player.position)}</Text>
-                            <Text style={standardText}>£{player.price}</Text>
-                            <Text style={standardText}></Text>
-
-                            {/* <Text style={standardText}>MAYBE SOME STATS AT SOME POINT</Text> */}
-                        </View>
-                        <View style={{padding: vh(1)}}>
-                            <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
-                        </View>
-                    </View>
-                case 'pickTeam':
-                    player = entry.pg ? entry.player : entry;
-                    const rec = getRecord(player, this.props.records);
-                    const sub = rec ? rec.sub : true;
-                    return <View style={modalTextContainer}>
-                        <Text style={standardText}>{fullName(player)}</Text>
-                        <Text style={standardText}>{positionString(player.position)}</Text>
-                        <Text style={standardText}>£{player.price}m</Text>
-                        <Text style={standardText}>MAYBE SOME STATS AT SOME POINT</Text>
-                        {(!sub) ?
-                        <View>
-                            <TouchableOpacity style={this.props.captain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setCaptain(player)}>
-                                <Text style={this.props.captain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Captain</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={this.props.vCaptain===player ? {...captainBox, backgroundColor: $zaGreen} : {...captainBox, backgroundColor: $standardWhite}} onPress={()=>this.setVCaptain(player)}>
-                                <Text style={this.props.vCaptain===player ? {...checkBox, color: $arylideYellow} : {...checkBox, color: $chocolateBlack}}>Vice Captain</Text>
-                            </TouchableOpacity>
-                        </View>
-                        : null}
-                    </View>
-                case 'gwStatsSubmit': 
-                    return <View style={modalTextContainer}>
-                        <Text style={standardText}>Please review your stats before submission! Once submitted, stats cannot be changed. Clicking confirm will submit these stats and set this 'Game' to complete.</Text>
-                    </View>;
-                default: 
+                    <Text style={modalLabelText}>GW Points</Text>
+                </View>;
+            case 'set4': 
+                return <Text style={modalLabelText}>Would you like to edit the game or submit the stats and complete it?</Text>;
+            case 'set5':
+                return <Text style={modalLabelText}>Please ensure stats are correct, once confirmeed they cannot be corrected.</Text>;
+            default: 
                 return;
-            }
+        }
+    }
+
+    bottomBtn = () => {
+        const { modalSet, btnClick, player } = this.props.modal;
+        const subImg = require('../../../images/subIcon.png');
+        switch(modalSet) {
+            case 'set1': case 'set2':
+                return <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
+            case 'set4':
+                return <Button width={vw(35)} clickable modal text="Edit Game" func={btnClick}/>;
+            case 'set5':
+                return <Button width={vw(35)} clickable modal text="Submit Stats" func={btnClick}/>;
+            default: 
+                return;
         }
     }
 
     render() { 
+        const { modal, modalActive, closeModal, captain, vCaptain } = this.props;
+        const { player, width, modalSet } = modal;
+        const playerImg = require('../../../images/profile.jpg');
+        const subImg = require('../../../images/subIcon.png');
         return ( 
-            <Modal visible={this.props.visible} 
+            <Modal visible={modalActive} 
             transparent={true}>
-                <View style={{...modal, height:this.props.height, width:this.props.width, left:(vw(100)-(this.props.width))/2}}>
-                    {this.modalJSX()}
-                    <View style={closeButton}>
-                        <View style={buttons}>
-                            {this.renderButtons()}
+                <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
+                    <View style={modalJSX}>
+                        <View>
+                            {player ? playerProfile(player) : null}
+                            {modalSet === 'set2' && !player.sub ? 
+                            <View style={captainCheckboxContainer}>
+                                <Checkbox clickable active={player.player_id===captain.player_id} text="C" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
+                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="VC" func={()=>this.setVCaptain(player)} style={captainCheckbox}/> 
+                            </View>
+                             : null}
                         </View>
-                        <Button text='Close' func={this.props.closeModalFcn} width={vw(35)}/>
+                        {this.topRightJSX()}
                     </View>
+                    <View style={modalJSX}>
+                        {this.bottomBtn()}
+                        <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
+                    </View>
+                </View>
                 </View>
             </Modal>
          );
@@ -122,24 +116,19 @@ class MyModal extends Component {
 const mapStateToProps = state => {
     return {
         records: state.user.records,
-        captain: state.user.currentTeam.captain,
-        vCaptain: state.user.currentTeam.vCaptain
+        modal: state.modal,
+        modalActive: state.boolDeciders.modal,
+        captain: state.stateChanges.updatedNotPersistedTeam.captain,
+        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        setCaptain: player => dispatch(setCaptain(player)),
-        setVCaptain: player => dispatch(setVCaptain(player))
+        closeModal: () => dispatch(closeModal()),
+        setCaptain: (player) => dispatch(setCaptain(player)),
+        setVCaptain: (player) => dispatch(setVCaptain(player))
     }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyModal);
-
-
-
-// props we need: 
-// visible
-// closeModalFcn
-// jsx: *OPTIONAL*
-// array of button options at bottom, each element needs text and an onPress fcn

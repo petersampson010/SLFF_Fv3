@@ -1,14 +1,8 @@
-import { isCaptain, isVCaptain } from "./functions/reusable"
+import { getCaptain, getVCaptain, isCaptain, isVCaptain } from "./functions/reusable"
 
 export const loginUser = (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs) => {
-    let captain, vCaptain;
-    for (let i=0;i<currentStarters.length;i++) {
-        if (isCaptain(currentStarters[i], records)) {
-            captain = currentStarters[i];
-        } else if (isVCaptain(currentStarters[i], records)) {
-            vCaptain = currentStarters[i];
-        }
-    }
+    let captain = getCaptain(currentStarters, records);
+    let vCaptain = getVCaptain(currentStarters, records);
     return {
         type: 'LOGINUSER',
         user,
@@ -32,13 +26,13 @@ export const loginUser = (user, adminUser, clubPlayers, currentStarters, current
     }
 }
 
-export const loginAdminUser = (adminUser, clubPlayers, allUsers, gameweeks, lastGW) => {
+export const loginAdminUser = (adminUser, clubPlayers, allUsers, GWs, lastGW) => {
     return {
         type: 'LOGINADMINUSER',
         adminUser, 
         clubPlayers,
         allUsers,
-        gameweeks,
+        GWs,
         lastGW
     }
 }
@@ -85,13 +79,23 @@ export const resetTeamPlayers = () => {
     }
 }
 
-export const nts2Login = (user, starters, subs, records) => {
+export const nts2Login = (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => {
+    let captain = getCaptain(starters, records);
+    let vCaptain = getVCaptain(starters, records);
     return {
         type: 'NTS2LOGIN',
         user,
         starters, 
         subs,
-        records
+        records,
+        league,
+        allPGJs,  
+        lastPGJs, 
+        allLastUGJs, 
+        topPlayer, 
+        topUser,
+        captain, 
+        vCaptain
     }
 }
 
@@ -117,6 +121,13 @@ export const addGameState = game => {
     }
 }
 
+export const updateGameState = game => {
+    return {
+        type: 'UPDATEGAME',
+        game
+    }
+}
+
 export const setTransfers = team => {
     return {
         type: 'SETTRANSFERS',
@@ -136,14 +147,14 @@ export const removeSpinner = () => {
     }
 }
 
-export const setCaptain = player => {
+export const setCaptain = (player,) => {
     return {
         type: 'SETCAPTAIN',
         player
     }
 }
 
-export const setVCaptain = player => {
+export const setVCaptain = (player) => {
     return {
         type: 'SETVCAPTAIN',
         player
@@ -191,6 +202,8 @@ export const setLatestToTransferring = () => {
 }
 
 export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, otherUser, clubFocusGW) => {
+    let captain = getCaptain(starters, records);
+    let vCaptain = getVCaptain(starters, records);
     return {
         type: 'SETOTHERTEAMPOINTS',
         starters, 
@@ -199,7 +212,9 @@ export const setOtherTeamPoints = (starters, subs, records, UGJ, allPGJs, otherU
         UGJ, 
         allPGJs,
         otherUser,
-        clubFocusGW
+        clubFocusGW,
+        captain, 
+        vCaptain
     }
 }
 
@@ -220,5 +235,31 @@ export const setTeamPoints = (starters, subs, UGJ, newUserFocusGW) => {
         subs,
         UGJ,
         newUserFocusGW
+    }
+}
+
+export const leavingClubPointsPage = () => {
+    return {
+        type: 'LEAVINGCLUBPOINTSPAGE'
+    }
+}
+
+export const setModal = (modalObj) => {
+    return {
+        type: "SETMODAL",
+        modalObj
+    }
+}
+
+export const closeModal = () => {
+    return {
+        type: "CLOSEMODAL"
+    }
+}
+
+export const updateStateClubPlayers = updatedPlayer => {
+    return {
+        type: "UPDATECLUBPLAYERS",
+        updatedPlayer
     }
 }

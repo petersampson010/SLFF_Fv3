@@ -6,7 +6,7 @@ import { addSpinner, closeModal, removeSpinner, setCaptain, setLatestToTransferr
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
-import { patchRecordSUBS, patchRecordCAPTAINS } from '../../functions/APIcalls';
+import { patchRecordSUBS, patchRecordCAPTAINS, patchRecordToCAPTAIN, patchRecordRemoveCAPTAIN } from '../../functions/APIcalls';
 import { showMessage } from 'react-native-flash-message';
 import Pitch from '../../components/Pitch/pitch';
 import BottomNav from '../../components/bottomNav/bottomNav';
@@ -52,22 +52,22 @@ class PickTeamScreen extends Component {
     }
         
     updateTeam = async() => {
-        const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest } = this.props;
+        const { starters, subs, originalStarters, originalSubs, records, captain, vCaptain, originalCaptain, originalVCaptain, addSpinner, removeSpinner, setLatestToTransferring, setTransferringBackToLatest, user } = this.props;
         let startToSub = _.difference(originalStarters, starters);
         let subToStart = _.difference(originalSubs, subs);
         try {
             addSpinner();
             for (let i=0;i<startToSub.length;i++) {
-                await patchRecordSUBS(true, startToSub[i].player_id);
-                await patchRecordSUBS(false, subToStart[i].player_id);
+                await patchRecordSUBS(true, startToSub[i].player_id, user.user_id);
+                await patchRecordSUBS(false, subToStart[i].player_id, user.user_id);
             }
-            if (originalCaptain!==captain) {
-                await patchRecordCAPTAINS(true, false, getRecordId(captain, records));
-                await patchRecordCAPTAINS(false, false, getRecordId(originalCaptain, records));
+            if (originalCaptain.player_id!==captain.player_id) {
+                await patchRecordRemoveCAPTAIN('captain', user.user_id);
+                await patchRecordToCAPTAIN('captain', user.user_id, captain.player_id);
             } 
-            if (originalVCaptain!==vCaptain) {
-                await patchRecordCAPTAINS(false, true, getRecordId(vCaptain, records));
-                await patchRecordCAPTAINS(false, false, getRecordId(originalVCaptain, records));
+            if (originalVCaptain.player_id!==vCaptain.player_id) {
+                await patchRecordRemoveCAPTAIN('vice_captain', user.user_id);
+                await patchRecordToCAPTAIN('vice_captain', user.user_id, vCaptain.player_id);
             }
             setLatestToTransferring();
             removeSpinner();
@@ -120,6 +120,7 @@ class PickTeamScreen extends Component {
 
 const mapStateToProps = state => {
     return {
+        user: state.user.user,
         subs: state.stateChanges.updatedNotPersistedTeam.subs,
         starters: state.stateChanges.updatedNotPersistedTeam.starters,
         originalSubs: state.user.currentTeam.subs,

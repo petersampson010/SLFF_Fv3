@@ -161,14 +161,15 @@ export const postRecordTRANSFER = (player, userId, gwId, count, captain, vice_ca
     admin_user_id: player.admin_user_id
 });
 
-export const patchRecordSUBS = (sub, playerId) => axiosPatch(`records?player_id=${playerId}&gameweek_id=0`, {sub});
+export const patchRecordSUBS = (sub, playerId, userId) => axiosPatch(`records?player_id=${playerId}&gameweek_id=0&user_id=${userId}`, {sub});
 
-export const patchRecordCAPTAINS = (captain, vice_captain, record_id) => {
-    return axiosPatch(`records/${record_id}`, {
-    captain,
-    vice_captain
+export const patchRecordToCAPTAIN = (captain, userId, playerId) => axiosPatch(`records?gameweek_id=0&user_id=${userId}&player_id=${playerId}`, {
+    [captain]: true
 });
-}
+
+export const patchRecordRemoveCAPTAIN = (captain, userId) => axiosPatch(`records?gameweek_id=0&user_id=${userId}&${captain}=true`, {
+    [captain]: false
+});
 
 export const deleteRecord = async(record_id) => axiosDelete(`records/${record_id}`);
 

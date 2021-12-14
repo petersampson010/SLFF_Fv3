@@ -76,6 +76,9 @@ const rootReducer = (state = initialState, action) => {
     console.log('changing redux state with action: ' + action.type);
     switch (action.type) {
         case 'LOGINUSER':
+            console.log('captains');
+            console.log(action.captain);
+            console.log(action.vCaptain);
             return {
                 ...state,
                 boolDeciders: {

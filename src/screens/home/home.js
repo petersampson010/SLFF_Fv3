@@ -4,8 +4,8 @@ import { connect } from 'react-redux';
 import Header from '../../components/header/header';
 import { displayDate, getTeamPointsInfo, topPlayer, topUser } from '../../functions/reusable';
 import BottomNav from '../../components/bottomNav/bottomNav';
-import { $arylideYellow, screenContainer } from '../../styles/global';
-import { gwInfo, leagueTable, topPerformers } from './style';
+import { $arylideYellow, $darkBlue, $platinum, screenContainer } from '../../styles/global';
+import { gwInfo, leagueTable, topPerformerContainer, topPerformers } from './style';
 import PlayerGWProfile from '../../components/profile/playerGWProfile';
 import UserGWProfile from '../../components/profile/userGWProfile';
 import GWScore from '../../components/gwScore/gwScore';
@@ -17,6 +17,8 @@ import NoScoreGW from '../../components/noScoreGW/noScoreGW';
 import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJ, getUserById } from '../../functions/APIcalls';
 import { setOtherTeamPoints } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
+import LinearGradient from 'react-native-linear-gradient';
+import AnimatedLinearGradient, {presetColors} from 'react-native-animated-linear-gradient'
 
 
 class HomeScreen extends Component {
@@ -90,8 +92,20 @@ class HomeScreen extends Component {
                         <GWScore />
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
-                            <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
-                            <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/>
+                            <TouchableOpacity style={topPerformerContainer}>
+                                <AnimatedLinearGradient customColors={[$darkBlue, $arylideYellow, $darkBlue, $arylideYellow, $darkBlue]} speed={2000}
+                                start={{x:0.5, y:0}}
+                                end={{x:1,  y:1}}/>
+                                <Text style={{color: $darkBlue,  fontSize: 18, fontWeight: 'bold', padding: vh(1)}}>Top Player</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={topPerformerContainer}>
+                                <AnimatedLinearGradient customColors={[$darkBlue, $arylideYellow, $darkBlue, $arylideYellow, $darkBlue]} speed={2000}
+                                start={{x:0, y:0}}
+                                end={{x:1,  y:1}}/>
+                                <Text style={{color: $darkBlue,  fontSize: 18, fontWeight: 'bold', padding: vh(1)}}>Top User</Text>
+                            </TouchableOpacity>
+                            {/* <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
+                            <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/> */}
                         </View>
                     </View> : <NoScoreGW/>}
                     {lastGW ? 

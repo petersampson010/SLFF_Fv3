@@ -17,7 +17,7 @@ export const topPerformers = {
 export const topPerformerContainer = {
     height: vh(10),
     width: vh(10),
-    borderRadius: 50,
+    borderRadius: 70,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center'

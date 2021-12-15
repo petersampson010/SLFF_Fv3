@@ -11,11 +11,11 @@ import UserGWProfile from '../../components/profile/userGWProfile';
 import GWScore from '../../components/gwScore/gwScore';
 import { tableElement3, tableRow, tableRowHead } from '../../styles/table';
 import { headers, sidenote, standardText } from '../../styles/textStyle';
-import { vh } from 'react-native-expo-viewport-units';
+import { vh, vw } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
 import { getAllRecordsByUserId, getGWStartersByUserId, getGWSubsByUserId, getUGJ, getUserById } from '../../functions/APIcalls';
-import { setOtherTeamPoints } from '../../actions';
+import { setModal, setOtherTeamPoints } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
 import LinearGradient from 'react-native-linear-gradient';
 import AnimatedLinearGradient, {presetColors} from 'react-native-animated-linear-gradient'
@@ -80,29 +80,44 @@ class HomeScreen extends Component {
         })
     }
 
+    setModal = (player) => {
+        console.log('hitting');
+        this.props.setModal({modalSet: 'set3', player: player.player, pg: player.pg, btnClick: null, width: vw(80), height: vh(50)})
+    }
+
     render() { 
         const { user, topPlayer, topUser } = this.props;
         const lastGW = this.props.lastGW ? this.props.lastGW : false;
         const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
+        console.log(topPlayer);
+        console.log(topUser);
         return ( 
             <View style={screenContainer}>
+                <Text>Hi please listten to me </Text>
                 <View style={{opacity}}>
                     {lastGW && topPlayer && topUser ? 
                     <View style={gwInfo}>
                         <GWScore />
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
-                            <TouchableOpacity style={topPerformerContainer}>
-                                <AnimatedLinearGradient customColors={[$darkBlue, $arylideYellow, $darkBlue, $arylideYellow, $darkBlue]} speed={2000}
-                                start={{x:0.5, y:0}}
-                                end={{x:1,  y:1}}/>
-                                <Text style={{color: $darkBlue,  fontSize: 18, fontWeight: 'bold', padding: vh(1)}}>Top Player</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={topPerformerContainer}>
-                                <AnimatedLinearGradient customColors={[$darkBlue, $arylideYellow, $darkBlue, $arylideYellow, $darkBlue]} speed={2000}
+                            <TouchableOpacity onPress={()=>this.setModal(topPlayer)}>
+                                {/* <AnimatedLinearGradient customColors={[$darkBlue, '#0ABFBC', $darkBlue]} speed={9000}
                                 start={{x:0, y:0}}
                                 end={{x:1,  y:1}}/>
-                                <Text style={{color: $darkBlue,  fontSize: 18, fontWeight: 'bold', padding: vh(1)}}>Top User</Text>
+                                <Text style={{color: $platinum}}>Top Player</Text> */}
+                                {/* </AnimatedLinearGradient> */}
+                                <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
+                                start={{x:0, y:0}}
+                                end={{x:1,  y:1}}>
+                                    <Text style={{color: 'white', fontWeight: 'bold'}}>Top Player</Text>
+                                </LinearGradient>
+                            </TouchableOpacity>
+                            <TouchableOpacity>
+                                <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
+                                start={{x:1, y:0}}
+                                end={{x:0,  y:1}}>
+                                    <Text style={{color: 'white', fontWeight: 'bold'}}>Top User</Text>
+                                </LinearGradient>
                             </TouchableOpacity>
                             {/* <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
                             <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/> */}
@@ -144,7 +159,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
-        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, otherUser) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser))
+        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, otherUser) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser)),
+        setModal: modalObj => dispatch(setModal(modalObj))
     }
 }
  

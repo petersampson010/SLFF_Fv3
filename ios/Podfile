@@ -12,6 +12,10 @@ target 'SLFF_Fv3' do
     :hermes_enabled => false
   )
 
+  pod 'RNDeviceInfo', :path => '../node_modules/react-native-device-info'
+
+  pod 'react-native-mmkv', :path => '../node_modules/react-native-mmkv'
+
   target 'SLFF_Fv3Tests' do
     inherit! :complete
     # Pods for testing

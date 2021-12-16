@@ -15,7 +15,13 @@ import PickTeamScreen from './screens/PitchScreens/pickTeam';
 import AdminHomeScreen from './screens/AdminHome/adminHome';
 import GameEditorScreen from './screens/GameEditor/gameEditor';
 import AdminPlayerEditScreen from './screens/adminPlayerEdit';
+import authLogin from './screens/login/authLogin'
 import { $darkBlue } from './styles/global';
+import { AUTH0_DOMAIN } from  '@env';
+// import MMKVStorage from  'react-native-mmkv-storage';
+import { MMKV } from 'react-native-mmkv'; 
+
+
 
 const Stack = createNativeStackNavigator();
 
@@ -26,7 +32,30 @@ export const updateStack = (navigation, stackIndex, page) => {
   }));
 }
 
+
+
+
+// const MMKVuser = new MMKVStorage.Loader()
+//     .withInstanceID("user")
+//     .withEncryption()
+//     .initialize();
+
+const doShit = async()  => {
+  // MMKV.initialize();
+  const storage = new MMKV();
+  console.log(storage);
+
+  // const token = '333fffvDD56GB78'
+  // storage.set('token',  token);
+  // let string = storage.getString('token');
+  // console.log(string);
+  // return string;
+}
+
 function Navigation() {
+  console.log(AUTH0_DOMAIN);
+  console.log('above');
+  doShit();
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Opener" screenOptions={{headerTitleAlign: 'center'}}>

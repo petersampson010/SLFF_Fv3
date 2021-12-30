@@ -46,10 +46,12 @@ class MyModal extends Component {
     topRightJSX = () => {
         const { modalSet } = this.props.modal;
         const playerImg = require('../../../images/profile.jpg');
+        console.log(modalSet);
         switch(modalSet) {
             case 'set1': case 'set2':
                 return <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
             case 'set3':
+                console.log('hit');
                 return <View>
                     <View style={{width: vw(25), flexDirection: 'row', justifyContent: 'center'}}>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
@@ -88,7 +90,7 @@ class MyModal extends Component {
         return ( 
             <Modal visible={modalActive} 
             transparent={true}>
-                <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                {/* <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
@@ -100,14 +102,14 @@ class MyModal extends Component {
                             </View>
                              : null}
                         </View>
-                        {this.topRightJSX()}
-                    </View>
+                        {/* {this.topRightJSX()} */}
+                    {/* </View>
                     <View style={modalJSX}>
                         {this.bottomBtn()}
                         <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
                     </View>
                 </View>
-                </View> 
+                </View>  */}
             </Modal>
          );
     }

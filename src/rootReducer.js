@@ -467,6 +467,7 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETMODAL":
+            console.log(action.modalObj);
             return {
                 ...state,
                 boolDeciders: {

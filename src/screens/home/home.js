@@ -89,6 +89,8 @@ class HomeScreen extends Component {
         const { user, topPlayer, topUser } = this.props;
         const lastGW = this.props.lastGW ? this.props.lastGW : false;
         const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
+        console.log(topPlayer);
+        console.log(topUser);
         return ( 
             <View style={screenContainer}>
                 <Text>Hi please listten to me </Text>

@@ -58,7 +58,7 @@ export const getAdminUserByEmail = adminUser => axiosGet(`admin_users?email=${ad
 export const postAdminUser = adminUser => axiosPost('admin_users', { 
     email: adminUser.email,
     password: adminUser.password,
-    club_name: adminUser.email
+    club_name: adminUser.club_name
 });
 
 export const getLeague = id => axiosGet(`admin_users/${id}/league`);

@@ -97,17 +97,9 @@ class AdminAccountSetupScreen extends Component {
       this.checkPassword()
       let res = await postAdminUser(this.state.adminUserObj);
       const { token, admin_user } = res;
-      console.log(token);
-      console.log(admin_user.admin_user_id);
       await setStorage('authToken', token);
-      let mytoken = await getStorage('authToken');
-      console.log(mytoken);
-      let reespo = await getAllUsersByAdminUserId(admin_user.admin_user_id);
-      console.log(reespo);
-      // let allAdminUsers = await getAllAdminUsers();
-      // let validAccount = this.checkValidAccount(allAdminUsers);
-        this.props.setAdminUser(admin_user);
-        updateStack(this.props.navigation, 0, 'ClubSetup');
+      this.props.setAdminUser(admin_user);
+      updateStack(this.props.navigation, 0, 'ClubSetup');
     } catch(e) {
       showMessage({
         message: e.response.data.errors ? e.response.data.errors[0] : "Sorry, we are experiencing some technical issues. Please try again later.",

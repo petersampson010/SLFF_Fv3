@@ -12,27 +12,29 @@ export const validatePlayer = player => {
     }
 }
 
-export const validateUser = (allUsers, adminUser, user) => {
-    let result = true;
-    if (adminUser.admin_user_id) {
-        allUsers.forEach(x => {
-            if (x.email===user.email) {
-                showMessage({
-                    message: "Email address already in use",
-                    type: "danger"
-                });
-                result = false;
-            }
-        })
-    } else {
-        showMessage({
-            message: "Invalid club ID",
-            type: "danger"
-        })
-        result = false;
-    }
-    return result;
-}
+// Rails handles this
+
+// export const validateUser = (allUsers, adminUser, user) => {
+//     let result = true;
+//     if (adminUser.admin_user_id) {
+//         allUsers.forEach(x => {
+//             if (x.email===user.email) {
+//                 showMessage({
+//                     message: "Email address already in use",
+//                     type: "danger"
+//                 });
+//                 result = false;
+//             }
+//         })
+//     } else {
+//         showMessage({
+//             message: "Invalid club ID",
+//             type: "danger"
+//         })
+//         result = false;
+//     }
+//     return result;
+// }
 
 export const validatePickTeam = (team) => {
     if (playersObjToArray(team).length===globalConfig.numberOfStarters) {

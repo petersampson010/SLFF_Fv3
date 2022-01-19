@@ -27,8 +27,7 @@ class ntsScreen1 extends Component {
       clubId: '',
       terms: '',
       budget: globalConfig.startBudget
-    },
-    signedUp: false,
+    }
   }
 
   formChange = (id, entry) => {
@@ -62,43 +61,24 @@ class ntsScreen1 extends Component {
       return false;
     }
   }
-
-  getInfo = async() => {
+        
+    handleSubmit = async() => {
     const { userObj } = this.state;
     try {
-      console.log('failing');
       this.checkPassword();
-      let thiis = await postUser(userObj);
-      console.log(thiis);
-      setStorage('authToken', token)
-      console.log('here');
-      console.log(token);
-      let allUsers = await getAllUsers();
-      let adminUser = await getAdminUserById(parseInt(user.admin_user_id));
-      let { lastGW } = await getLastAndAllGWs(adminUser.admin_user_id);
-      if (validateUser([allUsers], adminUser, userObj)) {
-        this.handleSubmit(adminUser, lastGW);
-      }
-    } catch(e) {
-      console.warn(e.response.data);
-      showMessage({
-        message: "Login failed, please try again",
-        description: "It is most likely, you have an incorrect club ID. Please check this and report the issue if it continues",
-        type: "danger"
-      })
-    }
-  }
-
-  handleSubmit = async(adminUser, lastGW) => {
-    const { userObj } = this.state;
-    try {
-        let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: 0, budget: globalConfig.startBudget};
-          this.setState({signedUp: true});
-          this.props.setUser(userData);
-          this.props.setAdminUser(adminUser);
-          getAllPlayersByAdminUserId(adminUser.admin_user_id)
-          .then(players => this.props.setClubPlayersAndLastGW(players, lastGW))
-          .then(() => updateStack(this.props.navigation, 0, 'nts2'));
+      let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget};
+      const { token, user } = await postUser(userData);
+      console.log(user.admin_user_id);
+      await setStorage('authToken', token);
+      let adminUser = await getAdminUserById(user.admin_user_id);
+      console.log(adminUser);
+      let { lastGW } = await getLastAndAllGWs(userData.admin_user_id);
+      console.log(lastGW);
+      // this.props.setUser(userData);
+      // this.props.setAdminUser(adminUser);
+      // let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
+      // this.props.setClubPlayersAndLastGW(allPlayers, lastGW);
+      updateStack(this.props.navigation, 0, 'nts2');
     } catch(e) {
       showMessage({
         message: e.response.data,
@@ -164,7 +144,7 @@ class ntsScreen1 extends Component {
                 autoCapitalize="none"
                 />
               </View>
-              <Button clickable title="Sign Up" onPress={this.getInfo}/>
+              <Button clickable title="Sign Up" onPress={this.handleSubmit}/>
             </View>
           </View>
     );

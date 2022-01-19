@@ -11,18 +11,33 @@ instance.interceptors.request.use(async(config) => {
 })
 
 const axiosGet = (url, singleObjReturn=false) => instance.get(url).then(res => {
+    console.log(url)
+    console.log(res.data);
+    console.log(singleObjReturn)
     if (singleObjReturn) {
         return res.data[0]
     } else {
         return res.data
     }
+}).catch(e => {
+    console.warn(e);
+    return false;
 })
 
-const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data);
+const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data).catch(e => {
+    console.warn(e);
+    return false;
+});
 
-const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data);
+const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data).catch(e => {
+    console.warn(e);
+    return false;
+});
 
-const axiosDelete = url => instance.delete(url);
+const axiosDelete = url => instance.delete(url).catch(e => {
+    console.warn(e);
+    return false;
+});
 
 // USER
 
@@ -37,12 +52,7 @@ export const getAllUsersByAdminUserId = id => axiosGet(`users?admin_user_id=${id
 
 export const getUserByEmail = userObj => axiosGet(`users?email=${userObj.email}`, true);
 
-export const postUser = (userObj) => axiosPost('users', {
-    email: userObj.email,
-    team_name: userObj.team_name,
-    password: userObj.password,
-    admin_user_id: userObj.admin_user_id
-});
+export const postUser = user => axiosPost('users', user);
 
 export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
 

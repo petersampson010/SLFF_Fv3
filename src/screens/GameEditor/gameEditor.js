@@ -174,10 +174,10 @@ class GameEditorScreen extends Component {
         } catch(e) {
             this.setState({...this.state, spinner: false});
             showMessage({
-                message: "Fail: Network Issue, please try again later",
+                message: e.response.data,
                 type: "danger"
               });
-            console.warn(e);
+            console.warn(e.response.data);
         }
     }
 

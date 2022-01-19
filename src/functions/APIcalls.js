@@ -34,9 +34,7 @@ export const postUser = (userObj) => axiosPost('users', {
     email: userObj.email,
     team_name: userObj.team_name,
     password: userObj.password,
-    transfers: 0,
-    budget: userObj.budget,
-    gw_start: userObj.gw_start,
+    password_confirmation: userObj.rePassword,
     admin_user_id: userObj.admin_user_id
 });
 
@@ -274,10 +272,10 @@ export const postPGJ = async(joiner, admin_user_id) => {
         });
     } catch(e) {
         showMessage({
-            message: "Fail: Network Issue, please try again later",
+            message: e.response.data,
             type: "danger"
           });
-        console.warn(e);
+        console.warn(e.response.data);
     }
 }
 

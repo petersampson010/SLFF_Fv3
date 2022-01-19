@@ -115,7 +115,10 @@ class ntsScreen2 extends Component {
             if (validateTransfers(budget, teamPlayersObj)) {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
+                        console.log('failing');
                         let returnUser = await postUser({...user, gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
+                        console.log('here');
+                        console.log(returnUser);
                         for (let i=0;i<globalConfig.numberOfPlayers;i++) {
                             let record = await postRecord(teamPlayers[i], returnUser.user_id, i);
                             records.push(record);
@@ -159,7 +162,7 @@ class ntsScreen2 extends Component {
                 type: "danger"
               });
             removeSpinner();
-            console.warn(e);
+            console.warn(e.response.data);
         }
     }
 

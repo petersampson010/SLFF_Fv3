@@ -65,10 +65,10 @@ class LoginScreen extends Component {
       this.handleAdminReturn(adminUser);
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
   
@@ -78,10 +78,10 @@ class LoginScreen extends Component {
       this.handleUserReturn(user);
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
     
@@ -134,10 +134,10 @@ class LoginScreen extends Component {
       }
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
 
@@ -157,10 +157,10 @@ class LoginScreen extends Component {
       }
     } catch(e) {
       showMessage({
-        message: "Fail: Network Issue, please try again later",
+        message: e.response.data,
         type: "danger"
       });
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
 

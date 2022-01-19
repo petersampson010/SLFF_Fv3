@@ -111,7 +111,7 @@ class TransfersScreen extends Component {
                 })
             }
         } catch(e) {
-            console.warn(e);
+            console.warn(e.response.data);
             setTransferringBackToLatest();
             removeSpinner();
             showMessage({

@@ -27,7 +27,7 @@ export default function ContactUsScreen() {
       }
     } catch(e) {
       showMessage({
-        message: "Fail: Network Issue, please try again later",
+        message: e.response.data,
         type: "danger"
       });
     }

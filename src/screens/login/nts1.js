@@ -12,7 +12,6 @@ import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/
 import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
 import { getLastAndAllGWs } from '../../functions/reusable';
-import { createIconSetFromFontello } from 'react-native-vector-icons';
 
 
 
@@ -53,6 +52,10 @@ class ntsScreen1 extends Component {
   getInfo = async() => {
     const { userObj } = this.state;
     try {
+      console.log('failing');
+      let token = await postUser(userObj);
+      console.log('here');
+      console.log(token);
       let allUsers = await getAllUsers();
       let adminUser = await getAdminUserById(parseInt(userObj.clubId));
       let { lastGW } = await getLastAndAllGWs(adminUser.admin_user_id);
@@ -60,7 +63,7 @@ class ntsScreen1 extends Component {
         this.handleSubmit(adminUser, lastGW);
       }
     } catch(e) {
-      console.warn(e);
+      console.warn(e.response.data);
       showMessage({
         message: "Login failed, please try again",
         description: "It is most likely, you have an incorrect club ID. Please check this and report the issue if it continues",
@@ -81,10 +84,10 @@ class ntsScreen1 extends Component {
           .then(() => updateStack(this.props.navigation, 0, 'nts2'));
     } catch(e) {
       showMessage({
-        message: "Fail: Network Issue, please try again later",
+        message: e.response.data,
         type: "danger"
       });
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
 

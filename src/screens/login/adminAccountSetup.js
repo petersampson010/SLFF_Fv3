@@ -102,7 +102,7 @@ class AdminAccountSetupScreen extends Component {
       }
     } catch(e) {
       showMessage({
-        message: "Fail: Network Issue, please try again later",
+        message: e.response.data,
         type: "danger"
       });
       console.warn(e);

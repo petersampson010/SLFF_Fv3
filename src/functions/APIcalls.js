@@ -4,6 +4,12 @@ const instance = axios.create({
     baseURL: 'http://localhost:3000/'
 }) 
 
+instance.interceptors.request.use(async(config) => {
+    const authToken = await getStorage('authToken');
+    config.headers['Authorization'] = authToken ? authToken : '';
+    return config;
+})
+
 const axiosGet = (url, singleObjReturn=false) => instance.get(url).then(res => {
     if (singleObjReturn) {
         return res.data[0]
@@ -21,6 +27,7 @@ const axiosDelete = url => instance.delete(url);
 // USER
 
 import { showMessage } from "react-native-flash-message";
+import { getStorage } from './storage';
 
 export const getAllUsers = () => axiosGet('users');
 
@@ -34,7 +41,6 @@ export const postUser = (userObj) => axiosPost('users', {
     email: userObj.email,
     team_name: userObj.team_name,
     password: userObj.password,
-    password_confirmation: userObj.rePassword,
     admin_user_id: userObj.admin_user_id
 });
 
@@ -56,7 +62,7 @@ export const getAdminUserByEmail = adminUser => axiosGet(`admin_users?email=${ad
 export const postAdminUser = adminUser => axiosPost('admin_users', { 
     email: adminUser.email,
     password: adminUser.password,
-    club_name: adminUser.club_name
+    club_name: adminUser.clubName
 });
 
 export const getLeague = id => axiosGet(`admin_users/${id}/league`);

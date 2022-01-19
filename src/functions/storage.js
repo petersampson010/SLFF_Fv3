@@ -4,17 +4,21 @@ export const setStorage = async(key, value) => {
     try {
         await EncryptedStorage.setItem(
             key, 
-            JSON.stringify(value)
+            value
         )
+        return true;
     } catch(e) {
      console.warn(e)
+     return false;
 }}
 
 export const getStorage = async(key) => {
     try {
-        await EncryptedStorage.getItem(key)
+        let res = await EncryptedStorage.getItem(key);
+        return res;
     } catch(e) {
-        console.warn(e)
+        console.warn(e);
+        return false;
     }
 }
 

@@ -12,6 +12,7 @@ import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/
 import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
 import { getLastAndAllGWs } from '../../functions/reusable';
+import { setStorage } from '../../functions/storage';
 
 
 
@@ -49,15 +50,31 @@ class ntsScreen1 extends Component {
     }
   }
 
+  checkPassword = () => {
+    if (this.state.userObj.password===this.state.userObj.rePassword) {
+      return true;
+    } else {
+      showMessage({
+        message: "Passwords do not match, please try again!",
+        description: "If you need a sub-section of error",
+        type: "warning"
+      });
+      return false;
+    }
+  }
+
   getInfo = async() => {
     const { userObj } = this.state;
     try {
       console.log('failing');
-      let token = await postUser(userObj);
+      this.checkPassword();
+      let thiis = await postUser(userObj);
+      console.log(thiis);
+      setStorage('authToken', token)
       console.log('here');
       console.log(token);
       let allUsers = await getAllUsers();
-      let adminUser = await getAdminUserById(parseInt(userObj.clubId));
+      let adminUser = await getAdminUserById(parseInt(user.admin_user_id));
       let { lastGW } = await getLastAndAllGWs(adminUser.admin_user_id);
       if (validateUser([allUsers], adminUser, userObj)) {
         this.handleSubmit(adminUser, lastGW);

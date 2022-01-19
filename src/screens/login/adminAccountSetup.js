@@ -3,12 +3,13 @@ import { View, Text, Button, Switch } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect } from 'react-redux';
 import { setAdminUser } from '../../actions';
-import { getAllAdminUsers, postAdminUser } from '../../functions/APIcalls'; 
+import { getAllAdminUsers, getAllUsers, postAdminUser, getAllUsersByAdminUserId } from '../../functions/APIcalls'; 
 import { showMessage } from "react-native-flash-message";
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
 import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/input';
 import { updateStack } from '../../Navigation';
+import { getStorage, setStorage } from '../../functions/storage';
 
 class AdminAccountSetupScreen extends Component {
 
@@ -44,39 +45,39 @@ class AdminAccountSetupScreen extends Component {
     })
   }
 
-  checkValidAccount = (allAdminUsers) => {
-    if (this.checkEmail(allAdminUsers) && this.checkPassword()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
+  // checkValidAccount = (allAdminUsers) => {
+  //   if (this.checkEmail(allAdminUsers) && this.checkPassword()) {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // }
 
-  checkEmail = allAdminUsers => {
-    let valid = true;
-    // loop1:
-    for (let i=0;i<allAdminUsers.length;i++) {
-      let user = allAdminUsers[i];
-      if (user.email===this.state.adminUserObj.email) {
-        showMessage({
-          message: "Email already exists, please try again or go back and try to login using this email",
-          description: "If you need a sub-section of error",
-          type: "warning"
-        });
-        valid = false;
-        break;
-      } else if (user.club_name===this.state.adminUserObj.clubName) {
-        showMessage({
-          message: "Club Name already in use, please try again or go back and try to login",
-          description: "If you need a sub-section of error",
-          type: "warning"
-        });
-        valid = false;
-        break;
-      }
-    }
-    return valid;
-  }
+  // checkEmail = allAdminUsers => {
+  //   let valid = true;
+  //   // loop1:
+  //   for (let i=0;i<allAdminUsers.length;i++) {
+  //     let user = allAdminUsers[i];
+  //     if (user.email===this.state.adminUserObj.email) {
+  //       showMessage({
+  //         message: "Email already exists, please try again or go back and try to login using this email",
+  //         description: "If you need a sub-section of error",
+  //         type: "warning"
+  //       });
+  //       valid = false;
+  //       break;
+  //     } else if (user.club_name===this.state.adminUserObj.clubName) {
+  //       showMessage({
+  //         message: "Club Name already in use, please try again or go back and try to login",
+  //         description: "If you need a sub-section of error",
+  //         type: "warning"
+  //       });
+  //       valid = false;
+  //       break;
+  //     }
+  //   }
+  //   return valid;
+  // }
 
   checkPassword = () => {
     if (this.state.adminUserObj.password===this.state.adminUserObj.rePassword) {
@@ -93,19 +94,26 @@ class AdminAccountSetupScreen extends Component {
   
   handleSubmit = async() => {
     try {
-      let allAdminUsers = await getAllAdminUsers();
-      let validAccount = this.checkValidAccount(allAdminUsers);
-      if (validAccount) {
-        let adminUser = await postAdminUser(this.state.adminUserObj);
-        this.props.setAdminUser(adminUser);
+      this.checkPassword()
+      let res = await postAdminUser(this.state.adminUserObj);
+      const { token, admin_user } = res;
+      console.log(token);
+      console.log(admin_user.admin_user_id);
+      await setStorage('authToken', token);
+      let mytoken = await getStorage('authToken');
+      console.log(mytoken);
+      let reespo = await getAllUsersByAdminUserId(admin_user.admin_user_id);
+      console.log(reespo);
+      // let allAdminUsers = await getAllAdminUsers();
+      // let validAccount = this.checkValidAccount(allAdminUsers);
+        this.props.setAdminUser(admin_user);
         updateStack(this.props.navigation, 0, 'ClubSetup');
-      }
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e.response.data.errors ? e.response.data.errors[0] : "Sorry, we are experiencing some technical issues. Please try again later.",
         type: "danger"
       });
-      console.warn(e);
+      console.warn(e.response.data);
     }
     return;
   }

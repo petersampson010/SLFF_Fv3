@@ -74,10 +74,10 @@ class ntsScreen1 extends Component {
       console.log(adminUser);
       let { lastGW } = await getLastAndAllGWs(userData.admin_user_id);
       console.log(lastGW);
-      // this.props.setUser(userData);
-      // this.props.setAdminUser(adminUser);
-      // let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
-      // this.props.setClubPlayersAndLastGW(allPlayers, lastGW);
+      this.props.setUser(userData);
+      this.props.setAdminUser(adminUser);
+      let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
+      this.props.setClubPlayersAndLastGW(allPlayers, lastGW);
       updateStack(this.props.navigation, 0, 'nts2');
     } catch(e) {
       showMessage({

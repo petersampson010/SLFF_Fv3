@@ -10,10 +10,7 @@ instance.interceptors.request.use(async(config) => {
     return config;
 })
 
-const axiosGet = (url, singleObjReturn=false) => instance.get(url).then(res => {
-    console.log(url)
-    console.log(res.data);
-    console.log(singleObjReturn)
+const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {params: body}).then(res => {
     if (singleObjReturn) {
         return res.data[0]
     } else {
@@ -44,6 +41,8 @@ const axiosDelete = url => instance.delete(url).catch(e => {
 import { showMessage } from "react-native-flash-message";
 import { getStorage } from './storage';
 
+export const userSignIn = userObj => axiosGet('user_sign_in', false, userObj);
+
 export const getAllUsers = () => axiosGet('users');
 
 export const getUserById = id => axiosGet(`users?user_id=${id}`, true);
@@ -54,7 +53,7 @@ export const getUserByEmail = userObj => axiosGet(`users?email=${userObj.email}`
 
 export const postUser = user => axiosPost('users', user);
 
-export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
+export const patchUser = (userId, userPatchObj) => axiosPatch(`users/${userId}`, userPatchObj);
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 
@@ -62,6 +61,8 @@ export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_po
 
 
 // ADMIN_USER
+
+export const adminUserSignIn = adminUserObj => axiosGet('admin_user_sign_in', false, adminUserObj);
 
 export const getAllAdminUsers = () => axiosGet('admin_users');
 

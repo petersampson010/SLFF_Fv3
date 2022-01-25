@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Header from '../../components/header/header';
 import { ScrollView, View } from 'react-native';
 import { connect } from 'react-redux';
-import { getAllPGJFromUserId, getAllPGJsFromGameweekId, getLeague, getPlayerById, getUGJs, getUserById, patchUserBUDGET, postRecord, postUser } from '../../functions/APIcalls';
+import { getAllPGJFromUserId, getAllPGJsFromGameweekId, getLeague, getPlayerById, getUGJs, getUserById, patchUser, patchUserBUDGET, postRecord, postUser } from '../../functions/APIcalls';
 import Pitch from '../../components/Pitch/pitch';
 import PlayersList from '../../components/playersList/playersList';
 import { showMessage } from 'react-native-flash-message';
@@ -116,7 +116,7 @@ class ntsScreen2 extends Component {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
                         console.log('failing');
-                        let returnUser = await postUser({...user, gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
+                        let returnUser = await patchUser(user.user_id, {gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
                         console.log('here');
                         console.log(returnUser);
                         for (let i=0;i<globalConfig.numberOfPlayers;i++) {

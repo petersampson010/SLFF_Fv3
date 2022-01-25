@@ -4,7 +4,7 @@ import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
-  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId, adminUserSignIn } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -13,6 +13,7 @@ import { updateStack } from '../../Navigation';
 import { getLastAndAllGWs } from '../../functions/reusable';
 import Button from '../../components/Button/button';
 import { vw } from 'react-native-expo-viewport-units';
+import { getStorage, setStorage } from '../../functions/storage';
 
 
 class LoginScreen extends Component {
@@ -61,8 +62,9 @@ class LoginScreen extends Component {
 
   handleAdminSubmit = async() => {
     try {
-      let adminUser = await getAdminUserByEmail(this.state.userObj);
-      this.handleAdminReturn(adminUser);
+      const { admin_user, token } = await adminUserSignIn(this.state.userObj);
+      await setStorage('authToken', token);
+      this.handleAdminReturn(admin_user);
     } catch(e) {
       showMessage({
         message: e.response.data,
@@ -74,7 +76,7 @@ class LoginScreen extends Component {
   
   handleUserSubmit = async() => {
     try {
-      let user = await getUserByEmail(this.state.userObj);
+      let user = await  getUserByEmail(this.state.userObj);
       this.handleUserReturn(user);
     } catch(e) {
       showMessage({
@@ -145,8 +147,13 @@ class LoginScreen extends Component {
     try {
       if (adminUser !== undefined && adminUser !== null) {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
+        console.log(clubPlayers);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
+        console.log(allUsers);
+
         let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
+        console.log(lastGW);
+        console.log(Gws);
         this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {

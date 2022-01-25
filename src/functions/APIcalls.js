@@ -5,7 +5,9 @@ const instance = axios.create({
 }) 
 
 instance.interceptors.request.use(async(config) => {
+    console.log('call to API before')
     const authToken = await getStorage('authToken');
+    console.log('authToken:  ' + authToken)
     config.headers['Authorization'] = authToken ? authToken : '';
     return config;
 })

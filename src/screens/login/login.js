@@ -148,13 +148,8 @@ class LoginScreen extends Component {
     try {
       if (adminUser !== undefined && adminUser !== null) {
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
-        console.log(clubPlayers);
         let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
-        console.log(allUsers);
-
         let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
-        console.log(lastGW);
-        console.log(Gws);
         this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {

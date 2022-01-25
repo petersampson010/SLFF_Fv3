@@ -68,13 +68,10 @@ class ntsScreen1 extends Component {
       this.checkPassword();
       let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget};
       const { token, user } = await postUser(userData);
-      console.log(user.admin_user_id);
       await setStorage('authToken', token);
       let adminUser = await getAdminUserById(user.admin_user_id);
-      console.log(adminUser);
-      let { lastGW } = await getLastAndAllGWs(userData.admin_user_id);
-      console.log(lastGW);
-      this.props.setUser(userData);
+      let { lastGW } = await getLastAndAllGWs(user.admin_user_id)
+      this.props.setUser(user);
       this.props.setAdminUser(adminUser);
       let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
       this.props.setClubPlayersAndLastGW(allPlayers, lastGW);

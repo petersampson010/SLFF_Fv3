@@ -5,9 +5,7 @@ const instance = axios.create({
 }) 
 
 instance.interceptors.request.use(async(config) => {
-    console.log('call to API before')
     const authToken = await getStorage('authToken');
-    console.log('authToken:  ' + authToken)
     config.headers['Authorization'] = authToken ? authToken : '';
     return config;
 })
@@ -55,7 +53,9 @@ export const getUserByEmail = userObj => axiosGet(`users?email=${userObj.email}`
 
 export const postUser = user => axiosPost('users', user);
 
-export const patchUser = (userId, userPatchObj) => axiosPatch(`users/${userId}`, userPatchObj);
+export const patchUser = (userId, userPatchObj) => {
+    return axiosPatch(`users/${userId}`, userPatchObj);
+}
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 

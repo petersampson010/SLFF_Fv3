@@ -16,6 +16,7 @@ import AdminHomeScreen from './screens/AdminHome/adminHome';
 import GameEditorScreen from './screens/GameEditor/gameEditor';
 import AdminPlayerEditScreen from './screens/adminPlayerEdit';
 import { $darkBlue } from './styles/global';
+import { getStorage } from './functions/storage';
 
 const Stack = createNativeStackNavigator();
 
@@ -26,10 +27,11 @@ export const updateStack = (navigation, stackIndex, page) => {
   }));
 }
 
-function Navigation() {
+function Navigation({initialRoute}) {
+console.log(initialRoute)
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Opener" screenOptions={{headerTitleAlign: 'center'}}>
+      <Stack.Navigator initialRouteName={initialRoute} screenOptions={{headerTitleAlign: 'center'}}>
         <Stack.Screen name="Opener" component={OpenerScreen} 
         options={{
           title: 'Sunday',

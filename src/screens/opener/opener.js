@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { getStorage } from '../../functions/storage';
 import { screenContainer } from '../../styles/global';
 import { optionContainer, optionsContainer, optionText, optionHead, optionUsContainer } from './style';
 
 class OpenerScreen extends Component {
+
+
+
     render() {
         return (
           <View style={screenContainer}>

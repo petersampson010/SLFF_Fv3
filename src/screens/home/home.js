@@ -81,19 +81,15 @@ class HomeScreen extends Component {
     }
 
     setModal = (player) => {
-        console.log('hitting');
         this.props.setModal({modalSet: 'set3', player: player.player, pg: player.pg, btnClick: null, width: vw(80), height: vh(50)})
     }
 
-    render() { 
+    render() {
         const { user, topPlayer, topUser } = this.props;
         const lastGW = this.props.lastGW ? this.props.lastGW : false;
         const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
-        console.log(topPlayer);
-        console.log(topUser);
         return ( 
             <View style={screenContainer}>
-                <Text>Hi please listten to me </Text>
                 <View style={{opacity}}>
                     {lastGW && topPlayer && topUser ? 
                     <View style={gwInfo}>

@@ -10,6 +10,8 @@ import { clearStorage, getStorage, getTokenAndId } from './src/functions/storage
 import userData from './src/functions/GetAndSet/userData';
 import adminData from './src/functions/GetAndSet/adminData';
 import { getAdminUserById, getUserById } from './src/functions/APIcalls';
+import { View } from 'react-native';
+import { screenContainer } from './src/styles/global';
 
 const LoadContainer = () => {
 
@@ -20,20 +22,21 @@ const LoadContainer = () => {
     useEffect(() => {
         console.log('HITTING LOAD CONTAINER USE EFFECT');
         const loggedIn = async() => {
-            await clearStorage();
+            // await clearStorage();
             let session = await getStorage('session');
+            console.log(session);
             if (session) {
                 const { token, user_id, admin_user_id } = session;
                 console.log('response from store is true: AU/U logged in');
                 if (user_id) {
                     console.log("User logged in");
                     const user = await getUserById(user_id);
-                    dispatch(userData(user));
+                    dispatch(await userData(user));
                     updateInitialRoute('Home');
                 } else if (admin_user_id) {
                     console.log("Admin User logged in");
                     const adminUser = await getAdminUserById(admin_user_id);
-                    dispatch(adminData(adminUser));
+                    dispatch(await adminData(adminUser));
                     updateInitialRoute('AdminHome');
                 }
             }
@@ -43,9 +46,13 @@ const LoadContainer = () => {
     }, [])
 
     return onLoad ? 
-            <SpinnerOverlay/>
+    <View style={screenContainer}>
+        <SpinnerOverlay/>
+    </View>
             :
             <Navigation initialRoute={initialRoute}/>;
+
+    // return <View></View>
 }
 
 export default LoadContainer;

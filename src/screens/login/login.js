@@ -95,6 +95,7 @@ class LoginScreen extends Component {
   handleUserReturn = async(user) => {
     try {
       if (user !== undefined && user !== null) {
+        console.log('**** ATTEMPTING TO SET USER DATA ****')
         this.props.loginUser(await userData(user));
         updateStack(this.props.navigation, 0, 'Home');
       } else {

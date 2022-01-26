@@ -67,10 +67,10 @@ class AdminHomeScreen extends Component {
     renderGames = () => {
         console.log('below');
         console.log(this.props.games);
-        // let completedGamesSorted = this.props.games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-        // let openGamesSorted = this.props.games.filter(x=>!x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+        let completedGamesSorted = this.props.games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+        let openGamesSorted = this.props.games.filter(x=>!x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
         return <View style={gamesContainer}>
-            {/* <View style={listLabel}>
+            <View style={listLabel}>
                 <Text>Upcoming</Text>
             </View>
             <ScrollView>
@@ -81,7 +81,7 @@ class AdminHomeScreen extends Component {
             </View>
             <ScrollView>
                 {completedGamesSorted.map((game, i) => this.renderGame(game, i))}
-            </ScrollView> */}
+            </ScrollView>
         </View>
     }
 

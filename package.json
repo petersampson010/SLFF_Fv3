@@ -18,6 +18,7 @@
     "axios": "^0.24.0",
     "intl": "^1.2.5",
     "react": "17.0.2",
+    "react-dom": "^17.0.2",
     "react-native": "0.66.1",
     "react-native-animated-linear-gradient": "^1.2.2",
     "react-native-date-picker": "^4.1.3",

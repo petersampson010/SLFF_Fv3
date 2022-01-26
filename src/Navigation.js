@@ -28,7 +28,7 @@ export const updateStack = (navigation, stackIndex, page) => {
 }
 
 function Navigation({initialRoute}) {
-console.log(initialRoute)
+// console.log(initialRoute)
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute} screenOptions={{headerTitleAlign: 'center'}}>

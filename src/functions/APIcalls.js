@@ -5,8 +5,14 @@ const instance = axios.create({
 }) 
 
 instance.interceptors.request.use(async(config) => {
-    const authToken = await getStorage('authToken');
-    config.headers['Authorization'] = authToken ? authToken : '';
+    console.log('**** ADDING AUTH TOKEN TO API REQUEST ****');
+    try  {
+        const { token } = await getStorage('session');
+        console.log('auth token: ' + token);
+        config.headers['Authorization'] = token;
+    } catch (e) {
+        console.log('**** NO TOKEN AVAILABLE ****');
+    }
     return config;
 })
 

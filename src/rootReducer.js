@@ -128,6 +128,9 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case 'LOGINADMINUSER':
+            console.log(action.GWs);
+            console.log(action);
+            console.log('above');
             return {
                 ...state, 
                 boolDeciders: {

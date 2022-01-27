@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, Switch, TouchableHighlightBase, TextInput } from 'react-native';
+import { View, Text, Switch, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
@@ -79,7 +79,9 @@ class LoginScreen extends Component {
   
   handleUserSubmit = async() => {
     try {
+      console.log(this.state.userObj);
       const { user, token } = await userSignIn(this.state.userObj);
+      console.log(user);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
       console.log('set User Token');
       this.handleUserReturn(user);

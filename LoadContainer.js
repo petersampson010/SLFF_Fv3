@@ -27,7 +27,6 @@ const LoadContainer = () => {
             console.log(session);
             if (session) {
                 const { token, user_id, admin_user_id } = session;
-                console.log('response from store is true: AU/U logged in');
                 if (user_id) {
                     console.log("User logged in");
                     const user = await getUserById(user_id);

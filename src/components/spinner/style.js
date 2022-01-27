@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $baseBlue, $chocolateBlack } from "../../styles/global";
+import { $baseBlue, $darkBlue, $standardWhite } from "../../styles/global";
 
 export const overlay = {
     position: 'absolute',
@@ -8,7 +8,14 @@ export const overlay = {
     height: vh(100),
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: $chocolateBlack,
+    // backgroundColor: $darkBlue,
     opacity: 0.8,
     paddingBottom: vh(25)
+}
+
+export const spinnerTitle = {
+    fontSize: 30,
+    color: $standardWhite,
+    fontWeight: 'bold',
+    paddingBottom: vh(20)
 }

@@ -137,11 +137,11 @@ class ClubSetupScreen extends Component {
             updateStack(this.props.navigation, 0, 'AdminHome');
         } catch(e)  {
             showMessage({
-                message: "Fail: Network Issue, please try again later",
+                message: e.response.data,
                 type: "danger"
               });
             this.props.removeSpinner();
-            console.warn(e);
+            console.warn(e.response.data);
         }
     }
 

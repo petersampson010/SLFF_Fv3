@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
-import { View, Text, Switch, TouchableHighlightBase, TextInput } from 'react-native';
+import { View, Text, Switch, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect } from 'react-redux';
 import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
-  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId } 
+  getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId, adminUserSignIn, userSignIn } 
   from '../../functions/APIcalls'; 
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -13,6 +13,9 @@ import { updateStack } from '../../Navigation';
 import { getLastAndAllGWs } from '../../functions/reusable';
 import Button from '../../components/Button/button';
 import { vw } from 'react-native-expo-viewport-units';
+import { getStorage, setStorage } from '../../functions/storage';
+import userData from '../../functions/GetAndSet/userData';
+import adminData from '../../functions/GetAndSet/adminData';
 
 
 class LoginScreen extends Component {
@@ -61,72 +64,43 @@ class LoginScreen extends Component {
 
   handleAdminSubmit = async() => {
     try {
-      let adminUser = await getAdminUserByEmail(this.state.userObj);
-      this.handleAdminReturn(adminUser);
+      const { admin_user, token } = await adminUserSignIn(this.state.userObj);
+      await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
+      console.log('set Admin Token');
+      this.handleAdminReturn(admin_user);
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
   
   handleUserSubmit = async() => {
     try {
-      let user = await getUserByEmail(this.state.userObj);
+      console.log(this.state.userObj);
+      const { user, token } = await userSignIn(this.state.userObj);
+      console.log(user);
+      await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
+      console.log('set User Token');
       this.handleUserReturn(user);
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
     
   handleUserReturn = async(user) => {
     try {
       if (user !== undefined && user !== null) {
-        const { admin_user_id, user_id } = user;
-        let { lastGW } = await getLastAndAllGWs(admin_user_id);
-        let clubPlayers = await getAllPlayersByAdminUserId(admin_user_id);
-        let adminUser = await getAdminUserById(admin_user_id);
-        let currentStarters = await getPlayersByUserIdGWIdSub(user_id, 0, false);
-        let currentSubs = await getPlayersByUserIdGWIdSub(user_id, 0, true);
-        let records = await getAllRecordsByUserId(user_id);
-        let league = await getLeague(admin_user_id);
-        if (lastGW) {
-          const { gameweek_id } = lastGW;
-          let lastGWStarters = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, false);
-          let lastGWSubs = await getPlayersByUserIdGWIdSub(user_id, gameweek_id, true);
-          let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
-          if (lastPGJs.length<1) {
-            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
-          } else {
-            let allPGJs = await getAllPGJFromUserId(user_id);
-            let allLastUGJs = await getUGJs(admin_user_id, gameweek_id);
-            let lastUGJ = await getUGJ(user_id, gameweek_id);
-            let pg = lastPGJs.sort((a,b)=>b.total_points-a.total_points);
-            pg = pg[0];
-            let topPlayer = pg ? {
-              pg,
-              player: await getPlayerById(pg.player_id)
-            } : null;
-            let ug = allLastUGJs.sort((a,b)=>b.total_points-a.total_points)[0];
-            let topUser = ug ? {
-              ug,
-              user: await getUserById(ug.user_id)
-            } : null;
-            await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
-          }
-        } else {
-          await this.props.loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
-        }
+        console.log('**** ATTEMPTING TO SET USER DATA ****')
+        this.props.loginUser(await userData(user));
         updateStack(this.props.navigation, 0, 'Home');
       } else {
-        // this.setState({email: 'A',
-        // password: 'A'});
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
@@ -134,20 +108,17 @@ class LoginScreen extends Component {
       }
     } catch(e) {
       showMessage({
-        message: "Login failed, please try again",
+        message: e.response.data,
         type: "danger"
       })
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
 
   handleAdminReturn = async(adminUser) => {
     try {
       if (adminUser !== undefined && adminUser !== null) {
-        let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
-        let allUsers = await getAllUsersByAdminUserId(adminUser.admin_user_id);
-        let { lastGW, GWs } = await getLastAndAllGWs(adminUser.admin_user_id);
-        this.props.loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW);
+        this.props.loginAdminUser(await adminData(adminUser));
         updateStack(this.props.navigation, 0, 'AdminHome');
       } else {
         showMessage({
@@ -157,10 +128,10 @@ class LoginScreen extends Component {
       }
     } catch(e) {
       showMessage({
-        message: "Fail: Network Issue, please try again later",
+        message: e.response.data,
         type: "danger"
       });
-      console.warn(e);
+      console.warn(e.response.data);
     }
   }
 
@@ -207,8 +178,8 @@ class LoginScreen extends Component {
 
   const mapDispatchToProps = dispatch => {
     return {
-      loginUser: (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs) => dispatch(loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, GW, lastPGJs, UGJs, lastUGJ, topPlayer, topUser, allPGJs)),
-      loginAdminUser: (adminUser, clubPlayers, allUsers, GWs, lastGW) => dispatch(loginAdminUser(adminUser, clubPlayers, allUsers, GWs, lastGW)),
+      loginUser: obj => dispatch(obj),
+      loginAdminUser: obj => dispatch(obj),
       resetTeamPlayers: () => dispatch(resetTeamPlayers()),
     }
   }

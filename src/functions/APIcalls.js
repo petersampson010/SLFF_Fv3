@@ -4,23 +4,50 @@ const instance = axios.create({
     baseURL: 'http://localhost:3000/'
 }) 
 
-const axiosGet = (url, singleObjReturn=false) => instance.get(url).then(res => {
+instance.interceptors.request.use(async(config) => {
+    console.log('**** ADDING AUTH TOKEN TO API REQUEST ****');
+    try  {
+        const { token } = await getStorage('session');
+        console.log('auth token: ' + token);
+        config.headers['Authorization'] = token;
+    } catch (e) {
+        console.log('**** NO TOKEN AVAILABLE ****');
+    }
+    return config;
+})
+
+const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {params: body}).then(res => {
     if (singleObjReturn) {
         return res.data[0]
     } else {
         return res.data
     }
+}).catch(e => {
+    console.warn(e);
+    return false;
 })
 
-const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data);
+const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data).catch(e => {
+    console.warn(e);
+    return false;
+});
 
-const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data);
+const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data).catch(e => {
+    console.warn(e);
+    return false;
+});
 
-const axiosDelete = url => instance.delete(url);
+const axiosDelete = url => instance.delete(url).catch(e => {
+    console.warn(e);
+    return false;
+});
 
 // USER
 
 import { showMessage } from "react-native-flash-message";
+import { getStorage } from './storage';
+
+export const userSignIn = userObj => axiosGet('user_sign_in', false, userObj);
 
 export const getAllUsers = () => axiosGet('users');
 
@@ -30,17 +57,11 @@ export const getAllUsersByAdminUserId = id => axiosGet(`users?admin_user_id=${id
 
 export const getUserByEmail = userObj => axiosGet(`users?email=${userObj.email}`, true);
 
-export const postUser = (userObj) => axiosPost('users', {
-    email: userObj.email,
-    team_name: userObj.team_name,
-    password: userObj.password,
-    transfers: 0,
-    budget: userObj.budget,
-    gw_start: userObj.gw_start,
-    admin_user_id: userObj.admin_user_id
-});
+export const postUser = user => axiosPost('users', user);
 
-export const patchUserBUDGET = (userId, budget) => axiosPatch(`users/${userId}`, {budget});
+export const patchUser = (userId, userPatchObj) => {
+    return axiosPatch(`users/${userId}`, userPatchObj);
+}
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
 
@@ -48,6 +69,8 @@ export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_po
 
 
 // ADMIN_USER
+
+export const adminUserSignIn = adminUserObj => axiosGet('admin_user_sign_in', false, adminUserObj);
 
 export const getAllAdminUsers = () => axiosGet('admin_users');
 
@@ -58,7 +81,7 @@ export const getAdminUserByEmail = adminUser => axiosGet(`admin_users?email=${ad
 export const postAdminUser = adminUser => axiosPost('admin_users', { 
     email: adminUser.email,
     password: adminUser.password,
-    club_name: adminUser.club_name
+    club_name: adminUser.clubName
 });
 
 export const getLeague = id => axiosGet(`admin_users/${id}/league`);
@@ -274,10 +297,10 @@ export const postPGJ = async(joiner, admin_user_id) => {
         });
     } catch(e) {
         showMessage({
-            message: "Fail: Network Issue, please try again later",
+            message: e.response.data,
             type: "danger"
           });
-        console.warn(e);
+        console.warn(e.response.data);
     }
 }
 

@@ -76,7 +76,7 @@ class PickTeamScreen extends Component {
                 message: `Team selection successful`
             })
         } catch(e) {
-            console.warn(e);
+            console.warn(e.response.data);
             setTransferringBackToLatest();
             removeSpinner();
             showMessage({

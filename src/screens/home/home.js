@@ -80,8 +80,15 @@ class HomeScreen extends Component {
         })
     }
 
-    setModal = (player) => {
-        this.props.setModal({modalSet: 'set3', player: player.player, pg: player.pg, btnClick: null, width: vw(80), height: vh(50)})
+    setModal = (entry) => {
+        console.log('below');
+        console.log(entry.player ? 'player' : 'no player');
+        if (entry.player) {
+            this.props.setModal({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)});
+        } else {
+            console.log('setting user modal');
+            this.props.setModal({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)});
+        }
     }
 
     render() {
@@ -96,24 +103,24 @@ class HomeScreen extends Component {
                         <GWScore />
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
-                            <TouchableOpacity onPress={()=>this.setModal(topPlayer)}>
+                            <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topPlayer)}>
                                 {/* <AnimatedLinearGradient customColors={[$darkBlue, '#0ABFBC', $darkBlue]} speed={9000}
                                 start={{x:0, y:0}}
                                 end={{x:1,  y:1}}/>
                                 <Text style={{color: $platinum}}>Top Player</Text> */}
                                 {/* </AnimatedLinearGradient> */}
-                                <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
+                                {/* <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
                                 start={{x:0, y:0}}
-                                end={{x:1,  y:1}}>
-                                    <Text style={{color: 'white', fontWeight: 'bold'}}>Top Player</Text>
-                                </LinearGradient>
+                                end={{x:1,  y:1}}> */}
+                                    <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top Player</Text>
+                                {/* </LinearGradient> */}
                             </TouchableOpacity>
-                            <TouchableOpacity>
-                                <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
+                            <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topUser)}>
+                                {/* <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
                                 start={{x:1, y:0}}
-                                end={{x:0,  y:1}}>
-                                    <Text style={{color: 'white', fontWeight: 'bold'}}>Top User</Text>
-                                </LinearGradient>
+                                end={{x:0,  y:1}}> */}
+                                    <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top User</Text>
+                                {/* </LinearGradient> */}
                             </TouchableOpacity>
                             {/* <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
                             <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/> */}

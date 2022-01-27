@@ -184,7 +184,6 @@ export const getTeamPointsInfoGWChange = async(userId, gwId, otherUser) => {
 export const getLastAndAllGWs = async(adminUserId) => {
     try {
         let GWs = await getAllGWsFromAdminUserId(adminUserId);
-        console.log(GWs);
         completeGWs = GWs.filter(g=>g.complete===true);
         completeGWs.sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
         let lastGW = completeGWs[0];

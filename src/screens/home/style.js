@@ -1,4 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units"
+import { $arylideYellow, $darkBlue } from "../../styles/global"
 import { standardText } from "../../styles/textStyle"
 
 export const gwInfo = {
@@ -9,7 +10,6 @@ export const gwInfo = {
 export const topPerformers = {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    // height: vh(40),
     marginTop: vh(2),
     width: vw(100),
 }
@@ -20,5 +20,10 @@ export const topPerformerContainer = {
     borderRadius: 70,
     flexDirection: 'row',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: $darkBlue,
+    shadowColor: $arylideYellow,
+    shadowOffset: {width: 0, height: 0},
+    shadowOpacity: 1,
+    shadowRadius: 5,
 }

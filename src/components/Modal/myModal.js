@@ -7,17 +7,14 @@ import { closeModal, setCaptain, setVCaptain } from '../../actions';
 import Button from '../Button/button';
 import Checkbox from '../Checkbox/checkbox';
 import { playerImage, playerImageLarge } from '../PlayerGraphic/style';
-import { playerProfile } from '../profile/playerProile';
 import { buttons, captainCheckbox, captainCheckboxContainer, closeButton, modal, modalContainer, modalJSX, modalSplitContainer, modalTextContainer, subImage } from './style';
-import { useNavigation } from '@react-navigation/native';
 import { modalLabelText } from '../../styles/textStyle';
-import { playerImg } from '../profile/style';
+import { userProfile } from '../profile/userProfile';
+import { playerProfile } from '../profile/playerProile';
 
 
 
 class MyModal extends Component {
-
-    // navigation = (useNavigation();
 
     setCaptain = player => {
         const { vCaptain, setCaptain } = this.props;
@@ -82,17 +79,18 @@ class MyModal extends Component {
 
     render() { 
         const { modal, modalActive, closeModal, captain, vCaptain } = this.props;
-        const { player, width, modalSet } = modal;
+        const { player, width, modalSet, pg, ug, user } = modal;
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        return ( 
-            <Modal visible={modalActive} 
+        console.log(player);
+        return (
+            <Modal
             transparent={true}>
-                <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                {/* <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
-                            {player ? playerProfile(player) : null}
+                            {player ? playerProfile(player) : userProfile(user)}
                             {modalSet === 'set2' && !player.sub ? 
                             <View style={captainCheckboxContainer}>
                                 <Checkbox clickable active={player.player_id===captain.player_id} text="C" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
@@ -102,12 +100,13 @@ class MyModal extends Component {
                         </View>
                         {this.topRightJSX()}
                     </View>
+                    <Text>Around here </Text>
                     <View style={modalJSX}>
                         {this.bottomBtn()}
                         <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
                     </View>
                 </View>
-                </View> 
+                </View>  */}
             </Modal>
          );
     }

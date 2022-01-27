@@ -65,8 +65,6 @@ class AdminHomeScreen extends Component {
     }
 
     renderGames = () => {
-        console.log('below');
-        console.log(this.props.games);
         let completedGamesSorted = this.props.games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
         let openGamesSorted = this.props.games.filter(x=>!x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
         return <View style={gamesContainer}>

@@ -66,7 +66,6 @@ class LoginScreen extends Component {
     try {
       const { admin_user, token } = await adminUserSignIn(this.state.userObj);
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
-      console.log('set Admin Token');
       this.handleAdminReturn(admin_user);
     } catch(e) {
       showMessage({
@@ -79,11 +78,8 @@ class LoginScreen extends Component {
   
   handleUserSubmit = async() => {
     try {
-      console.log(this.state.userObj);
       const { user, token } = await userSignIn(this.state.userObj);
-      console.log(user);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
-      console.log('set User Token');
       this.handleUserReturn(user);
     } catch(e) {
       showMessage({
@@ -97,7 +93,6 @@ class LoginScreen extends Component {
   handleUserReturn = async(user) => {
     try {
       if (user !== undefined && user !== null) {
-        console.log('**** ATTEMPTING TO SET USER DATA ****')
         this.props.loginUser(await userData(user));
         updateStack(this.props.navigation, 0, 'Home');
       } else {

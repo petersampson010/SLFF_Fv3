@@ -9,7 +9,7 @@ import { buttons, playerBio, playerImg, playerInfo, playerStats, profile, profil
 export const playerProfile = (player) => 
 <View style={{...modalSplitContainer, width: vw(30)}}>
     <View style={{padding: vh(1)}}>
-        <Text style={modalLabelText}>{fullName(player)}</Text>
+        <Text style={modalLabelText}>is this rendering?{fullName(player)}</Text>
         <Text style={modalLabelText}>{positionString(player.position)}</Text>
         <Text style={modalLabelText}>£{player.price}</Text>
         <Text style={modalLabelText}></Text>

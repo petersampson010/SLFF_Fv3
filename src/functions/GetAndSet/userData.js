@@ -7,15 +7,11 @@ const userData = async(user) => {
   try {
     const adminUser = await getAdminUserById(user.admin_user_id);
         let { lastGW } = await getLastAndAllGWs(adminUser.admin_user_id);
-        console.log(lastGW);
-        console.log('1');
         let clubPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
         let currentStarters = await getPlayersByUserIdGWIdSub(user.user_id, 0, false);
         let currentSubs = await getPlayersByUserIdGWIdSub(user.user_id, 0, true);
-        console.log('2');
         let records = await getAllRecordsByUserId(user.user_id);
         let league = await getLeague(adminUser.admin_user_id);
-        console.log('3');
         if (lastGW) {
           const { gameweek_id } = lastGW;
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, false);

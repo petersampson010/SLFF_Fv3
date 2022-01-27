@@ -17,7 +17,6 @@ export const getStorage = async(key) => {
         let res = await EncryptedStorage.getItem(key);
         return res ? JSON.parse(res) : res;
     } catch(e) {
-        console.log('hitting get storage error');
         console.warn(e);
         return false;
     }

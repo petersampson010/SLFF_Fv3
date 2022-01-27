@@ -7,7 +7,7 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { createStore } from 'redux';
 import Navigation from './src/Navigation';
 import rootReducer from './src/rootReducer';
@@ -23,11 +23,14 @@ import LoadContainer from './LoadContainer';
 const store = createStore(rootReducer);
 
 const App = () => {
+
+  const modalActive = useState(false);
+
   return (
     <Provider store={store}>
       <LoadContainer />
       <FlashMessage position="top" />
-      <MyModal />
+      {modalActive ? <MyModal/> : null}
     </Provider>
   );
 };

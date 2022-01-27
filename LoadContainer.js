@@ -20,20 +20,16 @@ const LoadContainer = () => {
     const dispatch = useDispatch();
   
     useEffect(() => {
-        console.log('HITTING LOAD CONTAINER USE EFFECT');
         const loggedIn = async() => {
             // await clearStorage();
             let session = await getStorage('session');
-            console.log(session);
             if (session) {
                 const { token, user_id, admin_user_id } = session;
                 if (user_id) {
-                    console.log("User logged in");
                     const user = await getUserById(user_id);
                     dispatch(await userData(user));
                     updateInitialRoute('Home');
                 } else if (admin_user_id) {
-                    console.log("Admin User logged in");
                     const adminUser = await getAdminUserById(admin_user_id);
                     dispatch(await adminData(adminUser));
                     updateInitialRoute('AdminHome');
@@ -45,13 +41,11 @@ const LoadContainer = () => {
     }, [])
 
     return onLoad ? 
-    <View style={screenContainer}>
-        <SpinnerOverlay/>
-    </View>
+            <View style={screenContainer}>
+                <SpinnerOverlay/>
+            </View>
             :
             <Navigation initialRoute={initialRoute}/>;
-
-    // return <View></View>
 }
 
 export default LoadContainer;

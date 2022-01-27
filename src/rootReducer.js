@@ -128,9 +128,6 @@ const rootReducer = (state = initialState, action) => {
                 }
             }
         case 'LOGINADMINUSER':
-            console.log(action.GWs);
-            console.log(action);
-            console.log('above');
             return {
                 ...state, 
                 boolDeciders: {
@@ -470,7 +467,7 @@ const rootReducer = (state = initialState, action) => {
                 }
             };
         case "SETMODAL":
-            console.log(action.modalObj);
+            console.log(action);
             return {
                 ...state,
                 boolDeciders: {

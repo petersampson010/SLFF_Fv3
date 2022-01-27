@@ -1,5 +1,5 @@
 import { vh } from "react-native-expo-viewport-units"
-import { $arylideYellow, $caretColor, $chocolateBlack, $coral, $darkElectricBlue, $electricBlue, $luminousGreen, $offWhite, $skobeloff, $standardWhite } from "./global"
+import { $arylideYellow, $caretColor, $chocolateBlack, $coral, $darkBlue, $darkElectricBlue, $electricBlue, $luminousGreen, $offWhite, $skobeloff, $standardWhite } from "./global"
 
 export const standardText = {
     fontFamily: 'Avenir Next',
@@ -15,8 +15,11 @@ export const labelText = {
 
 export const modalLabelText = {
     fontFamily: 'Avenir Next',
-    color: '#292929',
+    // color: '#292929',
+    color: $darkBlue,
     fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: vh(3)
 }
 
 export const headers = {

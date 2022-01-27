@@ -12,18 +12,18 @@ class GWScore extends Component {
     state = {  }
 
     render() { 
-        const { adminUser, lastGW, clubFocusGW, userFocusGW, otherTeamFocus } = this.props;
+        const { adminUser, lastGW, clubFocusGW, userFocusGW, otherTeamFocus, width, backgroundColor } = this.props;
         let GW = otherTeamFocus ? 
         (clubFocusGW ? clubFocusGW : lastGW) :
         (userFocusGW ? userFocusGW : lastGW);
         return otherTeamFocus ?
-        <View style={gwScoreContainer}> 
+        <View style={{...gwScoreContainer, width, backgroundColor}}> 
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
             <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
         :
-        <View style={gwScoreContainer}> 
+        <View style={{...gwScoreContainer, width, backgroundColor}}> 
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
             <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>

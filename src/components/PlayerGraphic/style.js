@@ -22,7 +22,7 @@ export const playerImage = {
 
 export const playerImageLarge = {
     height: vh(18),
-    width: vw(36),
+    width: vw(30),
     borderRadius: 500
 }
 

@@ -12,7 +12,6 @@ import { standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine, scoreInput } from '../../styles/input';
 import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
-import MyModal from '../../components/Modal/MyModal';
 import Button from '../../components/Button/button';
 
 class GameEditorScreen extends Component {

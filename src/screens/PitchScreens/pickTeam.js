@@ -97,7 +97,7 @@ class PickTeamScreen extends Component {
 
     setModal = (player, sub) => {
         const { setModal } = this.props;
-        setModal({modalSet: 'set2', player: {...player, sub}, width: vw(80), height: vh(60), btnClick: this.transfer})
+        setModal({modalSet: 'set2', player: {...player.player, sub}, width: vw(80), height: vh(60), btnClick: this.transfer})
     }
 
     render() { 

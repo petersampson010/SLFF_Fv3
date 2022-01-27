@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $arylideYellow, $chocolateBlack } from "../../styles/global";
+import { $arylideYellow, $chocolateBlack, $darkBlue } from "../../styles/global";
 import { standardText } from "../../styles/textStyle";
 
 export const profile = {
@@ -49,4 +49,35 @@ export const playerStats = {
 
 export const buttons = {
     flexDirection: 'row'
+}
+
+export const GWContainer = {
+    flexDirection: 'row',
+    justifyContent: 'center'
+}
+
+export const GWInfoContainer = {
+    marginVertical: vh(2),
+    textAlign: 'center',
+    margin: vh(0.3),
+    width: vw(18),
+    height: vh(6)
+}
+
+export const infoTitle = {
+    height: vh(2.5),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: $darkBlue,
+    borderTopRightRadius: 10,
+    borderTopLeftRadius: 10,
+}
+
+export const infoScore = {
+    height: vh(4),
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor:  'white',
+    borderBottomRightRadius: 10,
+    borderBottomLeftRadius: 10,
 }

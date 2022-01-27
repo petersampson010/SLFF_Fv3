@@ -7,48 +7,45 @@ import { capitalize } from '../../functions/reusable';
 import profileImg from '../../../images/profile.jpg';
 import { centerHorizontally } from '../../styles/align';
 import { standardText } from '../../styles/textStyle';
-import MyModal from '../Modal/MyModal';
 import { modalTextContainer } from '../Modal/style';
-import { profile, profileContainer, title } from './style';
+import { GWContainer, GWInfoContainer, infoScore, infoTitle, profile, profileContainer, title } from './style';
+import GWScore from '../gwScore/gwScore';
+import { $arylideYellow, $darkBlue } from '../../styles/global';
 
-class PlayerGWProfile extends Component {
+const playerGWProfile = pg => {
+
+    console.log('**** PLAYER GW PROFILE ****');
 
     renderPointsBreakdown = () => {
-        return Object.keys(this.props.player.pg).map(score=>{
-            let att = this.props.player.pg[score];
-            if (att==null || att=='0' || score=="pg_id" || score=="updated_at" || score=="created_at" || score=="player_id" || score=="gameweek_id" || score=="total_points") {
+        return Object.keys(pg).map(score=>{
+            let att = pg[score];
+            console.log(score);
+            score = score==="total_points" ? "Points" : score;
+            score = score==="goals_conceded" ? "Condeded" : score;
+            console.log(score);
+            if (att==null || att=='0' || score=="pg_id" || score=="updated_at" || score=="created_at" || score=="player_id" || score=="gameweek_id" || score=="admin_user_id") {
                 return;
             } else {
-                return <Text style={standardText}>{capitalize(score)}: {att}</Text>;
+                return <View style={GWInfoContainer}>
+                    <View style={infoTitle}>
+                        <Text style={{color: 'white'}}>{capitalize(score)}</Text>
+                    </View>
+                    <View style={infoScore}>
+                        <Text style={{color: $darkBlue}}>{att}</Text>
+                    </View>
+                </View>
             }
         });
     }
 
-    render() { 
-        const { player } = this.props;
-        return ( 
-            <TouchableOpacity style={profileContainer}
-            onPress={() => this.props.openModal('topPlayer')}>
-                <Text style={title}>Player</Text>
-                <Text style={standardText}>{player.player.first_name} {player.player.last_name}</Text>
-                <View style={centerHorizontally}>
-                    <Image
-                    style={profile}
-                    source={profileImg}/>
-                </View>
-                <Text style={standardText}>Total Points: {player.pg.total_points}</Text>
+    return ( 
+        <View>
+            <GWScore width={vw(80)} backgroundColor={$darkBlue}/>
+            <View style={GWContainer}>
                 {this.renderPointsBreakdown()}
-                {/* <MyModal 
-                        visible={this.props.topPlayerModal}
-                        height={vh(33)}
-                        width={vw(80)}
-                        closeModalFcn={()=>this.setState(this.props.closeModal('topPlayer'))}
-                        modalType="playerProfile"
-                        entry={player}
-                        />  */}
-            </TouchableOpacity>
-         );
-    }
+            </View>
+        </View>
+    );
 }
  
-export default PlayerGWProfile;
+export default playerGWProfile;

@@ -17,12 +17,8 @@ class PointsScreen extends Component {
 
     state = {  }
 
-    componentDidMount() {
-
-    }
-
     openModal = player => {
-        this.props.setModal({modalSet: 'set3', player, width: vw(80), height: vh(30), btnClick: null})
+        this.props.setModal({modalSet: 'set3', player: player.player, pg: player.pg, width: vw(80), height: vh(30), btnClick: null})
     }
 
     render() {

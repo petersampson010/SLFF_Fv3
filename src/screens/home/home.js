@@ -81,12 +81,9 @@ class HomeScreen extends Component {
     }
 
     setModal = (entry) => {
-        console.log('below');
-        console.log(entry.player ? 'player' : 'no player');
         if (entry.player) {
             this.props.setModal({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)});
         } else {
-            console.log('setting user modal');
             this.props.setModal({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)});
         }
     }

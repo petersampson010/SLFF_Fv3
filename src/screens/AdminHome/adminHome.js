@@ -10,7 +10,6 @@ import { showMessage } from 'react-native-flash-message';
 import TouchableScale from 'react-native-touchable-scale'
 import { setClubFocusGW, addGameState, setModal, updateGameState, closeModal } from '../../actions';
 import { displayDate } from '../../functions/reusable';
-import MyModal from '../../components/Modal/MyModal';
 import { TouchableOpacity } from 'react-native';
 import { gameContainer, gamesContainer, gameScore, listLabel } from './style';
 import { headers, labelText, modalLabelText, sidenote, standardText } from '../../styles/textStyle';

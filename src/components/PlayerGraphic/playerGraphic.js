@@ -83,10 +83,10 @@ class PlayerGraphic extends Component {
     render() {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        const { player, type, playerGraphicClickFcn, sub } = this.props;
+        const { player, type, playerGraphicClickFcn, sub, playerPG } = this.props;
         const { captain, points } = this.getPointsAndCaptain();
       return ( 
-            <TouchableOpacity onPress={() => playerGraphicClickFcn(player, sub)} style={{...container, width: this.containerWidth()}}>
+            <TouchableOpacity onPress={() => playerGraphicClickFcn({player, pg: playerPG(player.player_id)}, sub)} style={{...container, width: this.containerWidth()}}>
                 <View style={ subContainer }>
                     <View>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>

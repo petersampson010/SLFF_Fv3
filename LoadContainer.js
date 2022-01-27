@@ -5,7 +5,6 @@ import Navigation from './src/Navigation';
 import rootReducer from './src/rootReducer';
 import FlashMessage from 'react-native-flash-message';
 import SpinnerOverlay from './src/components/spinner/spinner';
-import MyModal from './src/components/Modal/MyModal';
 import { clearStorage, getStorage, getTokenAndId } from './src/functions/storage';
 import userData from './src/functions/GetAndSet/userData';
 import adminData from './src/functions/GetAndSet/adminData';

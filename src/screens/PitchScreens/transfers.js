@@ -122,7 +122,7 @@ class TransfersScreen extends Component {
     }
 
     setModal = player => {
-        this.props.setModal({modalSet: 'set1', player, btnClick: this.transfer, width: vw(80), height: vh(50)});
+        this.props.setModal({modalSet: 'set1', player: player.player, btnClick: this.transfer, width: vw(80), height: vh(50)});
     }
 
     render() { 

@@ -1,4 +1,4 @@
-import { $baseBlue, $cadetBlue, $chocolateBlack, $col1, $coral, $darkBlue, $darkElectricBlue, $electricBlue, $electricBlueHighlight, $luminousGreen, $mellowApricot, $offWhite, $onyx, $platinum, $sage, $spaceCadet, $standardWhite, $zaGreen } from "../../styles/global";
+import { $arylideYellow, $baseBlue, $cadetBlue, $chocolateBlack, $col1, $coral, $darkBlue, $darkElectricBlue, $electricBlue, $electricBlueHighlight, $luminousGreen, $mellowApricot, $offWhite, $onyx, $platinum, $sage, $spaceCadet, $standardWhite, $zaGreen } from "../../styles/global";
 import {vw, vh} from 'react-native-expo-viewport-units';
 
 
@@ -18,6 +18,8 @@ export const modalJSX = {
     marginBottom: vh(2),
     width: '100%'
 }
+
+
 
 export const buttons = {
     flexDirection: 'row',
@@ -61,11 +63,17 @@ export const pickTeamStats = {
 export const captainCheckbox = {
     flexDirection: 'row', 
     justifyContent: 'center', 
-    width: vh(3), 
+    width: vw(25), 
     height: vh(3), 
+    marginHorizontal: vw(4),
+    borderRadius: 10
 }
 
 export const captainCheckboxContainer = {
-    height: vh(18),
-    justifyContent: 'space-evenly'
+    marginVertical: vh(2),
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%'
+    // height: vh(18),
+    // justifyContent: 'space-evenly'
 }

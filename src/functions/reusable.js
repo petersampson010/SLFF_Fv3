@@ -18,7 +18,9 @@ export const positionString = (num) => {
 }
 
 export const capitalize = string => {
+    console.log(string);
     return string.charAt(0).toUpperCase() + string.slice(1);
+    // return "Error here ";
 }
 
 export const fullName = player => {

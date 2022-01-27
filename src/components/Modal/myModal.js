@@ -11,6 +11,8 @@ import { buttons, captainCheckbox, captainCheckboxContainer, closeButton, modal,
 import { modalLabelText } from '../../styles/textStyle';
 import { userProfile } from '../profile/userProfile';
 import { playerProfile } from '../profile/playerProile';
+import playerGWProfile from '../profile/playerGWProfile';
+import userGWProfile from '../profile/userGWProfile';
 
 
 
@@ -45,13 +47,18 @@ class MyModal extends Component {
         const playerImg = require('../../../images/profile.jpg');
         switch(modalSet) {
             case 'set1': case 'set2':
-                return <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
+                return <View 
+                style={{width: vw(35), flexDirection: 'row', justifyContent: 'center'}}
+                >
+                    <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
+                </View>
             case 'set3':
                 return <View>
-                    <View style={{width: vw(25), flexDirection: 'row', justifyContent: 'center'}}>
-                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
+                    <View 
+                    style={{width: vw(35), flexDirection: 'row', justifyContent: 'center'}}
+                    >
+                        <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImageLarge}/>
                     </View>
-                    <Text style={modalLabelText}>{this.props.pg}</Text>
                 </View>;
             case 'set4': 
                 return <Text style={modalLabelText}>Would you like to edit the game or submit the stats and complete it?</Text>;
@@ -82,31 +89,33 @@ class MyModal extends Component {
         const { player, width, modalSet, pg, ug, user } = modal;
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
-        console.log(player);
         return (
             <Modal
+            visible={modalActive}
             transparent={true}>
-                {/* <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
-                            {player ? playerProfile(player) : userProfile(user)}
-                            {modalSet === 'set2' && !player.sub ? 
-                            <View style={captainCheckboxContainer}>
-                                <Checkbox clickable active={player.player_id===captain.player_id} text="C" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
-                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="VC" func={()=>this.setVCaptain(player)} style={captainCheckbox}/> 
-                            </View>
-                             : null}
+                            {player ? playerProfile(player) : null}
+                            {user ? userProfile(user) : null}
                         </View>
                         {this.topRightJSX()}
                     </View>
-                    <Text>Around here </Text>
+                            {modalSet === 'set2' && !player.sub ? 
+                            <View style={captainCheckboxContainer}>
+                                <Checkbox clickable active={player.player_id===captain.player_id} text="Captain" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
+                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="Vice Captain" func={()=>this.setVCaptain(player)} style={captainCheckbox}/> 
+                            </View>
+                             : null}
+                    {pg ? playerGWProfile(pg) : null}
+                    {ug ? userGWProfile(ug) : null}
                     <View style={modalJSX}>
                         {this.bottomBtn()}
                         <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
                     </View>
                 </View>
-                </View>  */}
+                </View>  
             </Modal>
          );
     }

@@ -25,7 +25,7 @@ class StateModal extends Component {
             transparent={true}
             >
                 <View style={{height: vh(90), marginTop: vh(10), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                <View style={{...modalContainer, height:height, width:width, left:(vw(100)-(width))/2}}>
+                <View style={{...modalContainer, top:(vh(80)-height)/2, height:height, width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         {jsx}
                     </View>

@@ -94,7 +94,7 @@ class MyModal extends Component {
             visible={modalActive}
             transparent={true}>
                 <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
-                <View style={{...modalContainer, width:width, left:(vw(100)-(width))/2}}>
+                <View style={{...modalContainer, top: vh(15), width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
                             {player ? playerProfile(player) : null}

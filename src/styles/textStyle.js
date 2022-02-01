@@ -29,7 +29,7 @@ export const headers = {
 }
 
 export const sidenote = {
-    color: $arylideYellow,
+    color: 'white',
     fontSize: 12,
     fontFamily: 'Avenir Next'
 }
@@ -86,4 +86,18 @@ export const gwTEXT = {
     color: $arylideYellow,
     fontSize: 14,
     textAlign: 'center'
+}
+
+export const appTitleTEXT =  {
+    fontFamily: 'Avenir Next',
+    fontSize: 30,
+    color: $standardWhite,
+    fontWeight: 'bold'
+}
+
+export const clubNameTEXT = {
+    fontFamily: 'Avenir Next',
+    fontSize: 24,
+    color: $standardWhite,
+    fontStyle: 'italic'
 }

@@ -1,5 +1,6 @@
 import { vh, vw } from "react-native-expo-viewport-units";
 import { $baseBlue, $darkBlue, $standardWhite } from "../../styles/global";
+import { appTitleTEXT } from "../../styles/textStyle";
 
 export const overlay = {
     position: 'absolute',
@@ -14,8 +15,6 @@ export const overlay = {
 }
 
 export const spinnerTitle = {
-    fontSize: 30,
-    color: $standardWhite,
-    fontWeight: 'bold',
+    ...appTitleTEXT,
     paddingBottom: vh(20)
 }

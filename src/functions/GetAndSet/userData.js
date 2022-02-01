@@ -12,6 +12,8 @@ const userData = async(user) => {
         let currentSubs = await getPlayersByUserIdGWIdSub(user.user_id, 0, true);
         let records = await getAllRecordsByUserId(user.user_id);
         let league = await getLeague(adminUser.admin_user_id);
+        console.log('league  below');
+        console.log(league);
         if (lastGW) {
           const { gameweek_id } = lastGW;
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, false);
@@ -40,7 +42,7 @@ const userData = async(user) => {
           return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
         }
       } catch(e) {
-        console.warn(e)
+        console.log(e)
         return false;
       }
 }

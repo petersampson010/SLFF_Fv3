@@ -15,8 +15,8 @@ import PickTeamScreen from './screens/PitchScreens/pickTeam';
 import AdminHomeScreen from './screens/AdminHome/adminHome';
 import GameEditorScreen from './screens/GameEditor/gameEditor';
 import AdminPlayerEditScreen from './screens/adminPlayerEdit';
-import { $darkBlue } from './styles/global';
-import { getStorage } from './functions/storage';
+import { $inputBlue, $darkBlueOpacity } from './styles/global';
+import signOutText from './components/signOut';
 
 const Stack = createNativeStackNavigator();
 
@@ -36,7 +36,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Sunday',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -44,7 +44,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Login',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -52,7 +52,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Admin Account Setup',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -60,7 +60,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Team Sign Up',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -68,7 +68,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Team Set Up',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -76,23 +76,24 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Contact Us',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
         <Stack.Screen name="Home" component={HomeScreen} 
-        options={{
+        options={({navigation})=>({
           title: 'Home',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerRight: ()=>signOutText(navigation),
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
-        }}}/>
+        }})}/>
         <Stack.Screen name="Transfers" component={TransfersScreen} 
         options={{
           title: 'Transfers',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -100,7 +101,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Points',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -108,7 +109,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Club Setup',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -116,7 +117,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Pick Team',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}
@@ -125,7 +126,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Club Home',
           headerLeft: ()=>false,
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -133,7 +134,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Game Editor',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>
@@ -141,7 +142,7 @@ function Navigation({initialRoute}) {
         options={{
           title: 'Player Edit',
           headerTintColor: 'white',
-          headerStyle: {backgroundColor: $darkBlue}
+          headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
         }}}/>

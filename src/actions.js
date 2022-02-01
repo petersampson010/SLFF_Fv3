@@ -263,3 +263,9 @@ export const updateStateClubPlayers = updatedPlayer => {
         updatedPlayer
     }
 }
+
+export const resetStore = () => {
+    return {
+        type: "RESETSTORE"
+    }
+}

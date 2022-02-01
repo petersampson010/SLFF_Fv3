@@ -17,7 +17,8 @@ export const gameScore = {
 export const listLabel = {
     width: vw(100),
     backgroundColor: 'grey',
-    padding: vw(1)
+    padding: vw(1),
+    marginTop: vh(1)
 
 }
 

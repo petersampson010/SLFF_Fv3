@@ -1,16 +1,16 @@
 import React, { Component } from 'react';
-import { ScrollView, TouchableOpacity, Text, View } from 'react-native';
+import { ScrollView, TouchableOpacity, Text, View, Image } from 'react-native';
 import { connect } from 'react-redux';
 import Header from '../../components/header/header';
 import { displayDate, getTeamPointsInfo, topPlayer, topUser } from '../../functions/reusable';
 import BottomNav from '../../components/bottomNav/bottomNav';
-import { $arylideYellow, $darkBlue, $platinum, screenContainer } from '../../styles/global';
-import { gwInfo, leagueTable, topPerformerContainer, topPerformers } from './style';
+import { $arylideYellow, $darkBlue, $darkBlueOpacity, $inputBlue, $platinum, screenContainer } from '../../styles/global';
+import { appClubContainer, appLogoTitleContainer, appTitle, gwInfo, leagueTable, recentGame, topPerformerContainer, topPerformers } from './style';
 import PlayerGWProfile from '../../components/profile/playerGWProfile';
 import UserGWProfile from '../../components/profile/userGWProfile';
 import GWScore from '../../components/gwScore/gwScore';
 import { tableElement3, tableRow, tableRowHead } from '../../styles/table';
-import { headers, sidenote, standardText } from '../../styles/textStyle';
+import { clubNameTEXT, headers, sidenote, standardText } from '../../styles/textStyle';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { headerText } from '../../components/header/style';
 import NoScoreGW from '../../components/noScoreGW/noScoreGW';
@@ -89,38 +89,33 @@ class HomeScreen extends Component {
     }
 
     render() {
-        const { user, topPlayer, topUser } = this.props;
+        const { user, topPlayer, topUser, adminUser } = this.props;
         const lastGW = this.props.lastGW ? this.props.lastGW : false;
         const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
         return ( 
             <View style={screenContainer}>
+                <View style={appClubContainer}>
+                    <View style={appLogoTitleContainer}>
+                        <Image alt='app logo'/>
+                        <Text style={appTitle}>SLFF</Text>
+                    </View>
+                    <View  style={appLogoTitleContainer}>
+                        <Text style={clubNameTEXT}>{adminUser.club_name}</Text>
+                    </View>
+                </View>
                 <View style={{opacity}}>
                     {lastGW && topPlayer && topUser ? 
                     <View style={gwInfo}>
-                        <GWScore />
+                        <Text style={recentGame}>Most Recent Game</Text>
+                        <GWScore backgroundColor={$inputBlue}/>
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
                             <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topPlayer)}>
-                                {/* <AnimatedLinearGradient customColors={[$darkBlue, '#0ABFBC', $darkBlue]} speed={9000}
-                                start={{x:0, y:0}}
-                                end={{x:1,  y:1}}/>
-                                <Text style={{color: $platinum}}>Top Player</Text> */}
-                                {/* </AnimatedLinearGradient> */}
-                                {/* <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
-                                start={{x:0, y:0}}
-                                end={{x:1,  y:1}}> */}
                                     <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top Player</Text>
-                                {/* </LinearGradient> */}
                             </TouchableOpacity>
                             <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topUser)}>
-                                {/* <LinearGradient colors={['#fc354c', $darkBlue, '#0ABFBC']} style={topPerformerContainer}
-                                start={{x:1, y:0}}
-                                end={{x:0,  y:1}}> */}
                                     <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top User</Text>
-                                {/* </LinearGradient> */}
                             </TouchableOpacity>
-                            {/* <PlayerGWProfile player={topPlayer} topPlayerModal={this.state.modal.topPlayer} closeModal={this.closeModal} openModal={this.openModal}/>
-                            <UserGWProfile user={topUser} topUserModal={this.state.modal.topUser} closeModal={this.closeModal} openModal={this.openModal}/> */}
                         </View>
                     </View> : <NoScoreGW/>}
                     {lastGW ? 
@@ -139,8 +134,8 @@ class HomeScreen extends Component {
                         </ScrollView>
                     </View>
                     : null}
-                    <BottomNav navigation={this.props.navigation}/>
                 </View>
+                <BottomNav navigation={this.props.navigation}/>
             </View>
          );
     }
@@ -149,6 +144,7 @@ class HomeScreen extends Component {
 const mapStateToProps = state => {
     return {
         user: state.user.user,
+        adminUser: state.club.adminUser,
         league: state.club.league,
         topPlayer: state.club.topPlayer,
         topUser: state.club.topUser,

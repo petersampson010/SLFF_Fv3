@@ -21,23 +21,19 @@ const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {par
         return res.data
     }
 }).catch(e => {
-    console.warn(e);
-    return false;
+    throw e.response.data.errors;
 })
 
 const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data).catch(e => {
-    console.warn(e);
-    return false;
+    throw e.response.data.errors;
 });
 
 const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data).catch(e => {
-    console.warn(e);
-    return false;
+    throw e.response.data.errors;
 });
 
 const axiosDelete = url => instance.delete(url).catch(e => {
-    console.warn(e);
-    return false;
+    throw e.response.data.errors;
 });
 
 // USER

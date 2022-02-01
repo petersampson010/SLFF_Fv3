@@ -498,6 +498,8 @@ const rootReducer = (state = initialState, action) => {
                     clubPlayers: state.club.clubPlayers.map(cp => cp.player_id===action.updatedPlayer.player_id ? action.updatedPlayer : cp)
                 }
             }
+        case "RESETSTORE":
+            return initialState;
         default:
             return state;
     }

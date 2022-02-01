@@ -98,16 +98,13 @@ class AdminHomeScreen extends Component {
             let res = await postGame(this.state.game, this.props.adminUser.admin_user_id);
             if (res.date) {
                 this.props.addGameState(res);
-                // this.setState({
-                //     ...this.state,
-                //     modal: {active: false},
-                //     game: {
-                //         dateModalVisible: false,
-                //         opponent: '',
-                //         date: new Date(),
-                //         complete: false
-                //     }
-                // });
+                this.setState({
+                    ...this.state,
+                    modal: {
+                        active: false, 
+                        update: false
+                    },
+                });
                 showMessage({
                     message: "Game/Event added",
                     type: 'success'
@@ -125,6 +122,7 @@ class AdminHomeScreen extends Component {
     updateGame = async() => {
         try {
             let res = await patchGame(this.state.game);
+            this.props.updateGameState(this.state.game);
             if (res.date) {
                 this.setState({
                     ...this.state,
@@ -133,7 +131,6 @@ class AdminHomeScreen extends Component {
                         update: false
                     },
                 });
-                this.props.updateGameState(this.state.game);
                 showMessage({
                     message: "Game/Event updated",
                     type: 'success'
@@ -159,7 +156,7 @@ class AdminHomeScreen extends Component {
     }
 
     setModal = (game) => {
-        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(25), btnClick: () => this.openEditGameModal(game)});
+        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(45), btnClick: () => this.openEditGameModal(game)});
     }
 
     openSubmitGameStats = (game) => {
@@ -182,7 +179,7 @@ class AdminHomeScreen extends Component {
                     </ScrollView>
                     <StateModal
                     modalActive={this.state.modal.active}
-                    height={vh(55)}
+                    height={vh(60)}
                     width={vw(90)}
                     jsx={<View>
                         <Text style={modalLabelText}>Opposition</Text>
@@ -194,55 +191,17 @@ class AdminHomeScreen extends Component {
                             />
                         </View>
                         <Text style={modalLabelText}>Date</Text>
-                        {/* <TouchableOpacity onPress={this.openDate} style={inputFieldLarge}> */}
                             <DatePicker 
+                            height={vh(1)}
                             mode='date'
                             date={new Date(this.state.game.date)}
                             onDateChange={date=>this.setState({...this.state, game: {...this.state.game, date}})}
                             androidVariant='nativeAndroid'
                             />
-                            {/* <DateTimePickerModal
-                            isVisible={this.state.game.dateModalVisible}
-                            mode='date'
-                            date={this.state.game.date}
-                            onConfirm={date=>this.setState({...this.state, game: {...this.state.game, date, dateModalVisible: false}})}
-                            onCancel={()=>this.setState({...this.state, game: {...this.state.game, dateModalVisible: false}})}
-                            /> */}
-                            {/* <Text style={{...input, paddingTop: vh(1.5)}}>{displayDate(this.state.game.date)}</Text> */}
-                        {/* </TouchableOpacity> */}
                     </View>}
                     btn={<Button clickable modal text={this.state.modal.update ? "Edit Game" : "Submit Game"} func={this.state.modal.update ? this.updateGame : this.addGame} width={vw(35)}/>}
                     closeFcn={()=>this.setState({...this.state, modal: {active: false}})}
                     />
-                    {/* <MyModal 
-                    visible={this.state.modal2.active}
-                    height={vh(60)}
-                    width={vw(70)}
-                    closeModalFcn={()=>
-                        this.setState({...this.state, modal2: {active: false,
-                            game: {
-                                opponent: '',
-                                date: new Date(),
-                            }
-                        }})
-                    }
-                    jsx={this.state.modal2.game.complete ? 
-                        <Text>This game has been completed, you are unable to edit the player statistics</Text> 
-                        : 
-                        <View>
-                        <Text style={standardText}>Edit game or update stats</Text><Text style={standardText}>Remember... when entering player stats and completing a game, all changes are final so be sure to double check your entries!</Text>
-                        </View>}
-                        buttonOptions={this.state.modal2.game.complete ? [] : [
-                            {
-                                text: 'Submit Game Stats', 
-                                fcn: ()=>{this.setState({...this.state, modal2: {...this.state.modal2, active: false}});this.props.navigation.navigate('GameEditor')}
-                            },
-                            {
-                            text: 'Edit Game', 
-                            fcn: ()=>this.setState({...this.state, modal: {active: true, update: true, game: this.state.modal2.game}, modal2: {...this.state.modal2, active: false}})
-                        }
-                    ]}
-                /> */}
                 </ScrollView>
             <View style={buttonSplit}>
                 <Button clickable text='Add Event/Game' func={()=>this.setState({...this.state, modal: {active: true}})} width={vw(40)} />

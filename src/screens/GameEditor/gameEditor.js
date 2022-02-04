@@ -8,11 +8,12 @@ import { closeModal, completeGameState, setModal } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
 import { tableElement1, tableElement9, tableRow } from '../../styles/table';
 import { vh, vw } from 'react-native-expo-viewport-units';
-import { standardText } from '../../styles/textStyle';
+import { headers, standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine, scoreInput } from '../../styles/input';
 import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import Button from '../../components/Button/button';
+import { headComp, tableComp } from './style';
 
 class GameEditorScreen extends Component {
     state = { 
@@ -61,40 +62,40 @@ class GameEditorScreen extends Component {
             return <View key={i} style={{...tableRow, backgroundColor: this.state.players[x].valid ? 'rgba(249,249,249,0.1)' : 'red'}}>{this.renderRow(x)}</View>})
     }
 
-    renderRow = (playerID) => [<View style={tableElement1}><Text style={standardText}>{this.state.players[playerID].name}</Text></View>,
-        <TextInput style={tableElement9}
+    renderRow = (playerID) => [<View style={{...tableElement1, height: vh(6), width: vw(10)}}><Text style={standardText}>{this.state.players[playerID].name}</Text></View>,
+        <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].minutes} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'minutes')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].assists} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'assists')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].goals} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'goals')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].own_goals} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'own_goals')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].y_cards} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'y_cards')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].r_cards} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'r_cards')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].bonus} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'bonus')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={tableComp}
         value={this.state.players[playerID].penalty_miss} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'penalty_miss')}
         placeholder="0"
-        />, <TextInput style={tableElement9}
+        />, <TextInput keyboardType="numeric"  style={{...tableComp, borderRightWidth: 0}}
         value={this.state.players[playerID].goals_conceded} 
         onChange={el=>this.updateScore(playerID, el.nativeEvent.text, 'goals_conceded')}
         placeholder="0"
@@ -217,6 +218,7 @@ class GameEditorScreen extends Component {
                     <Text style={{...standardText, width: vw(30), textAlign: 'right'}}>{this.props.adminUser.club_name}</Text>
                     <View>
                         <TextInput
+                        keyboardType='numeric'
                         style={scoreInput}
                         value={this.state.score.team}
                         onChange={el=>this.setState({...this.state, score: {...this.state.score, team: el.nativeEvent.text}})}
@@ -225,6 +227,7 @@ class GameEditorScreen extends Component {
                     <Text style={standardText}>-</Text>
                     <View>
                         <TextInput
+                        keyboardType='numeric'
                         style={scoreInput}
                         value={this.state.score.oppo}
                         onChange={el=>this.setState({...this.state, score: {...this.state.score, oppo: el.nativeEvent.text}})}
@@ -232,20 +235,20 @@ class GameEditorScreen extends Component {
                     </View>
                     <Text style={{...standardText, width: vw(30), textAlign: 'left'}}>{this.props.clubFocusGW.opponent}</Text>
                 </View>
-                <View style={{...tableRow, backgroundColor: $darkBlue}}>
-                    <View style={tableElement1}><Text style={standardText}>Player</Text></View>
-                    <Text style={tableElement9}>M</Text>
-                    <Text style={tableElement9}>A</Text>
-                    <Text style={tableElement9}>G</Text>
-                    <Text style={tableElement9}>OG</Text>
-                    <Text style={tableElement9}>YC</Text>
-                    <Text style={tableElement9}>RC</Text>
-                    <Text style={tableElement9}>B</Text>
-                    <Text style={tableElement9}>PM</Text>
-                    <Text style={tableElement9}>GC</Text>
+                <View style={{...tableRow, backgroundColor: $darkBlue, height: vh(17)}}>
+                    <View style={tableElement1}><Text numberOfLines={1} style={headers}>Player Stats</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Minutes</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Assists</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Goals</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Own Goals</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Yellow Cards</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Red Cards</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Bonus</Text></View>
+                    <View style={headComp}><Text style={{width: vh(15), ...standardText}}>Penalty Miss</Text></View>
+                    <View style={headComp}><Text style={{width: vh(16), ...standardText}}>Goals Conceeded</Text></View>
                 </View>
                 <ScrollView style={screenContainer}>
-                    <View style={{paddingBottom: vh(38)}}>
+                    <View style={{paddingBottom: vh(62)}}>
                         {this.renderRows()}
                     </View>
                 </ScrollView>

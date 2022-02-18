@@ -1,24 +1,21 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { navContainer } from './style';
 import NavSection from './navSection';
 
-class BottomNav extends Component {
-    state = {  }
+const BottomNav = ({navigation}) => {
 
-    render() {
         const pages = ['Home', 'PickTeam', 'Points', 'Transfers'];
         return ( 
             <View style={navContainer}>
                 {pages.map((p,i)=>
                 <NavSection 
                 key={i}
-                navigation={this.props.navigation} 
+                navigation={navigation} 
                 page={p}/>
                 )}
             </View>
          );
-    }
 }
  
 export default BottomNav;

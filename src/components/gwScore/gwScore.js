@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { View, Text } from 'react-native';
 import { headers, labelText, scoreTeamsTEXT, scoreTEXT, standardText } from '../../styles/textStyle';
 import { headerText } from '../header/style';
@@ -8,11 +8,15 @@ import { vw } from 'react-native-expo-viewport-units';
 import { gwScoreContainer } from './style';
 import { inputFieldContainerInLine, scoreInput } from '../../styles/input';
 
-class GWScore extends Component {
-    state = {  }
+const GWScore = ({ width, backgroundColor }) => {
 
-    render() { 
-        const { adminUser, lastGW, clubFocusGW, userFocusGW, otherTeamFocus, width, backgroundColor } = this.props;
+    const adminUser = useSelector(state => state.club.adminUser);
+    const lastGW = useSelector(state => state.club.lastGW);
+    const otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus);
+    const UGJFocus = useSelector(state => state.club.focusedGWTeam.UGJ);
+    const userFocusGW = useSelector(state => state.user.userFocusGW);
+    const clubFocusGW = useSelector(state => state.club.clubFocusGW);
+
         let GW = otherTeamFocus ? 
         (clubFocusGW ? clubFocusGW : lastGW) :
         (userFocusGW ? userFocusGW : lastGW);
@@ -28,18 +32,6 @@ class GWScore extends Component {
             <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
             <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        adminUser: state.club.adminUser,
-        lastGW: state.club.lastGW,
-        UGJFocus: state.club.focusedGWTeam.UGJ,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus,
-        userFocusGW: state.user.userFocusGW,
-        clubFocusGW: state.club.clubFocusGW
-    }
 }
  
-export default connect(mapStateToProps)(GWScore);
+export default GWScore;

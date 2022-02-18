@@ -27,12 +27,15 @@ const LoadContainer = () => {
                 if (session) {
                     const { user_id, admin_user_id } = session;
                     if (user_id) {
+                        console.log('usre logged in');
                         const user = await getUserById(user_id);
                         dispatch(await userData(user));
                         updateInitialRoute('Home'); 
                     } else if (admin_user_id) {
+                        console.log('AU logged in');
                         const adminUser = await getAdminUserById(admin_user_id);
-                        dispatch(await adminData(adminUser));
+                        const adminDataObj = await adminData(adminUser);
+                        adminDataObj ? dispatch(adminDataObj) : null;
                         updateInitialRoute('AdminHome');
                     }
                 }

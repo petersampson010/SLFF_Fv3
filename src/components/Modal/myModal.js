@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, TouchableOpacity, View, Text, Image } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { showMessage } from 'react-native-flash-message';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { closeModal, setCaptain, setVCaptain } from '../../actions';
 import Button from '../Button/button';
 import Checkbox from '../Checkbox/checkbox';
@@ -16,34 +16,43 @@ import userGWProfile from '../profile/userGWProfile';
 
 
 
-class MyModal extends Component {
+const MyModal = () => {
+    
+    const records = useSelector(state => state.user.records);
+    const modal = useSelector(state => state.modal);
+    const modalActive = useSelector(state => state.boolDeciders.modal);
+    const captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain);
+    const vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain);
+    const { player, width, modalSet, pg, ug, user } = modal;
 
-    setCaptain = player => {
-        const { vCaptain, setCaptain } = this.props;
+    const closeModal = useDispatch(() => closeModal());
+    const setCap = useDispatch((player) => setCaptain(player));
+    const setVCap = useDispatch((player) => setVCaptain(player));
+
+    setC = player => {
         if (vCaptain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            setCaptain(player);
+            setCap(player);
         }
     }
 
-    setVCaptain = player => {
-        const { captain, setVCaptain } = this.props;
+    setVC = player => {
         if (captain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            setVCaptain(player);
+            setVCap(player);
         }
     }
 
     topRightJSX = () => {
-        const { modalSet } = this.props.modal;
+        const { modalSet } = modal;
         const playerImg = require('../../../images/profile.jpg');
         switch(modalSet) {
             case 'set1': case 'set2':
@@ -70,7 +79,7 @@ class MyModal extends Component {
     }
 
     bottomBtn = () => {
-        const { modalSet, btnClick, player } = this.props.modal;
+        const { modalSet, btnClick, player } = modal;
         const subImg = require('../../../images/subIcon.png');
         switch(modalSet) {
             case 'set1': case 'set2':
@@ -84,9 +93,6 @@ class MyModal extends Component {
         }
     }
 
-    render() { 
-        const { modal, modalActive, closeModal, captain, vCaptain } = this.props;
-        const { player, width, modalSet, pg, ug, user } = modal;
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
         return (
@@ -100,43 +106,25 @@ class MyModal extends Component {
                             {player ? playerProfile(player) : null}
                             {user ? userProfile(user) : null}
                         </View>
-                        {this.topRightJSX()}
+                        {topRightJSX()}
                     </View>
                             {modalSet === 'set2' && !player.sub ? 
                             <View style={captainCheckboxContainer}>
-                                <Checkbox clickable active={player.player_id===captain.player_id} text="Captain" func={()=>this.setCaptain(player)} style={captainCheckbox}/>
-                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="Vice Captain" func={()=>this.setVCaptain(player)} style={captainCheckbox}/> 
+                                <Checkbox clickable active={player.player_id===captain.player_id} text="Captain" func={()=>setC(player)} style={captainCheckbox}/>
+                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="Vice Captain" func={()=>setVC(player)} style={captainCheckbox}/> 
                             </View>
                              : null}
                     {pg ? playerGWProfile(pg) : null}
                     {ug ? userGWProfile(ug) : null}
                     <View style={modalJSX}>
-                        {this.bottomBtn()}
+                        {bottomBtn()}
                         <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
                     </View>
                 </View>
                 </View>  
             </Modal>
          );
-    }
-}
- 
-const mapStateToProps = state => {
-    return {
-        records: state.user.records,
-        modal: state.modal,
-        modalActive: state.boolDeciders.modal,
-        captain: state.stateChanges.updatedNotPersistedTeam.captain,
-        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
-    }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        closeModal: () => dispatch(closeModal()),
-        setCaptain: (player) => dispatch(setCaptain(player)),
-        setVCaptain: (player) => dispatch(setVCaptain(player))
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(MyModal);
+export default MyModal;

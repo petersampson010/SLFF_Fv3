@@ -1,15 +1,16 @@
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
+import { useSelector } from 'react-redux';
 import { headers } from '../../styles/textStyle';
 import GWScore from '../gwScore/gwScore';
 
-class NoScoreGW extends Component {
-    state = {  }
+const NoScoreGW = () => {
 
-    render() { 
+    const topPlayer = useSelector(state => state.club.topPlayer);
+
         return ( 
             <View>
-                {this.props.topPlayer ? 
+                {topPlayer ? 
                 <View>
                     <GWScore/>
                     <Text style={headers}>No Points Were Scored For This Gameweek! Maybe someone else should take over the admin account..</Text>
@@ -19,13 +20,6 @@ class NoScoreGW extends Component {
                 }
             </View>
          );
-    }
-}
-
-export const mapStateToProps = state => {
-    return {
-        topPlayer: state.club.topPlayer
-    }
 }
  
 export default NoScoreGW;

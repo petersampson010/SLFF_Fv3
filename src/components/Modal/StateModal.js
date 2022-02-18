@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, TouchableOpacity, View, Text, Image } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { createIconSetFromFontello } from 'react-native-vector-icons';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { closeModal, setCaptain } from '../../actions';
 import { fullName, getRecord, positionString } from '../../functions/reusable';
 import { buttonText, buttonContainerFullWidth } from '../../styles/button';
@@ -14,12 +14,8 @@ import { playerImage, playerImageLarge, subImage } from '../PlayerGraphic/style'
 import { buttons, closeButton, modal, modalContainer, modalJSX, modalSplitContainer, modalTextContainer } from './style';
 
 
-class StateModal extends Component {
+const StateModal = ({ jsx, modalActive, btn, width, height, closeFcn }) => {
 
-
-    render() { 
-        const { jsx, modalActive, btn, width, height, closeFcn } = this.props;
-        // const { player, jsx, width, height, btn } = modal;
         return ( 
             <Modal visible={modalActive} 
             transparent={true}
@@ -37,23 +33,6 @@ class StateModal extends Component {
                     </View>
             </Modal>
          );
-    }
-}
- 
-const mapStateToProps = state => {
-    return {
-        // records: state.user.records,
-        // captain: state.user.currentTeam.captain,
-        // vCaptain: state.user.currentTeam.vCaptain,
-        // modal: state.modal,
-        // modalActive: state.boolDeciders.modal
-    }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        closeModal: () => dispatch(closeModal())
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(StateModal);
+export default StateModal;

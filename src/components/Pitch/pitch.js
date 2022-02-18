@@ -2,19 +2,26 @@ import React, { Component } from 'react';
 import PlayerGraphic from '../PlayerGraphic/playerGraphic';
 import { View, ImageBackground } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import PitchHead from '../PitchHead/pitchHead';
-import { pitch, pitchContainer, starters, subs, positionRow, pitchImage, pitchClassContainer } from './style';
+import { pitch, pitchContainer, starters, subsStyle, positionRow, pitchImage, pitchClassContainer } from './style';
 import { fullName, getRecord, playersArrayToObj, positionString } from '../../functions/reusable';
 
 
 
 
-class Pitch extends Component {
+const Pitch = ({ type, team, playerGraphicClickFcn, clickFcn, update, subs, allPGJs }) => {
+
+    const UGJ = useSelector(state => state.user.focusedGWTeam.UGJ);
+    const records = useSelector(state => state.user.records);
+    const otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus);
+    const otherUGJ = useSelector(state => state.club.focusedGWTeam.UGJ);
+    const formattedTeam = () => playersArrayToObj(team);
+    console.log(formattedTeam()['4']);
+    const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
 
 
-    playerPG = (playerId) => {
-        const { otherTeamFocus, UGJ, otherUGJ, allPGJs, type } = this.props;
+    const playerPG = (playerId) => {
         if (otherTeamFocus) {
             return type==="points" ? allPGJs.filter(pg=>{
                 return pg.player_id===playerId && pg.gameweek_id===otherUGJ.gameweek_id
@@ -26,34 +33,29 @@ class Pitch extends Component {
         }
     }
 
-    team = () => playersArrayToObj(this.props.team);
-
-    renderPlayers = (position) => {
-        return this.team()[position].map((player, i) => {
+    const renderPlayers = (position) => {
+        return formattedTeam()[position].map((player, i) => {
             return <PlayerGraphic 
             sub={false}
             player={player} 
             key={i}
-            type={this.props.type}
-            playerGraphicClickFcn={this.props.playerGraphicClickFcn}
-            playerPG={this.playerPG}
+            type={type}
+            playerGraphicClickFcn={playerGraphicClickFcn}
+            playerPG={playerPG}
             />})
         
     }
 
-    renderSubs = () => this.props.subs.map((player, i) => 
+    const renderSubs = () => subs.map((player, i) => 
             <PlayerGraphic 
             sub={true}
             player={player} 
             key={i}
-            type={this.props.type}
-            playerGraphicClickFcn={this.props.playerGraphicClickFcn}
-            playerPG={this.playerPG}
+            type={type}
+            playerGraphicClickFcn={playerGraphicClickFcn}
+            playerPG={playerPG}
             />)
 
-    render() { 
-        const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
-        const team = this.team();
         return (
             <View>
                 <View>
@@ -62,37 +64,27 @@ class Pitch extends Component {
                                 <View style={pitch}>
                                     <View style={starters}>
                                         <View style={{...positionRow, width: vw(66)}}>
-                                            {team[4].length>0 ? this.renderPlayers('4') : null}
+                                            {formattedTeam()['4'].length>0 ? renderPlayers('4') : null}
                                         </View>
                                         <View style={{...positionRow, width: vw(78)}}>
-                                            {team[3].length>0 ? this.renderPlayers('3') : null}
+                                            {formattedTeam()['3'].length>0 ? renderPlayers('3') : null}
                                         </View>
                                         <View style={{...positionRow, width: vw(90)}}>
-                                            {team[2].length>0 ? this.renderPlayers('2') : null}
+                                            {formattedTeam()['2'].length>0 ? renderPlayers('2') : null}
                                         </View>
                                         <View style={positionRow}>
-                                            {team[1].length>0 ? this.renderPlayers('1') : null}
+                                            {formattedTeam()['1'].length>0 ? renderPlayers('1') : null}
                                         </View>
                                     </View>
                                 </View>
                             </View>
                         </ImageBackground>
                 </View>
-                {this.props.type!=='transfers' ? <View style={subs}>
-                        {this.renderSubs()}
+                {type!=='transfers' ? <View style={subsStyle}>
+                        {renderSubs()}
                 </View> : null}
             </View>
          );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        UGJ: state.user.focusedGWTeam.UGJ,
-        records: state.user.records,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus,
-        otherUGJ: state.club.focusedGWTeam.UGJ
-    }
 }
  
-export default connect(mapStateToProps)(Pitch);
+export default Pitch;

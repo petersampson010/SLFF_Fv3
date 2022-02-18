@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { View, Text, StyleSheet, Modal } from 'react-native';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { changeGWOther, setTeamPoints } from '../../actions';
 import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
 import { getTeamPointsInfo, getTeamPointsInfoGWChange } from '../../functions/reusable';
@@ -13,29 +13,36 @@ import pitch from '../Pitch/pitch';
 import { gameweekBanner, gwArrow, gwText, pickTeamX, pitchHead, pitchHeadComp, pitchHeadLeft, pitchHeadRight, pointsBanner, pointsBannerComp, pointsY, pointsYComp, team_nameContainer, team_nameText, transfersX } from './style';
 
 
-class PitchHead extends Component {
-    state = { 
+const PitchHead = ({ type, update }) => {
 
-    }
+    const UGJ = useSelector(state => state.user.focusedGWTeam.UGJ),
+    user = useSelector(state => state.user.user),
+    budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
+    otherUGJ = useSelector(state => state.club.focusedGWTeam.UGJ),
+    otherUser = useSelector(state => state.club.focusedGWTeam.user),
+    lastGW = useSelector(state => state.club.lastGW),
+    otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus),
+    userFocusGW = useSelector(state => state.user.userFocusGW),
+    clubFocusGW = useSelector(state => state.club.clubFocusGW),
+    changeGWOtherFUNC = useDispatch((starters, subs, UGJ, clubFocusGW) => changeGWOther(starters, subs, UGJ, clubFocusGW)),
+    setTeamPointsFUNC = useDispatch((starters, subs, UGJ, newUserFocusGW) => setTeamPoints(starters, subs, UGJ, newUserFocusGW))
 
-    changeGWPoints = async(direction) => {
-        const { otherTeamFocus, otherUser, changeGWOther, setTeamPoints, user, userFocusGW, clubFocusGW, lastGW } = this.props;
+    const changeGWPoints = async(direction) => {
         let GW = otherTeamFocus ? 
         (clubFocusGW ? clubFocusGW : lastGW) :
         (userFocusGW ? userFocusGW : lastGW);
         if (otherTeamFocus) {
             const newClubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1)
             const { starters, subs, records, otherUGJ } = await getTeamPointsInfoGWChange(otherUser.user_id, newClubFocusGW.gameweek_id, otherTeamFocus);
-            changeGWOther(starters, subs, otherUGJ, newClubFocusGW);
+            changeGWOtherFUNC(starters, subs, otherUGJ, newClubFocusGW);
         } else {
             const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1);
             const { starters, subs, UGJ } = await getTeamPointsInfoGWChange(user.user_id, newUserFocusGW.gameweek_id, otherTeamFocus);
-            setTeamPoints(starters, subs, UGJ, newUserFocusGW);
+            setTeamPointsFUNC(starters, subs, UGJ, newUserFocusGW);
         }
     }
 
-    compX = () => {
-        const { type, update } = this.props;
+    const compX = () => {
         switch(type) {
             case 'points': 
                 return <GWScore/>;
@@ -44,10 +51,10 @@ class PitchHead extends Component {
             case 'transfers':
                 return <View style={transfersX}>
                         <View >
-                            <Text style={labelText}>Transfers Available: {this.props.user.transfers}</Text>
+                            <Text style={labelText}>Transfers Available: {user.transfers}</Text>
                             <View style={{flexDirection: "row"}}>
                                 <Text style={labelText}>Budget: </Text>
-                                <Text style={{...labelText, color: (this.props.budget>=0 ? 'green' : 'red')}}>{Math.floor((this.props.budget*100)/100)}m</Text>
+                                <Text style={{...labelText, color: (budget>=0 ? 'green' : 'red')}}>{Math.floor((budget*100)/100)}m</Text>
                             </View>
                         </View>
                         <Button clickable text='Confirm' func={update} width={vw(30)}/>
@@ -57,8 +64,7 @@ class PitchHead extends Component {
         }
     }
 
-    compY = () => {
-        const { type, UGJ, otherUser, otherUGJ, otherTeamFocus, lastGW, userFocusGW, clubFocusGW, user } = this.props;
+    const compY = () => {
         switch(type) {
             case 'points':
                 let GW = otherTeamFocus ? 
@@ -67,11 +73,11 @@ class PitchHead extends Component {
                 let arrowLeft = otherTeamFocus ? GW.gameweek>otherUser.gw_start : GW.gameweek>user.gw_start;
                 let arrowRight = GW.gameweek<lastGW.gameweek;
                 return <View style={gameweekBanner}>
-                    <TouchableOpacity style={{...gwArrow, borderBottomLeftRadius: 7, borderTopLeftRadius: 7}} onPress={arrowLeft ? () => this.changeGWPoints('L') : null}>
+                    <TouchableOpacity style={{...gwArrow, borderBottomLeftRadius: 7, borderTopLeftRadius: 7}} onPress={arrowLeft ? () => changeGWPoints('L') : null}>
                         <Text style={{...gwTEXT, textAlign: 'left'}}>{arrowLeft ? '<--' : ''}</Text>
                     </TouchableOpacity>
                     <View style={gwText}><Text style={gwTEXT}>Gameweek {GW.gameweek}</Text></View>
-                    <TouchableOpacity style={{...gwArrow, borderBottomRightRadius: 7, borderTopRightRadius: 7}} onPress={arrowRight ? () => this.changeGWPoints('R') : null}>
+                    <TouchableOpacity style={{...gwArrow, borderBottomRightRadius: 7, borderTopRightRadius: 7}} onPress={arrowRight ? () => changeGWPoints('R') : null}>
                         <Text style={{...gwTEXT, textAlign: 'right'}}>{arrowRight ? '-->' : ''}</Text>
                     </TouchableOpacity>
                 </View>
@@ -80,10 +86,7 @@ class PitchHead extends Component {
         }
     }
 
-    // style={{width: vw(20), height: vh(10), paddingVertical: vh(1) backgroundColor: 'white'}}
-
-    compZ = () => {
-        const { type, otherTeamFocus, otherUGJ, UGJ } = this.props;
+    const compZ = () => {
         switch(type) {
             case 'points': 
                 return <View style={pointsBanner}>
@@ -99,37 +102,14 @@ class PitchHead extends Component {
         }
     }
 
-    render() {
         return (
             <View>
-                <View style={team_nameContainer}><Text style={team_nameText}>{this.props.otherTeamFocus ? this.props.otherUser.team_name : this.props.user.team_name}</Text></View>
-                {this.compY()}
-                {this.compX()}
-                {this.compZ()}
+                <View style={team_nameContainer}><Text style={team_nameText}>{otherTeamFocus ? otherUser.team_name : user.team_name}</Text></View>
+                {compY()}
+                {compX()}
+                {compZ()}
             </View>
          );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        UGJ: state.user.focusedGWTeam.UGJ,
-        user: state.user.user,
-        budget: state.stateChanges.updatedNotPersistedTeam.budget,
-        otherUGJ: state.club.focusedGWTeam.UGJ,
-        otherUser: state.club.focusedGWTeam.user,
-        lastGW: state.club.lastGW,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus,
-        userFocusGW: state.user.userFocusGW,
-        clubFocusGW: state.club.clubFocusGW
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        changeGWOther: (starters, subs, UGJ, clubFocusGW) => dispatch(changeGWOther(starters, subs, UGJ, clubFocusGW)),
-        setTeamPoints: (starters, subs, UGJ, newUserFocusGW) => dispatch(setTeamPoints(starters, subs, UGJ, newUserFocusGW))
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(PitchHead);
+export default PitchHead;

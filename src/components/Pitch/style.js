@@ -13,7 +13,7 @@ export const subHead= {
 //     backgroundColor: $darkBlue
 // }
 
-export const subs = {
+export const subsStyle = {
     width: vw(100),
     backgroundColor: '#C2C2C2',
     paddingTop: 10,

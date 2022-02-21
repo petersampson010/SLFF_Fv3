@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { ScrollView, TouchableOpacity, Text, View, Image } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import Header from '../../components/header/header';
 import { displayDate, getTeamPointsInfo, topPlayer, topUser } from '../../functions/reusable';
 import BottomNav from '../../components/bottomNav/bottomNav';
@@ -21,33 +21,41 @@ import LinearGradient from 'react-native-linear-gradient';
 import AnimatedLinearGradient, {presetColors} from 'react-native-animated-linear-gradient'
 
 
-class HomeScreen extends Component {
-    state = { 
-        modal: {
-            topPlayer: false,
-            topUser: false
-        }
-     }
+const HomeScreen = ({navigation}) => {
 
-    renderRows = () => {
-        return this.props.league.sort((a,b)=>b.total_points-a.total_points).map((team, i)=>
+    const [modal, updateModal] = useState({
+        topPlayer: false,
+        topUser: false
+    }),
+    user = useSelector(state => state.user.user),
+    adminUser = useSelector(state => state.club.adminUser),
+    league = useSelector(state => state.club.league),
+    topPlayer = useSelector(state => state.club.topPlayer),
+    topUser = useSelector(state => state.club.topUser),
+    lastGW = useSelector(state => state.club.lastGW ? state.club.lastGW : false),
+    lastUGJ = useSelector(state => state.user.focusedGWTeam.UGJ),
+    setOtherTeamPointsFUNC = useDispatch((starters, subs, records, UGJ, allPGJs, otherUser) => setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser)),
+    setModalFUNC = useDispatch(modalObj => setModal(modalObj))
+    
+
+    const renderRows = () => {
+        return league.sort((a,b)=>b.total_points-a.total_points).map((team, i)=>
         <TouchableOpacity key={i}
             style={tableRow}
-            onPress={() => this.goToTeamPoints(team)}>
+            onPress={() => goToTeamPoints(team)}>
             <Text style={{...tableElement3, ...standardText}}>{team.team_name}</Text>
             <Text style={{...tableElement3, ...standardText}}>{team.total_points}</Text>
-            {this.props.lastGW ? <Text style={{...tableElement3, ...standardText}}>{team.gw_points}</Text> : null}
+            {lastGW ? <Text style={{...tableElement3, ...standardText}}>{team.gw_points}</Text> : null}
         </TouchableOpacity>);
     }
 
-    goToTeamPoints = async(team) => {
-        const { lastGW } = this.props;
+    const goToTeamPoints = async(team) => {
         if (lastGW) {
             const { starters, subs, records, otherUGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
             const otherUser = await getUserById(team.user_id);
             if (otherUGJ) {
-                this.props.setOtherTeamPoints(starters, subs, records, otherUGJ, allPGJs, otherUser);
-                this.props.navigation.navigate('Points');
+                setOtherTeamPointsFUNC(starters, subs, records, otherUGJ, allPGJs, otherUser);
+                navigation.navigate('Points');
             } else {
                 showMessage({
                     message: "Team has not yet completed a GW",
@@ -62,36 +70,28 @@ class HomeScreen extends Component {
         }
     }
 
-    closeModal = type => {
-        this.setState({
-            modal: {
-                ...this.state.modal,
-                [type]: false
-            }
+    const closeModal = type => {
+        updateModal({
+            ...modal,
+            [type]: false
         })
     }
 
-    openModal = type => {
-        this.setState({
-            modal: {
-                ...this.state.modal,
-                [type]: true
-            }
+    const openModal = type => {
+        updateModal({
+            ...modal,
+            [type]: true
         })
     }
 
-    setModal = (entry) => {
+    const setModalCheck = (entry) => {
         if (entry.player) {
-            this.props.setModal({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)});
+            setModalFUNC({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)});
         } else {
-            this.props.setModal({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)});
+            setModalFUNC({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)});
         }
     }
-
-    render() {
-        const { user, topPlayer, topUser, adminUser } = this.props;
-        const lastGW = this.props.lastGW ? this.props.lastGW : false;
-        const opacity = this.state.modal.topPlayer || this.state.modal.topUser ? 0.1 : 1;
+        const opacity = modal.topPlayer || modal.topUser ? 0.1 : 1;
         return ( 
             <View style={screenContainer}>
                 <View style={appClubContainer}>
@@ -110,10 +110,10 @@ class HomeScreen extends Component {
                         <GWScore backgroundColor={$inputBlue}/>
                         <Text style={{...sidenote, textAlign: 'right'}}>{displayDate(lastGW.date)}</Text>
                         <View style={topPerformers}>
-                            <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topPlayer)}>
+                            <TouchableOpacity style={topPerformerContainer} onPress={()=>setModalCheck(topPlayer)}>
                                     <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top Player</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={topPerformerContainer} onPress={()=>this.setModal(topUser)}>
+                            <TouchableOpacity style={topPerformerContainer} onPress={()=>setModalCheck(topUser)}>
                                     <Text style={{color: $arylideYellow, fontWeight: 'bold'}}>Top User</Text>
                             </TouchableOpacity>
                         </View>
@@ -129,35 +129,15 @@ class HomeScreen extends Component {
                         </View>
                         <ScrollView style={''}>
                             <View style={{paddingBottom: vh(20)}}>
-                                {this.renderRows()}
+                                {renderRows()}
                             </View>
                         </ScrollView>
                     </View>
                     : null}
                 </View>
-                <BottomNav navigation={this.props.navigation}/>
+                <BottomNav navigation={navigation}/>
             </View>
          );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        user: state.user.user,
-        adminUser: state.club.adminUser,
-        league: state.club.league,
-        topPlayer: state.club.topPlayer,
-        topUser: state.club.topUser,
-        lastGW: state.club.lastGW,
-        lastUGJ: state.user.focusedGWTeam.UGJ
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setOtherTeamPoints: (starters, subs, records, UGJ, allPGJs, otherUser) => dispatch(setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser)),
-        setModal: modalObj => dispatch(setModal(modalObj))
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default HomeScreen;

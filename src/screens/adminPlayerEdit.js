@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { ScrollView, View, Switch, Text, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Input } from 'react-native-elements';
@@ -13,68 +13,61 @@ import StateModal from '../components/Modal/StateModal';
 import { input, inputFieldLarge, inputFieldMedium, inputFieldSmall } from '../styles/input';
 import { textLabel } from './login/style';
 import { modalLabelText } from '../styles/textStyle';
-import { updateStateClubPlayers } from '../actions';
-import { connect } from 'react-redux';
+import { updateGameState, updateStateClubPlayers } from '../actions';
+import { connect, useDispatch } from 'react-redux';
 
-class AdminPlayerEditScreen extends Component {
-    state = { 
-        modal: {
-            active: false,
+const AdminPlayerEditScreen = ({}) => {
+
+    const [modal, updateModal] = useState({
+        active: false,
+        player: {
+            "player_id": 1,
+            "first_name": "G",
+            "last_name": "H",
+            "position": "1",
+            "price": 1,
+            "availability": "a",
+            "admin_user_id": 1,
+            "created_at": "2020-11-23T13:03:11.328Z",
+            "updated_at": "2020-11-23T13:03:11.328Z"
+            }
+    }),
+    updateStateClubPlayersFUNC = useDispatch(updatedPlayer => updateStateClubPlayers(updatedPlayer));
+
+
+    const formChange = (id, entry) => {
+        updateModal({...modal,
             player: {
-                "player_id": 1,
-                "first_name": "G",
-                "last_name": "H",
-                "position": "1",
-                "price": 1,
-                "availability": "a",
-                "admin_user_id": 1,
-                "created_at": "2020-11-23T13:03:11.328Z",
-                "updated_at": "2020-11-23T13:03:11.328Z"
-                }
-        }
-    }
-
-    formChange = (id, entry) => {
-        this.setState({
-            ...this.state, 
-            modal: {...this.state.modal,
-                player: {
-                    ...this.state.modal.player,
-                    [id]: entry
-                }
+                ...modal.player,
+                [id]: entry
             }
         })
     }
 
-    updatePrice = entry => {
+    const updatePrice = entry => {
         if (entry.match('(^[0-9]{1,2}$|^$)')) {
-            this.setState({
-                ...this.state, 
-                modal: {...this.state.modal,
-                    player: {
-                        ...this.state.modal.player,
-                        "price": entry
-                    }
+            updateModal({...modal,
+                player: {
+                    ...modal.player,
+                    "price": entry
                 }
             })
         }
     }
 
-    editPlayer = player => {
-        this.setState({...this.state, 
-            modal: {active: true, player}
-        })
+    const editPlayer = player => {
+        updateGameState({active: true, player})
     }
 
-    removePlayer = player => {
+    const removePlayer = player => {
 
     }
 
-    updatePlayer = async() => {
+    const updatePlayer = async() => {
         try {
-            let updatedPlayer = await patchPlayer(this.state.modal.player);
-            this.props.updateStateClubPlayers(updatedPlayer);
-            this.setState({...this.state, modal: {active: false, player: {
+            let updatedPlayer = await patchPlayer(modal.player);
+            updateStateClubPlayersFUNC(updatedPlayer);
+            updateModal({active: false, player: {
                 "player_id": 1,
                 "first_name": "G",
                 "last_name": "H",
@@ -84,7 +77,7 @@ class AdminPlayerEditScreen extends Component {
                 "admin_user_id": 1,
                 "created_at": "2020-11-23T13:03:11.328Z",
                 "updated_at": "2020-11-23T13:03:11.328Z"
-                }}})
+                }})
         } catch(e) {
             showMessage({
                 message: e.response.data,
@@ -94,52 +87,51 @@ class AdminPlayerEditScreen extends Component {
         }
     }
 
-    render() { 
         return ( 
             <View style={screenContainer}>
                 <PlayersList
-                clickFcn={this.editPlayer}
+                clickFcn={editPlayer}
                 // jsx={
                 // <View>
-                //     <Input value={this.state.modal.player.first_name}
-                //     onChangeText={value=>this.formChange('first_name', value)}
+                //     <Input value={state.modal.player.first_name}
+                //     onChangeText={value=>formChange('first_name', value)}
                 //     label="First Name"
                 //     autoCapitalize="words"
                 //     />
-                //     <Input value={this.state.modal.player.last_name}
-                //     onChangeText={value=>this.formChange('last_name', value)}
+                //     <Input value={state.modal.player.last_name}
+                //     onChangeText={value=>formChange('last_name', value)}
                 //     label="Last Name"
                 //     autoCapitalize="words"
                 //     />
-                //     <Input value={this.state.modal.player.price.toString()}
-                //     onChangeText={value=>this.updatePrice(value)}
+                //     <Input value={state.modal.player.price.toString()}
+                //     onChangeText={value=>updatePrice(value)}
                 //     label="Price"
                 //     />
                 //     <Picker 
-                //     selectedValue={this.state.modal.player.position} 
-                //     onValueChange={value=>this.formChange('position', value)}>
+                //     selectedValue={state.modal.player.position} 
+                //     onValueChange={value=>formChange('position', value)}>
                 //         <Picker.Item label="GK" value='1'/>
                 //         <Picker.Item label="DEF" value='2'/>
                 //         <Picker.Item label="MID" value='3'/>
                 //         <Picker.Item label="FWD" value='4'/>
                 //     </Picker>
-                //     <Switch value={availability(this.state.modal.player.availability)} 
-                //     onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
+                //     <Switch value={availability(state.modal.player.availability)} 
+                //     onValueChange={value=>formChange('availability', value ? 'a' : 'u')} />
                 //     </View>
                 //     }
                 //     bottomButton={
                 //         <View>
-                //             <Button width={vw(35)} clickable text="Update Player" func={(player)=>this.updatePlayer(player)}/>
+                //             <Button width={vw(35)} clickable text="Update Player" func={(player)=>updatePlayer(player)}/>
                 //         </View>
                 //     }
-            //     buttonOptions={[{text: 'Update Player', fcn: this.updatePlayer}, 
-            // {text: 'Remove Player', fcn: this.removePlayer}]}
+            //     buttonOptions={[{text: 'Update Player', fcn: updatePlayer}, 
+            // {text: 'Remove Player', fcn: removePlayer}]}
             //     height={vh(60)}
             //     width={vw(70)}
 
                 />
                 <StateModal
-                modalActive={this.state.modal.active}
+                modalActive={modal.active}
                 height={vh(50)}
                 width={vw(80)}
                 jsx={<View>
@@ -148,8 +140,8 @@ class AdminPlayerEditScreen extends Component {
                             <View>
                                 <Text style={modalLabelText}>First Name</Text>
                                 <View style={inputFieldMedium}>
-                                    <TextInput value={this.state.modal.player.first_name}
-                                    onChangeText={value=>this.formChange('first_name', value)}
+                                    <TextInput value={modal.player.first_name}
+                                    onChangeText={value=>formChange('first_name', value)}
                                     autoCapitalize="words"
                                     style={input}
                                     />
@@ -158,8 +150,8 @@ class AdminPlayerEditScreen extends Component {
                             <View>
                                 <Text style={modalLabelText}>Last Name</Text>
                                 <View style={inputFieldMedium}>
-                                    <TextInput value={this.state.modal.player.last_name}
-                                    onChangeText={value=>this.formChange('last_name', value)}
+                                    <TextInput value={modal.player.last_name}
+                                    onChangeText={value=>formChange('last_name', value)}
                                     autoCapitalize="words"
                                     style={input}
                                     />
@@ -170,8 +162,8 @@ class AdminPlayerEditScreen extends Component {
                             <Text style={modalLabelText}>Position</Text>
                             <Picker 
                             itemStyle={{height: vh(18)}}
-                            selectedValue={this.state.modal.player.position} 
-                            onValueChange={value=>this.formChange('position', value)}>
+                            selectedValue={modal.player.position} 
+                            onValueChange={value=>formChange('position', value)}>
                                 <Picker.Item label="GK" value='1'/>
                                 <Picker.Item label="DEF" value='2'/>
                                 <Picker.Item label="MID" value='3'/>
@@ -183,8 +175,8 @@ class AdminPlayerEditScreen extends Component {
                         <View style={{width: vw(20)}}>
                             <Text style={modalLabelText}>Price</Text>
                             <View style={{...inputFieldSmall, width: vw(13)}}>
-                                <TextInput value={this.state.modal.player.price.toString()}
-                                onChangeText={value=>this.updatePrice(value)}
+                                <TextInput value={modal.player.price.toString()}
+                                onChangeText={value=>updatePrice(value)}
                                 style={input}
                                 />
                             </View>
@@ -193,30 +185,19 @@ class AdminPlayerEditScreen extends Component {
                             <Text style={modalLabelText}>Availability</Text>
                             <View style={{flexDirection: 'row', justifyContent: 'center', marginTop: vh(1)}}>
                                 <Switch 
-                                value={availability(this.state.modal.player.availability)} 
-                                onValueChange={value=>this.formChange('availability', value ? 'a' : 'u')} />
+                                value={availability(modal.player.availability)} 
+                                onValueChange={value=>formChange('availability', value ? 'a' : 'u')} />
                             </View>
                         </View>
                     </View>
                 </View>
                 }
-                btn={<Button width={vw(35)} clickable modal text="Update Player" func={(player)=>this.updatePlayer(player)}/>}
-                closeFcn={()=>this.setState({...this.state, modal: {...this.state.modal, active: false}})}
+                btn={<Button width={vw(35)} clickable modal text="Update Player" func={(player)=>updatePlayer(player)}/>}
+                closeFcn={()=>updateModal({...modal, active: false})}
                 />
             </View>
          );
-    }
 }
 
-const mapStateToProps = state => {
-    return {
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        updateStateClubPlayers: updatedPlayer => dispatch(updateStateClubPlayers(updatedPlayer))
-    }
-}
  
-export default connect(null, mapDispatchToProps)(AdminPlayerEditScreen);
+export default AdminPlayerEditScreen;

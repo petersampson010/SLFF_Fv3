@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
 import { Image, Text, StyleSheet, View, Button, Modal, TouchableHighlight, TouchableOpacity } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { fullName, subOrTransfer } from '../../functions/reusable';
 import { box, capText, container, playerImage, subContainer, subImage, subTransferBtn } from './style';
 import { vw } from 'react-native-expo-viewport-units';
 import { checkBox, headers, playerNamePoints } from '../../styles/textStyle';
 
 
-class PlayerGraphic extends Component {
-    state = {}
+const PlayerGraphic = ({player, type, playerGraphicClickFcn, sub, playerPG, num}) => {
 
-    playerNumber = () => {
-        const { num } = this.props;
+    const records = useSelector(state => state.user.records),
+    captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain),
+    vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain),
+    pointsCaptain = useSelector(state => state.user.focusedGWTeam.captain),
+    pointsVCaptain = useSelector(state => state.user.focusedGWTeam.vCaptain),
+    otherCaptain = useSelector(state => state.club.focusedGWTeam.captain),
+    otherVCaptain = useSelector(state => state.club.focusedGWTeam.vCaptain),
+    otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus),
+    playerImg = require('../../../images/profile.jpg'),
+    subImg = require('../../../images/subIcon.png');
+    
+    const playerNumber = () => {
         if (num) {
             return num;
         } else {
@@ -20,11 +29,11 @@ class PlayerGraphic extends Component {
     }
 
 
-    containerWidth = () => {
-        if (this.props.sub) {
+    const containerWidth = () => {
+        if (sub) {
             return vw(20)
         } else {
-            switch(this.props.player.position) {
+            switch(player.position) {
                 case '2':
                     return vw(25);
                 case '3':
@@ -37,56 +46,51 @@ class PlayerGraphic extends Component {
         }
     }
 
-    getPointsAndCaptain = () =>  {
-        const { player, captain, vCaptain, pointsCaptain, pointsVCaptain, otherCaptain, otherVCaptain, type, otherTeamFocus, playerPG } = this.props;
+    const getPointsAndCaptain = () =>  {
         if (type==='points') {
             let PG = playerPG(player.player_id)
             if (otherTeamFocus) {
                 let captainPlayed = playerPG(otherCaptain.player_id).minutes > 0;
                 if (player.player_id===otherCaptain.player_id) {
-                    return { captain: 'C', points: 2*PG.total_points }
+                    return { captainString: 'C', points: 2*PG.total_points }
                 } else if (player.player_id===otherVCaptain.player_id) {
                     if (captainPlayed) {
-                        return { captain: 'vc', points: PG.total_points }
+                        return { captainString: 'vc', points: PG.total_points }
                     } else {
-                        return { captain: 'vc', points: 2*PG.total_points }
+                        return { captainString: 'vc', points: 2*PG.total_points }
                     }
                 } else {
-                    return { captain: null, points: PG.total_points }
+                    return { captainString: null, points: PG.total_points }
                 }
             } else {
                 let captainPlayed = playerPG(pointsCaptain.player_id).minutes > 0;
                 if (player.player_id===pointsCaptain.player_id) {
-                    return { captain: 'C', points: 2*PG.total_points }
+                    return { captainString: 'C', points: 2*PG.total_points }
                 } else if (player.player_id===pointsVCaptain.player_id) {
                     if (captainPlayed) {
-                        return { captain: 'vc', points: PG.total_points }
+                        return { captainString: 'vc', points: PG.total_points }
                     } else {
-                        return { captain: 'vc', points: 2*PG.total_points }
+                        return { captainString: 'vc', points: 2*PG.total_points }
                     }
                 } else {
-                    return { captain: null, points: PG.total_points }
+                    return { captainString: null, points: PG.total_points }
                 }
             }
         } else if (type==='pickTeam') {
             if (player.player_id===captain.player_id) {
-                return { captain: 'C', points: null }
+                return { captainString: 'C', points: null }
             } else if (player.player_id===vCaptain.player_id) {
-                return { captain: 'vc', points: null }
+                return { captainString: 'vc', points: null }
             } else {
-                return { captain: null, points: null }
+                return { captainString: null, points: null }
             }
         }
-        return  { captain: null, points: null };
+        return  { captainString: null, points: null };
     }
 
-    render() {
-        const playerImg = require('../../../images/profile.jpg');
-        const subImg = require('../../../images/subIcon.png');
-        const { player, type, playerGraphicClickFcn, sub, playerPG } = this.props;
-        const { captain, points } = this.getPointsAndCaptain();
+    const { captainString, points } = getPointsAndCaptain();
       return ( 
-            <TouchableOpacity onPress={() => playerGraphicClickFcn({player, pg: playerPG(player.player_id)}, sub)} style={{...container, width: this.containerWidth()}}>
+            <TouchableOpacity onPress={() => playerGraphicClickFcn({player, pg: playerPG(player.player_id)}, sub)} style={{...container, width: containerWidth()}}>
                 <View style={ subContainer }>
                     <View>
                         <Image source={playerImg} imageStyle={{resizeMode: 'cover'}} style={playerImage}/>
@@ -94,30 +98,11 @@ class PlayerGraphic extends Component {
                 </View>
                 <View style={{flexDirection: 'row', marginTop: 5}}>
                     <Text numberOfLines={1} style={playerNamePoints}>{player.last_name} </Text>
-                    <Text style={capText}>{captain}</Text>
+                    <Text style={capText}>{captainString}</Text>
                 </View>
                     <Text style={playerNamePoints}>{points}</Text>
             </TouchableOpacity>
       );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        records: state.user.records,
-        captain: state.stateChanges.updatedNotPersistedTeam.captain,
-        vCaptain: state.stateChanges.updatedNotPersistedTeam.vCaptain,
-        pointsCaptain: state.user.focusedGWTeam.captain,
-        pointsVCaptain: state.user.focusedGWTeam.vCaptain,
-        otherCaptain: state.club.focusedGWTeam.captain,
-        otherVCaptain: state.club.focusedGWTeam.vCaptain,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(PlayerGraphic);
+export default PlayerGraphic;

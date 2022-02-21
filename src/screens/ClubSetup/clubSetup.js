@@ -1,4 +1,4 @@
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import React, { Component } from 'react';
 import { View, Text, Button, StyleSheet, SectionList, ScrollView } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
@@ -21,10 +21,9 @@ import { showMessage } from 'react-native-flash-message';
 import { Picker } from '@react-native-picker/picker';
 
 
-class ClubSetupScreen extends Component {
+const ClubSetupScreen = ({navigation}) => {
 
-    state = {
-        players: {
+    const [players, updatePlayers] = {
             0: {name: '', position:'1', price: ''},
             1: {name: '', position:'1', price: ''},
             2: {name: '', position:'1', price: ''},
@@ -50,34 +49,34 @@ class ClubSetupScreen extends Component {
             20: {name: '', position:'1', price: ''},
             22: {name: '', position:'1', price: ''},
             23: {name: '', position:'1', price: ''}
-        }
+    },
+    adminUserId = useSelector(state => state.club.adminUser.admin_user_id),
+    spinner = useSelector(state => state.boolDeciders.spinner)
+    addSpinnerFUNC = useDispatch(() => addSpinner()),
+    removeSpinnerFUNC = useDispatch(() => removeSpinner());
+
+    const updatePosition = (i, selectedValue) => {
+        updatePlayers({...players, [i]: {...players[i], position: selectedValue}})
     }
 
-    updatePosition = (i, selectedValue) => {
-        this.setState({...this.state, players: {...this.state.players, [i]: {...this.state.players[i], position: selectedValue}}})
-    }
-
-    updatePrice = (text, i) => {
+    const updatePrice = (text, i) => {
         if (text.match('(^[0-9]{1,2}$|^$)')) {
-            this.setState({
-                ...this.state,
-                players: {
-                    ...this.state.players, 
+            updatePlayers({
+                    ...players, 
                     [i]: {
-                        ...this.state.players[i],
+                        ...players[i],
                         price: text
                     }
-                }
-            })
+                })
         }
     }
 
-    averagePrice = () => {
+    const averagePrice = () => {
         let totalPrice = 0;
         let noOfPlayers = 0;
         for (let j=0; j<24; j++) {
-            if (this.state.players[j].price.length>0) {
-                totalPrice += parseInt(this.state.players[j].price);
+            if (players[j].price.length>0) {
+                totalPrice += parseInt(players[j].price);
                 noOfPlayers++;
             }
         }
@@ -86,67 +85,66 @@ class ClubSetupScreen extends Component {
         return averagePrice ? averagePrice : 0;
     }
 
-    updateName = (name, i) => {
-        this.setState({...this.state, players: {...this.state.players, [i]: {...this.state.players[i], name}}})
+    const updateName = (name, i) => {
+        updatePlayers({...players, [i]: {...players[i], name}})
     }
 
 
-    renderRows = () => Object.keys(this.state.players).map((i) => 
+    const renderRows = () => Object.keys(players).map((i) => 
         <View key={i} style={tableRow}>
             <TextInput 
-                value={this.state.players[i].name} 
-                onChange={el=>this.updateName(el.nativeEvent.text, i)}
+                value={players[i].name} 
+                onChange={el=>updateName(el.nativeEvent.text, i)}
                 autoCapitalize = 'words'
                 style={{...textBox, width: vw(50)}}
             />
-            <Picker style={picker} itemStyle={pickerItemStyle} key={i} selectedValue={this.state.players[i].position} onValueChange={value=>this.updatePosition(i, value)}>
+            <Picker style={picker} itemStyle={pickerItemStyle} key={i} selectedValue={players[i].position} onValueChange={value=>updatePosition(i, value)}>
                 <Picker.Item label="GK" value='1'/>
                 <Picker.Item label="DEF" value='2'/>
                 <Picker.Item label="MID" value='3'/>
                 <Picker.Item label="FWD" value='4'/>
             </Picker>
                 <TextInput
-                    value={this.state.players[i].price} 
-                    onChange={el=>this.updatePrice(el.nativeEvent.text, i)}
+                    value={players[i].price} 
+                    onChange={el=>updatePrice(el.nativeEvent.text, i)}
                     style={{...textBox, textAlign: 'center', width: vw(20)}}
                 />
         </View>
         )
 
 
-    submitPlayers = () => {
-        if (this.countPlayers()>1) {
-            this.postPlayers();
+    const submitPlayers = () => {
+        if (countPlayers()>1) {
+            postPlayers();
         } else {
             console.warn('not enough players ya get me')
         }
     }
 
-    postPlayers = async() => {
-        this.props.addSpinner();
+    const postPlayers = async() => {
+        addSpinnerFUNC();
         try {
             for (let i=0;i<24;i++) {
-                let entry = this.state.players[i];
+                let entry = players[i];
                 if (validatePlayer(entry)) {
-                    await postPlayer(entry, this.props.adminUserId);
+                    await postPlayer(entry, adminUserId);
                 } else {
                     console.warn('invalid entry: ' + i);
                 }
             }
-            this.props.removeSpinner();
-            updateStack(this.props.navigation, 0, 'AdminHome');
+            removeSpinnerFUNC();
+            updateStack(navigation, 0, 'AdminHome');
         } catch(e)  {
             showMessage({
                 message: e.response.data,
                 type: "danger"
               });
-            this.props.removeSpinner();
+            removeSpinnerFUNC();
             console.warn(e.response.data);
         }
     }
 
-    countPlayers = () => {
-        let { players } = this.state;
+    const countPlayers = () => {
         let noOfPlayers = 0;
         for (let i=0;i<24;i++) {
             if (players[i].name!==''&&players[i].price!==0) {
@@ -156,17 +154,16 @@ class ClubSetupScreen extends Component {
         return noOfPlayers;
     }
 
-    render() {
         return (
             <View style={screenContainer}>
-                {this.props.spinner ? <SpinnerOverlay/> :
+                {spinner ? <SpinnerOverlay/> :
                 <View>
                     <View style={topBar}>
                         <View>
-                        <Text style={labelText}>Average Player Price: £{this.averagePrice()}m</Text>
+                        <Text style={labelText}>Average Player Price: £{averagePrice()}m</Text>
                         <Text style={labelText}>Reccommended: £74m</Text>
                         </View>
-                        <Button clickable title="Submit Club Players" onPress={this.submitPlayers}/>
+                        <Button clickable title="Submit Club Players" onPress={submitPlayers}/>
                     </View>
                     <View>
                         <View style={tableRow}>
@@ -176,26 +173,14 @@ class ClubSetupScreen extends Component {
                         </View>
                     </View>
                     <ScrollView contentContainerStyle={{paddingBottom: vh(20)}}>
-                            {this.renderRows()}
+                            {renderRows()}
                     </ScrollView>
                 </View>
                 }
             </View>
         );
-    }
-  }
-
-const mapStateToProps = state => {
-    return {
-        adminUserId: state.club.adminUser.admin_user_id
-    }
 }
 
-const mapDispatchToProps = dispatch => {
-    return {
-        addSpinner: () => dispatch(addSpinner()),
-        removeSpinner: () => dispatch(removeSpinner())
-    }
-}
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClubSetupScreen)
+
+export default ClubSetupScreen;

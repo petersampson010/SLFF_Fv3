@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { ScrollView, View, Text, TextInput } from 'react-native';
 import { Input } from 'react-native-elements';  
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validateGame } from '../../functions/validity';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -24,28 +24,30 @@ import { textLabel } from '../login/style';
 import DatePicker from 'react-native-date-picker';
 
 
-class AdminHomeScreen extends Component {
+const AdminHomeScreen = ({navigation}) => {
 
-    constructor(props) {
-        super(props);
-        this.state = { 
-            modal: {
-                active: false,
-                update: false,
-            },
-            game: {
-                dateModalVisible: false,
-                opponent: '',
-                date: new Date(),
-                complete: false
-            }
-         }
-    }
+    const [modal, updateModal] = useState({
+        active: false,
+        update: false,
+    }),
+    [game, updateGame] = useState({
+        dateModalVisible: false,
+        opponent: '',
+        date: new Date(),
+        complete: false
+    }),
+    games = useSelector(state => state.club.allGames),
+    adminUser = useSelector(state => state.club.adminUser),
+    setClubFocusGWFUNC = useDispatch(game => setClubFocusGW(game)),
+    addGameStateFUNC = useDispatch(game => addGameState(game)),
+    updateGameStateFUNC = useDispatch(game => updateGameState(game)),
+    setModalFUNC = useDispatch(modalObj => setModal(modalObj)),
+    closeModalFUNC = useDispatch(() => closeModal());
 
     
 
-    renderGame = (game, i) => <TouchableOpacity key={i} style={gameContainer}
-    onPress={()=>this.setModal(game)}>
+    const renderGame = (game, i) => <TouchableOpacity key={i} style={gameContainer}
+    onPress={()=>setModal(game)}>
         <View>
             <Text style={labelText}>{game.opponent}</Text>
             <Text style={sidenote}>{displayDate(game.date)}</Text>
@@ -54,56 +56,47 @@ class AdminHomeScreen extends Component {
         <View style={gameScore}>
             <Text style={standardText}>{game.score}</Text>
         </View>
-            : <Button width={vw(35)} clickable text="Submit Stats" func={()=>this.openSubmitGameStats(game)}/>}
+            : <Button width={vw(35)} clickable text="Submit Stats" func={()=>openSubmitGameStats(game)}/>}
     </TouchableOpacity>
 
-    openSubmitGameStats = (game) => {
-        this.props.setClubFocusGW(game);
-        this.props.closeModal();
-        this.props.navigation.navigate('GameEditor');
-    }
-
-    renderGames = () => {
-        let completedGamesSorted = this.props.games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
-        let openGamesSorted = this.props.games.filter(x=>!x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+    const renderGames = () => {
+        let completedGamesSorted = games.filter(x => x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
+        let openGamesSorted = games.filter(x=>!x.complete).sort((a,b)=>Date.parse(b.date)-Date.parse(a.date));
         return <View style={gamesContainer}>
             <View style={listLabel}>
                 <Text>Upcoming</Text>
             </View>
             <ScrollView>
-                {openGamesSorted.map((game, i) => this.renderGame(game, i))}
+                {openGamesSorted.map((game, i) => renderGame(game, i))}
             </ScrollView>
             <View style={listLabel}>
                 <Text>Complete</Text>
             </View>
             <ScrollView>
-                {completedGamesSorted.map((game, i) => this.renderGame(game, i))}
+                {completedGamesSorted.map((game, i) => renderGame(game, i))}
             </ScrollView>
         </View>
     }
 
 
-    formChange = (id, value) => {
-        this.setState({
-            ...this.state, 
+    const formChange = (id, value) => {
+        setState({
+            ...state, 
             game: {
-                ...this.state.game,
+                ...state.game,
                 [id]: value
             }
         })
     }
 
-    addGame = async() => {
+    const addGame = async() => {
         try {
-            let res = await postGame(this.state.game, this.props.adminUser.admin_user_id);
+            let res = await postGame(game, adminUser.admin_user_id);
             if (res.date) {
-                this.props.addGameState(res);
-                this.setState({
-                    ...this.state,
-                    modal: {
-                        active: false, 
-                        update: false
-                    },
+                addGameStateFUNC(res);
+                updateModal({
+                    active: false, 
+                    update: false
                 });
                 showMessage({
                     message: "Game/Event added",
@@ -119,17 +112,14 @@ class AdminHomeScreen extends Component {
         }
     }   
 
-    updateGame = async() => {
+    const updateGameComplete = async() => {
         try {
-            let res = await patchGame(this.state.game);
-            this.props.updateGameState(this.state.game);
+            let res = await patchGame(game);
+            updateGameStateFUNC(game);
             if (res.date) {
-                this.setState({
-                    ...this.state,
-                    modal: {
-                        active: false, 
-                        update: false
-                    },
+                updateModal({
+                    active: false, 
+                    update: false
                 });
                 showMessage({
                     message: "Game/Event updated",
@@ -145,47 +135,46 @@ class AdminHomeScreen extends Component {
         }
     }
 
-    openDate = () => {
-        this.setState({
-            ...this.state, 
-            game: {
-                ...this.state.game, 
-                dateModalVisible: true
-            }
+    const openDate = () => {
+        updateGame({
+            ...game, 
+            dateModalVisible: true
         })
     }
 
-    setModal = (game) => {
-        this.props.setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(45), btnClick: () => this.openEditGameModal(game)});
+    const setModal = (game) => {
+        setModalFUNC({modalSet: 'set4', player: null, width: vw(80), height: vh(45), btnClick: () => openEditGameModal(game)});
     }
 
-    openSubmitGameStats = (game) => {
-        this.props.setClubFocusGW(game);
-        this.props.closeModal();
-        this.props.navigation.navigate('GameEditor');
+    const openSubmitGameStats = (game) => {
+        setClubFocusGWFUNC(game);
+        closeModalFUNC();
+        navigation.navigate('GameEditor');
     }
 
-    openEditGameModal = (game) => {
-        this.props.closeModal();
-        this.setState({...this.state, modal: {active: true, update: true}, game});
+    const openEditGameModal = (game) => {
+        closeModalFUNC();
+        updateModal({active: true, update: true});
+        updateGame(game);
     }
 
-    render() {
+    // return <Text>Hi</Text>
+
         return ( 
             <View>
                 <ScrollView style={screenContainer}>
                     <ScrollView>
-                        {this.renderGames()}
+                        {renderGames()}
                     </ScrollView>
                     <StateModal
-                    modalActive={this.state.modal.active}
+                    modalActive={modal.active}
                     height={vh(60)}
                     width={vw(90)}
                     jsx={<View>
                         <Text style={modalLabelText}>Opposition</Text>
                         <View style={inputFieldLarge}>
-                            <TextInput style={input} value={this.state.game.opponent}
-                            onChangeText={value=>this.formChange('opponent', value)}
+                            <TextInput style={input} value={game.opponent}
+                            onChangeText={value=>formChange('opponent', value)}
                             placeholder="Fantasy FC"
                             placeholderTextColor='#d1d2d6'
                             />
@@ -194,40 +183,22 @@ class AdminHomeScreen extends Component {
                             <DatePicker 
                             height={vh(1)}
                             mode='date'
-                            date={new Date(this.state.game.date)}
-                            onDateChange={date=>this.setState({...this.state, game: {...this.state.game, date}})}
+                            date={new Date(game.date)}
+                            onDateChange={date=>updateGame({...game, date})}
                             androidVariant='nativeAndroid'
                             />
                     </View>}
-                    btn={<Button clickable modal text={this.state.modal.update ? "Edit Game" : "Submit Game"} func={this.state.modal.update ? this.updateGame : this.addGame} width={vw(35)}/>}
-                    closeFcn={()=>this.setState({...this.state, modal: {active: false}})}
+                    btn={<Button clickable modal text={modal.update ? "Edit Game" : "Submit Game"} func={modal.update ? updateGameComplete : addGame} width={vw(35)}/>}
+                    closeFcn={()=>updateModal({active: false})}
                     />
                 </ScrollView>
             <View style={buttonSplit}>
-                <Button clickable text='Add Event/Game' func={()=>this.setState({...this.state, modal: {active: true}})} width={vw(40)} />
-                <Button clickable text='Edit Player(s)' func={()=>this.props.navigation.navigate('AdminPlayerEdit')} width={vw(40)} />
+                <Button clickable text='Add Event/Game' func={()=>updateModal({active: true})} width={vw(40)} />
+                <Button clickable text='Edit Player(s)' func={()=>navigation.navigate('AdminPlayerEdit')} width={vw(40)} />
             </View>
 
             </View>
          );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        games: state.club.allGames,
-        adminUser: state.club.adminUser
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setClubFocusGW: game => dispatch(setClubFocusGW(game)),
-        addGameState: game => dispatch(addGameState(game)),
-        updateGameState: game => dispatch(updateGameState(game)),
-        setModal: modalObj => dispatch(setModal(modalObj)),
-        closeModal: () => dispatch(closeModal())
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(AdminHomeScreen);
+export default AdminHomeScreen;

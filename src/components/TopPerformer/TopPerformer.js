@@ -4,11 +4,9 @@ import { ActivityIndicator, View } from "react-native";
 import { overlay } from "./style";
 
 
-class  TopPerformer extends Component {
-  render() {
+const TopPerformer = () => {
       return (
           <Text>Dont need  it</Text>
       );
-  }
 }
 export default TopPerformer;

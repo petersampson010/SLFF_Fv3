@@ -16,6 +16,7 @@ import AdminHomeScreen from './screens/AdminHome/adminHome';
 import GameEditorScreen from './screens/GameEditor/gameEditor';
 import AdminPlayerEditScreen from './screens/adminPlayerEdit';
 import { $inputBlue, $darkBlueOpacity } from './styles/global';
+import FlashMessage from 'react-native-flash-message';
 import signOutText from './components/signOut';
 
 const Stack = createNativeStackNavigator();
@@ -147,6 +148,7 @@ function Navigation({initialRoute}) {
           color: 'white'
         }}}/>
       </Stack.Navigator>
+      {/* <FlashMessage position="top" /> */}
     </NavigationContainer>
     );
 }

@@ -1,5 +1,5 @@
-import { connect } from 'react-redux';
-import React, { Component } from 'react';
+import { connect, useDispatch } from 'react-redux';
+import React, { Component, useState } from 'react';
 import { View, Text, Switch, Button, StyleSheet, TextInput, processColor } from 'react-native';
 import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
@@ -16,41 +16,41 @@ import { setStorage } from '../../functions/storage';
 
 
 
-class ntsScreen1 extends Component {
+const ntsScreen1 = ({navigation}) => {
 
-  state = {
-    userObj: {
-      email: '',
-      team_name: '',
-      password: '',
-      rePassword: '',
-      clubId: '',
-      terms: '',
-      budget: globalConfig.startBudget
-    }
-  }
+  const dispatch = useDispatch,
+  [userObj, updateUserObj] = useState({
+    email: '',
+    team_name: '',
+    password: '',
+    rePassword: '',
+    clubId: '',
+    terms: '',
+    budget: globalConfig.startBudget
+  }),
+  [verified, updateVerified] = useState(false);
 
-  formChange = (id, entry) => {
+  const formChange = (id, entry) => {
     switch(id) {
       case 'email': 
-        this.setState({...this.state, userObj: {...this.state.userObj, email: entry}})
+        updateUserObj({...userObj, email: entry})
         break;
       case 'team_name': 
-        this.setState({...this.state, userObj: {...this.state.userObj, team_name: entry}})
+        updateUserObj({...userObj, team_name: entry})
         break;
       case 'password': 
-        this.setState({...this.state, userObj: {...this.state.userObj, password: entry}})
+        updateUserObj({...userObj, password: entry})
         break;
       case 'rePassword': 
-        this.setState({...this.state, userObj: {...this.state.userObj, rePassword: entry}})
+        updateUserObj({...userObj, rePassword: entry})
         break;
       case 'clubID':
-        this.setState({...this.state, userObj: {...this.state.userObj, clubId: entry}})
+        updateUserObj({...userObj, clubId: entry})
     }
   }
 
-  checkPassword = () => {
-    if (this.state.userObj.password===this.state.userObj.rePassword) {
+  const checkPassword = () => {
+    if (userObj.password===userObj.rePassword) {
       return true;
     } else {
       showMessage({
@@ -62,20 +62,31 @@ class ntsScreen1 extends Component {
     }
   }
         
-    handleSubmit = async() => {
-    const { userObj } = this.state;
+    const handleSubmit = async() => {
     try {
-      this.checkPassword();
+      checkPassword();
       let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget};
       const { token, user } = await postUser(userData);
+      console.log(token);
+      console.log(user);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
+      console.log('test2');
+
       let adminUser = await getAdminUserById(user.admin_user_id);
-      let { lastGW } = await getLastAndAllGWs(user.admin_user_id)
-      this.props.setUser(user);
-      this.props.setAdminUser(adminUser);
+      console.log(adminUser);
+      console.log('teest3');
+
+      let { lastGW } = await getLastAndAllGWs(user.admin_user_id);
+      console.log('test4');
+      console.log(lastGW);
+
+      dispatch(setUser(user));
+      dispatch(setAdminUser(adminUser));
+      console.log('6');
+
       let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
-      this.props.setClubPlayersAndLastGW(allPlayers, lastGW);
-      updateStack(this.props.navigation, 0, 'nts2');
+      dispatch(setClubPlayersAndLastGW(allPlayers, lastGW));
+      updateStack(navigation, 0, 'nts2');
     } catch(e) {
       showMessage({
         message: e.response.data,
@@ -85,7 +96,6 @@ class ntsScreen1 extends Component {
     }
   }
 
-  render() {
     return (
       <View style={screenContainer}>
             <View style={inputFieldContainerCenter}>
@@ -93,8 +103,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Enter your email address</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.email} 
-                onChangeText={value => this.formChange('email', value)}
+                value={userObj.email} 
+                onChangeText={value => formChange('email', value)}
                 placeholder="email@address.com"
                 placeholderTextColor='#d1d2d6'
                 autoCapitalize="none"
@@ -103,8 +113,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Enter your team name</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.team_name} 
-                onChangeText={value => this.formChange('team_name', value)}
+                value={userObj.team_name} 
+                onChangeText={value => formChange('team_name', value)}
                 placeholder="Sunday Funday"
                 placeholderTextColor='#d1d2d6'
                 />
@@ -112,8 +122,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Enter your password</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.password} 
-                onChangeText={value => this.formChange('password', value)}
+                value={userObj.password} 
+                onChangeText={value => formChange('password', value)}
                 placeholder="Password"
                 placeholderTextColor='#d1d2d6'
                 autoCapitalize="none"
@@ -123,8 +133,8 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Re-enter your password</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.rePassword} 
-                onChangeText={value => this.formChange('rePassword', value)}
+                value={userObj.rePassword} 
+                onChangeText={value => formChange('rePassword', value)}
                 placeholder="Password"
                 placeholderTextColor='#d1d2d6'
                 autoCapitalize="none"
@@ -134,32 +144,18 @@ class ntsScreen1 extends Component {
               <Text style={textLabel}>Club ID</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
-                value={this.state.userObj.clubId} 
-                onChangeText={value => this.formChange('clubID', value)}
+                value={userObj.clubId} 
+                onChangeText={value => formChange('clubID', value)}
                 placeholder="24"
                 placeholderTextColor='#d1d2d6'
                 autoCapitalize="none"
                 />
               </View>
-              <Button clickable title="Sign Up" onPress={this.handleSubmit}/>
+              <Button clickable title="Sign Up" onPress={handleSubmit}/>
             </View>
           </View>
     );
-  }
 }
 
-const mapStateToProps = state => {
-  return {
 
-  }
-}
-
-const mapDispatchToProps = dispatch => {
-  return {
-    setUser: user => dispatch(setUser(user)),
-    setAdminUser: adminUser => dispatch(setAdminUser(adminUser)),
-    setClubPlayersAndLastGW: (players, lastGW) => dispatch(setClubPlayersAndLastGW(players, lastGW))
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ntsScreen1);
+export default ntsScreen1;

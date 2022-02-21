@@ -1,5 +1,11 @@
 {
     "startBudget": 700,
     "numberOfPlayers": 9,
-    "numberOfStarters": 6
+    "numberOfStarters": 6,
+    "numberOfPosition": {
+        "1": 1,
+        "2": 3,
+        "3": 3,
+        "4": 2
+    }
 }

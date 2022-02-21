@@ -21,8 +21,8 @@ const App = () => {
   return (
     <Provider store={store}>
       <LoadContainer />
-      <FlashMessage position="top" />
       <MyModal/>
+      
     </Provider>
   );
 };

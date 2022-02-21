@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import Header from '../../components/header/header';
 import { ScrollView, View } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { getAllPGJFromUserId, getAllPGJsFromGameweekId, getLeague, getPlayerById, getUGJs, getUserById, patchUser, patchUserBUDGET, postRecord, postUser } from '../../functions/APIcalls';
 import Pitch from '../../components/Pitch/pitch';
 import PlayersList from '../../components/playersList/playersList';
@@ -17,15 +17,29 @@ import globalConfig from '../../config/globalConfig.json';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { updateStack } from '../../Navigation';
 
-class ntsScreen2 extends Component {
-    state = {}
+const ntsScreen2 = ({navigation}) => {
 
-    transfer = player => {
+    const [team, updateTeam] = useState({}),
+    user = useSelector(state => state.user.user),
+    teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)),
+    originalBudget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
+    [budget, updateOriginalBudget] = useState(originalBudget),
+    lastGW = useSelector(state => state.club.lastGW),
+    nts2LoginFUNC = useDispatch((user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => nts2Login(user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser)),
+    transferOutFUNC = useDispatch(player => transferOut(player)),
+    transferInFUNC = useDispatch(player => transferIn(player)),
+    addSpinnerFUNC = useDispatch(() => addSpinner()),
+    removeSpinnerFUNC = useDispatch(() => removeSpinner()),
+    setTransferringBackToLatestFUNC = useDispatch(() => setTransferringBackToLatest()),
+    setLatestToTransferringFUNC = useDispatch(() => setLatestToTransferring()),
+    setModalFUNC = useDispatch(modalObj => setModal(modalObj)),
+    closeModalFUNC = useDispatch(() => closeModal());
+
+    const transfer = player => {
         let { position, price } = player;
-        const { transferOut, transferIn, user, teamPlayers, closeModal } = this.props;
-        if (this.playerSelected(player)) {
-            transferOut(player);
-            closeModal();
+        if (playerSelected(player)) {
+            transferOutFUNC(player);
+            closeModalFUNC();
         } else {
             if (teamPlayers.filter(x=>x.position===position).length>2) {
                 showMessage({
@@ -33,24 +47,24 @@ class ntsScreen2 extends Component {
                     type: "warning"
                 })
             } else {
-                transferIn(player);
-                closeModal();
+                transferInFUNC(player);
+                closeModalFUNC();
             }
         }
     } 
 
-    playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
+    const playerSelected = player => playerIds(teamPlayers).includes(player.player_id);
 
 
-    select = player => {
-        const { team } = this.state;
-        let newBudget = this.state.budget - player.price;
+    const select = player => {
+        let newBudget = budget - player.price;
         if (team.length>7) {
             showMessage({
                 message: "too many players, please deselect a player before adding anymore",
                 type: "danger"
             });
         } else {
+            console.log(globalConfig.numberOfPosition[player.position]);
             switch(player.position) {
                 case '1':
                     if (team[1].length>0) {
@@ -60,7 +74,8 @@ class ntsScreen2 extends Component {
                             type: "warning"
                         })
                     } else {
-                        this.setState({...this.state, team: {...this.state.team, 1: [...this.state.team[1], player]}, budget: newBudget})
+                        updateTeam({...team, 1: [...team[1], player]});
+                        updateBudget(newBudget);
                     };
                     break;
                 case '2':
@@ -71,7 +86,8 @@ class ntsScreen2 extends Component {
                             type: "warning"
                         })
                     } else {
-                        this.setState({...this.state, team: {...this.state.team, 2: [...this.state.team[2], player]}, budget: newBudget})
+                        updateTeam({...team, 2: [...team[2], player]});
+                        updateBudget(newBudget);
                     };
                     break;
                 case '3':
@@ -82,7 +98,8 @@ class ntsScreen2 extends Component {
                             type: "warning"
                         })
                     } else {
-                        this.setState({...this.state, team: {...this.state.team, 3: [...this.state.team[3], player]}, budget: newBudget})
+                        updateTeam({...team, 3: [...team[3], player]});
+                        updateBudget(newBudget);
                     };
                     break;
                 case '4':
@@ -93,7 +110,8 @@ class ntsScreen2 extends Component {
                             type: "warning"
                         })
                     } else {
-                        this.setState({...this.state, team: {...this.state.team, 4: [...this.state.team[4], player]}, budget: newBudget})
+                        updateTeam({...team, 4: [...team[4], player]});
+                        updateBudget(newBudget);
                     };
                     break;
                 default: 
@@ -102,16 +120,15 @@ class ntsScreen2 extends Component {
         }
     }
 
-    deSelect = player => {
-        let { team } = this.state
-        this.setState({...this.state, budget: this.state.budget + player.price, team: {...team, [player.position]: team[player.position].filter(x=>x.player_id!==player.player_id)}});
+    const deSelect = player => {
+        updateBudget(budget + player.price);
+        updateTeam({...team, [player.position]: team[player.position].filter(x=>x.player_id!==player.player_id)});
     }
 
-    submitTeam = async() => {
-        const { teamPlayers, budget, addSpinner, removeSpinner, user, navigation, nts2Login, lastGW } = this.props
+    const submitTeam = async() => {
         const teamPlayersObj = playersArrayToObj(teamPlayers);
         try {
-            addSpinner();
+            addSpinnerFUNC();
             if (validateTransfers(budget, teamPlayersObj)) {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
@@ -124,7 +141,7 @@ class ntsScreen2 extends Component {
                             let lastPGJs = await getAllPGJsFromGameweekId(lastGW.gameweek_id);
                             let league = await getLeague(returnUser.admin_user_id);
                             if (lastPGJs<1) {
-                                nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null);
+                                nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null);
                             } else {
                                 let allPGJs = await getAllPGJFromUserId(returnUser.user_id);
                                 let allLastUGJs = await getUGJs(returnUser.admin_user_id, lastGW.gameweek_id);
@@ -139,10 +156,10 @@ class ntsScreen2 extends Component {
                                     ug,
                                     user: await getUserById(ug.user_id)
                                 } : null;
-                                nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser);
+                                nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser);
                             }
                         } else {
-                            nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, null, [], [], [], null, null);
+                            nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, null, [], [], [], null, null);
                         }
                         updateStack(navigation, 0, 'Home');
                     } else {
@@ -152,64 +169,39 @@ class ntsScreen2 extends Component {
                         });
                     }
             }
-            removeSpinner();
+            removeSpinnerFUNC();
         } catch(e) {
             showMessage({
                 message: "Fail: Network Issue, please try again later",
                 type: "danger"
               });
-            removeSpinner();
+            removeSpinnerFUNC();
             console.warn(e.response.data);
         }
     }
 
-    setModal = player => {
-        this.props.setModal({modalSet: 'set1', player, btnClick: this.transfer, width: vw(80), height: vh(30)});
+    const setModalINPUT = player => {
+        setModalFUNC({modalSet: 'set1', player, btnClick: transfer, width: vw(80), height: vh(30)});
     }
 
-    render() { 
         return ( 
             <View style={screenContainer}>
-                <PitchHead type='transfers' update={this.submitTeam}/>
+                <PitchHead type='transfers' update={submitTeam}/>
                 <ScrollView style={pitchContainer}>
                     {/* <Header style={styles.header} title='Team Selection'/> */}
                     <Pitch
-                    update={this.submitTeam}
-                    clickFcn={this.transfer}
-                    playerGraphicClickFcn={this.setModal}
+                    update={submitTeam}
+                    clickFcn={transfer}
+                    playerGraphicClickFcn={setModalINPUT}
                     type='transfers'
-                    team={this.props.teamPlayers}
+                    team={teamPlayers}
                     />
                     <PlayersList
-                    clickFcn={this.setModal}
+                    clickFcn={setModalINPUT}
                     />
                 </ScrollView>
             </View>
         );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        user: state.user.user,
-        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
-        budget: state.stateChanges.updatedNotPersistedTeam.budget,
-        lastGW: state.club.lastGW
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        nts2Login: (user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => dispatch(nts2Login(user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser)),
-        transferOut: player => dispatch(transferOut(player)),
-        transferIn: player => dispatch(transferIn(player)),
-        addSpinner: () => dispatch(addSpinner()),
-        removeSpinner: () => dispatch(removeSpinner()),
-        setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
-        setLatestToTransferring: () => dispatch(setLatestToTransferring()),
-        setModal: modalObj => dispatch(setModal(modalObj)),
-        closeModal: () => dispatch(closeModal())
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(ntsScreen2);
+export default ntsScreen2;

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, ScrollView } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import Header from '../../components/header/header';
 import Pitch from '../../components/Pitch/pitch';
 import { getCaptain, getVCaptain, playersArrayToObj, getNameOfNavPage } from '../../functions/reusable';
@@ -13,28 +13,37 @@ import { setModal } from '../../actions';
 
 
 
-class PointsScreen extends Component {
+const PointsScreen = ({navigation}) => {
 
-    state = {  }
+    const dispatch = useDispatch(), 
+    lastGW = useSelector(state => state.club.lastGW),
+    subs = useSelector(state => state.user.focusedGWTeam.subs),
+    starters = useSelector(state => state.user.focusedGWTeam.starters),
+    records = useSelector(state => state.user.records),
+    league = useSelector(state => state.club.league),
+    otherStarters = useSelector(state => state.club.focusedGWTeam.starters),
+    otherSubs = useSelector(state => state.club.focusedGWTeam.subs),
+    otherRecords = useSelector(state => state.club.focusedGWTeam.records),
+    allPGJs = useSelector(state => state.user.PGJs.all),
+    otherAllPGJs = useSelector(state => state.club.focusedGWTeam.allPGJs),
+    otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus),
+    selectStarters = otherTeamFocus ? otherStarters : starters,
+    selectSubs = otherTeamFocus ? otherSubs : subs,
+    selectRecords = otherTeamFocus ? otherRecords : records,
+    selectAllPGJoiners = otherTeamFocus ? otherAllPGJs : allPGJs;
 
-    openModal = player => {
-        this.props.setModal({modalSet: 'set3', player: player.player, pg: player.pg, width: vw(80), height: vh(30), btnClick: null})
+    const openModal = player => {
+        dispatch(setModal({modalSet: 'set3', player: player.player, pg: player.pg, width: vw(80), height: vh(30), btnClick: null}))
     }
 
-    render() {
-        const { starters, subs, records, otherStarters, otherSubs, otherRecords, otherTeamFocus, otherAllPGJs, allPGJs } = this.props;
-        const selectStarters = otherTeamFocus ? otherStarters : starters;
-        const selectSubs = otherTeamFocus ? otherSubs : subs;
-        const selectRecords = otherTeamFocus ? otherRecords : records;
-        const selectAllPGJoiners = otherTeamFocus ? otherAllPGJs : allPGJs;
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="points"/>
                 <ScrollView style={pitchContainer}>
-                    {this.props.lastGW ? 
+                    {lastGW ? 
                     <Pitch
                     type="points"
-                    playerGraphicClickFcn={this.openModal}
+                    playerGraphicClickFcn={openModal}
                     captain={getCaptain(selectStarters, selectRecords)}
                     vCaptain={getVCaptain(selectStarters, selectRecords)}
                     team={selectStarters}
@@ -42,32 +51,10 @@ class PointsScreen extends Component {
                     allPGJs={selectAllPGJoiners}
                     /> : <Text>No Games played yet, come back soon!</Text>}
                 </ScrollView>
-                <BottomNav navigation={this.props.navigation}/>
+                <BottomNav navigation={navigation}/>
             </View>
          );
-    }
-}
 
-const mapStateToProps = state => {
-    return {
-        lastGW: state.club.lastGW,
-        subs: state.user.focusedGWTeam.subs,
-        starters: state.user.focusedGWTeam.starters,
-        records: state.user.records,
-        league: state.club.league,
-        otherStarters: state.club.focusedGWTeam.starters,
-        otherSubs: state.club.focusedGWTeam.subs,
-        otherRecords: state.club.focusedGWTeam.records,
-        allPGJs: state.user.PGJs.all,
-        otherAllPGJs: state.club.focusedGWTeam.allPGJs,
-        otherTeamFocus: state.boolDeciders.otherTeamFocus
-    }
-}
-
-const mapDispatchToProps = dispatch => {
-    return {
-        setModal: modalObj => dispatch(setModal(modalObj))
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(PointsScreen);
+export default PointsScreen;

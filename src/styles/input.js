@@ -7,7 +7,7 @@ export const inputFieldVeryLarge = {
     borderColor: 'white',
     borderRadius: 8,
     backgroundColor: $inputBlue,
-    height: vh(36), 
+    height: vh(30), 
     width: vw(70),
     marginBottom: vh(3)
 }
@@ -49,7 +49,7 @@ export const inputFieldContainerCenter = {
     alignItems: 'center',
     flex: 1,
     paddingTop: vh(5),
-    paddingBottom: vh(25)
+    paddingBottom: vh(20)
 }
 
 export const inputFieldContainerInLine = {

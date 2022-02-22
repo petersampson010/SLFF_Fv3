@@ -17,15 +17,13 @@ import { headComp, tableComp } from './style';
 
 const GameEditorScreen = ({ navigation }) => {
 
-    const clubPlayers = useSelector(state => state.club.clubPlayers),
+    const dispatch = useDispatch(), 
+    clubPlayers = useSelector(state => state.club.clubPlayers),
     clubFocusGW = useSelector(state => state.club.clubFocusGW),
     userFocusGW = useSelector(state => state.user.userFocusGW),
     adminUser = useSelector(state => state.club.adminUser),
     allUsers = useSelector(state => state.club.allUsers),
-    lastGW = useSelector(state => state.club.lastGW),
-    completeGameStateFUNC = useDispatch((newAllGames, newLastGW) => completeGameState(newAllGames, newLastGW)),
-    setModalFUNC = useDispatch(modalObj => setModal(modalObj)),
-    closeModalFUNC = useDispatch(() => closeModal());
+    lastGW = useSelector(state => state.club.lastGW);
 
     const [players, updatePlayers] = useState({});
     const [activeDialog, updateActiveDialog] = useState(false);
@@ -168,9 +166,9 @@ const GameEditorScreen = ({ navigation }) => {
             await postNewRecords(records);
             await completeGame(clubFocusGW.gameweek_id, score, lastGW ? lastGW.gameweek+1 : 1);
             let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
-            completeGameStateFUNC(returnObj.GWs, returnObj.lastGW);
+            dispatch(completeGameState(returnObj.GWs, returnObj.lastGW));
             updateSpinner(false);
-            closeModalFUNC();
+            dispatch(closeModal());
             showMessage({
                 message: "Success",
                 type: "success"
@@ -210,7 +208,7 @@ const GameEditorScreen = ({ navigation }) => {
     }
 
     const setModalRedux = () => {
-        setModalFUNC({modalSet: 'set5', player: null, btnClick: startSpin, width: vw(80), height: vh(30)})
+        dispatch(setModal({modalSet: 'set5', player: null, btnClick: startSpin, width: vw(80), height: vh(30)}));
     }
     
         return (

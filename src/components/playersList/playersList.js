@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -18,20 +18,19 @@ const PlayersList = ({clickFcn}) => {
     subImg = require('../../../images/subIcon.png'),
     clubPlayers = useSelector(state => state.club.clubPlayers),
     teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs));
-    // setModalFUNC = useDispatch(modalObj => setModal(modalObj))
 
     const table = () => {
         switch(positionFilter) {
             case '0': 
-                return clubPlayers.map((player, index) => tableRow(player, index))
+                return clubPlayers.map((player, index) => tableRowRender(player, index))
             case '1': 
-                return clubPlayers.filter(x=>x.position==='1').map((player, index) => tableRow(player, index))
+                return clubPlayers.filter(x=>x.position==='1').map((player, index) => tableRowRender(player, index))
             case '2': 
-                return clubPlayers.filter(x=>x.position==='2').map((player, index) => tableRow(player, index))
+                return clubPlayers.filter(x=>x.position==='2').map((player, index) => tableRowRender(player, index))
             case '3': 
-                return clubPlayers.filter(x=>x.position==='3').map((player, index) => tableRow(player, index))
+                return clubPlayers.filter(x=>x.position==='3').map((player, index) => tableRowRender(player, index))
             case '4': 
-                return clubPlayers.filter(x=>x.position==='4').map((player, index) => tableRow(player, index));
+                return clubPlayers.filter(x=>x.position==='4').map((player, index) => tableRowRender(player, index));
             default: 
                 break;
         }
@@ -41,7 +40,7 @@ const PlayersList = ({clickFcn}) => {
         return playerIds(teamPlayers).includes(player.player_id);
     }
 
-    const tableRow = (player, key) => {
+    const tableRowRender = (player, key) => {
         const playerImg = require('../../../images/profile.jpg');
         const subImg = require('../../../images/subIcon.png');
         return <TouchableOpacity key={key}
@@ -53,13 +52,15 @@ const PlayersList = ({clickFcn}) => {
         </TouchableOpacity>;
     }
 
+    console.log(positionFilter);
+
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>
                     <Picker
                     itemStyle={itemPositionPicker}
                     selectedValue={positionFilter} 
-                    onValueChange={value=>updatePositionFilter({value})}>
+                    onValueChange={value=>updatePositionFilter(value)}>
                         <Picker.Item color="white" label="ANY" value='0'/>
                         <Picker.Item color="white" label="GK" value='1'/>
                         <Picker.Item color="white" label="DEF" value='2'/>

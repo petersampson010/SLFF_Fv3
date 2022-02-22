@@ -19,27 +19,18 @@ import { updateStack } from '../../Navigation';
 
 const ntsScreen2 = ({navigation}) => {
 
-    const [team, updateTeam] = useState({}),
+    const dispatch = useDispatch(),  
     user = useSelector(state => state.user.user),
     teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)),
     originalBudget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
     [budget, updateOriginalBudget] = useState(originalBudget),
-    lastGW = useSelector(state => state.club.lastGW),
-    nts2LoginFUNC = useDispatch((user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser) => nts2Login(user, starters, subs, records, league, allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser)),
-    transferOutFUNC = useDispatch(player => transferOut(player)),
-    transferInFUNC = useDispatch(player => transferIn(player)),
-    addSpinnerFUNC = useDispatch(() => addSpinner()),
-    removeSpinnerFUNC = useDispatch(() => removeSpinner()),
-    setTransferringBackToLatestFUNC = useDispatch(() => setTransferringBackToLatest()),
-    setLatestToTransferringFUNC = useDispatch(() => setLatestToTransferring()),
-    setModalFUNC = useDispatch(modalObj => setModal(modalObj)),
-    closeModalFUNC = useDispatch(() => closeModal());
+    lastGW = useSelector(state => state.club.lastGW);
 
     const transfer = player => {
         let { position, price } = player;
         if (playerSelected(player)) {
-            transferOutFUNC(player);
-            closeModalFUNC();
+            dispatch(transferOut(player));
+            dispatch(closeModal());
         } else {
             if (teamPlayers.filter(x=>x.position===position).length>2) {
                 showMessage({
@@ -47,88 +38,18 @@ const ntsScreen2 = ({navigation}) => {
                     type: "warning"
                 })
             } else {
-                transferInFUNC(player);
-                closeModalFUNC();
+                dispatch(transferIn(player));
+                dispatch(closeModal());
             }
         }
     } 
 
     const playerSelected = player => playerIds(teamPlayers).includes(player.player_id);
 
-
-    const select = player => {
-        let newBudget = budget - player.price;
-        if (team.length>7) {
-            showMessage({
-                message: "too many players, please deselect a player before adding anymore",
-                type: "danger"
-            });
-        } else {
-            console.log(globalConfig.numberOfPosition[player.position]);
-            switch(player.position) {
-                case '1':
-                    if (team[1].length>0) {
-                        showMessage({
-                            message: "Keeper already selected",
-                            description: "If you need a sub-section of error",
-                            type: "warning"
-                        })
-                    } else {
-                        updateTeam({...team, 1: [...team[1], player]});
-                        updateBudget(newBudget);
-                    };
-                    break;
-                case '2':
-                    if (team[2].length>3) {
-                        showMessage({
-                            message: "Too many defenders already selected",
-                            description: "If you need a sub-section of error",
-                            type: "warning"
-                        })
-                    } else {
-                        updateTeam({...team, 2: [...team[2], player]});
-                        updateBudget(newBudget);
-                    };
-                    break;
-                case '3':
-                    if (team[3].length>3) {
-                        showMessage({
-                            message: "Too many midfielders already selected",
-                            description: "If you need a sub-section of error",
-                            type: "warning"
-                        })
-                    } else {
-                        updateTeam({...team, 3: [...team[3], player]});
-                        updateBudget(newBudget);
-                    };
-                    break;
-                case '4':
-                    if (team[4].length>2) {
-                        showMessage({
-                            message: "Too many forwards already selected",
-                            description: "If you need a sub-section of error",
-                            type: "warning"
-                        })
-                    } else {
-                        updateTeam({...team, 4: [...team[4], player]});
-                        updateBudget(newBudget);
-                    };
-                    break;
-                default: 
-                    break; 
-            }
-        }
-    }
-
-    const deSelect = player => {
-        updateBudget(budget + player.price);
-        updateTeam({...team, [player.position]: team[player.position].filter(x=>x.player_id!==player.player_id)});
-    }
-
     const submitTeam = async() => {
         const teamPlayersObj = playersArrayToObj(teamPlayers);
         try {
-            addSpinnerFUNC();
+            dispatch(addSpinner());
             if (validateTransfers(budget, teamPlayersObj)) {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
@@ -141,7 +62,7 @@ const ntsScreen2 = ({navigation}) => {
                             let lastPGJs = await getAllPGJsFromGameweekId(lastGW.gameweek_id);
                             let league = await getLeague(returnUser.admin_user_id);
                             if (lastPGJs<1) {
-                                nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null);
+                                dispatch(nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league, [], [], [], null, null));
                             } else {
                                 let allPGJs = await getAllPGJFromUserId(returnUser.user_id);
                                 let allLastUGJs = await getUGJs(returnUser.admin_user_id, lastGW.gameweek_id);
@@ -156,10 +77,10 @@ const ntsScreen2 = ({navigation}) => {
                                     ug,
                                     user: await getUserById(ug.user_id)
                                 } : null;
-                                nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser);
+                                dispatch(nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, league,  allPGJs, lastPGJs, allLastUGJs, topPlayer, topUser));
                             }
                         } else {
-                            nts2LoginFUNC(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, null, [], [], [], null, null);
+                            dispatch(nts2Login(returnUser, teamPlayers.slice(0,globalConfig.numberOfStarters), teamPlayers.slice(globalConfig.numberOfStarters-globalConfig.numberOfPlayers), records, null, [], [], [], null, null));
                         }
                         updateStack(navigation, 0, 'Home');
                     } else {
@@ -169,19 +90,19 @@ const ntsScreen2 = ({navigation}) => {
                         });
                     }
             }
-            removeSpinnerFUNC();
+            dispatch(removeSpinner());
         } catch(e) {
             showMessage({
                 message: "Fail: Network Issue, please try again later",
                 type: "danger"
               });
-            removeSpinnerFUNC();
+            dispatch(removeSpinner());
             console.warn(e.response.data);
         }
     }
 
     const setModalINPUT = player => {
-        setModalFUNC({modalSet: 'set1', player, btnClick: transfer, width: vw(80), height: vh(30)});
+        dispatch(setModal({modalSet: 'set1', player, btnClick: transfer, width: vw(80), height: vh(30)}));
     }
 
         return ( 

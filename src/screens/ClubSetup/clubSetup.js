@@ -23,7 +23,8 @@ import { Picker } from '@react-native-picker/picker';
 
 const ClubSetupScreen = ({navigation}) => {
 
-    const [players, updatePlayers] = {
+    const dispatch = useDispatch(), 
+    [players, updatePlayers] = {
             0: {name: '', position:'1', price: ''},
             1: {name: '', position:'1', price: ''},
             2: {name: '', position:'1', price: ''},
@@ -51,9 +52,7 @@ const ClubSetupScreen = ({navigation}) => {
             23: {name: '', position:'1', price: ''}
     },
     adminUserId = useSelector(state => state.club.adminUser.admin_user_id),
-    spinner = useSelector(state => state.boolDeciders.spinner)
-    addSpinnerFUNC = useDispatch(() => addSpinner()),
-    removeSpinnerFUNC = useDispatch(() => removeSpinner());
+    spinner = useSelector(state => state.boolDeciders.spinner);
 
     const updatePosition = (i, selectedValue) => {
         updatePlayers({...players, [i]: {...players[i], position: selectedValue}})
@@ -122,7 +121,7 @@ const ClubSetupScreen = ({navigation}) => {
     }
 
     const postPlayers = async() => {
-        addSpinnerFUNC();
+        dispatch(addSpinner());
         try {
             for (let i=0;i<24;i++) {
                 let entry = players[i];
@@ -132,14 +131,14 @@ const ClubSetupScreen = ({navigation}) => {
                     console.warn('invalid entry: ' + i);
                 }
             }
-            removeSpinnerFUNC();
+            dispatch(removeSpinner());
             updateStack(navigation, 0, 'AdminHome');
         } catch(e)  {
             showMessage({
                 message: e.response.data,
                 type: "danger"
               });
-            removeSpinnerFUNC();
+            dispatch(removeSpinner());
             console.warn(e.response.data);
         }
     }

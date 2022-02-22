@@ -1,5 +1,5 @@
-import React, { Component, useState } from 'react';
-import { View, Text, Button, Switch } from 'react-native';
+import React, { Component, useRef, useState } from 'react';
+import { View, Text, Switch, Keyboard, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect, useDispatch } from 'react-redux';
 import { setAdminUser } from '../../actions';
@@ -10,18 +10,22 @@ import { loginHead, switchText, textLabel } from './style';
 import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/input';
 import { updateStack } from '../../Navigation';
 import { getStorage, setStorage } from '../../functions/storage';
+import { vh, vw } from 'react-native-expo-viewport-units';
+import Button from '../../components/Button/button';
 
 const AdminAccountSetupScreen = ({navigation}) => {
 
-  const [adminUserObj, updateAdminUserObj] = useState({
+  const dispatch = useDispatch(),  
+  scrollRef = useRef(),
+  [adminUserObj, updateAdminUserObj] = useState({
     email: '',
     password: '',
     rePassword: '',
     clubName: '',
     terms: false
-  }),
-  setAdminUserFUNC = useDispatch(adminUser => setAdminUser(adminUser));
+  });
 
+  Keyboard.addListener('keyboardDidHide', () => scrollRef.current?.scrollTo({y: 0, animated: true}));
   
   const formChange = (id, entry) => {
     if (id==='email') {
@@ -95,7 +99,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
       let res = await postAdminUser(adminUserObj);
       const { token, admin_user } = res;
       await setStorage('authToken', token);
-      setAdminUserFUNC(admin_user);
+      dispatch(setAdminUser(admin_user));
       updateStack(navigation, 0, 'ClubSetup');
     } catch(e) {
       showMessage({
@@ -111,9 +115,15 @@ const AdminAccountSetupScreen = ({navigation}) => {
       <View style={screenContainer}>
             <View style={inputFieldContainerCenter}>
               <Text style={loginHead}>Admin Account Setup</Text>
+              <ScrollView
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ref={scrollRef}>
+              <View style={{height: vh(90)}}>
               <Text style={textLabel}>Enter your email address</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
+                onFocus={()=>scrollRef.current?.scrollTo({y: 0, animated: true})}  
                 value={adminUserObj.email} 
                 onChangeText={value => formChange('email', value)}
                 placeholder="email@address.com"
@@ -124,6 +134,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
               <Text style={textLabel}>Enter your club name</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
+                onFocus={()=>scrollRef.current?.scrollTo({y: 0, animated: true})}
                 value={adminUserObj.team_name} 
                 onChangeText={value => formChange('clubName', value)}
                 placeholder="Club de sunday futbol"
@@ -133,6 +144,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
               <Text style={textLabel}>Enter your password</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
+                onFocus={()=>scrollRef.current?.scrollTo({y: 100, animated: true})}
                 value={adminUserObj.password} 
                 onChangeText={value => formChange('password', value)}
                 placeholder="Password"
@@ -144,6 +156,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
               <Text style={textLabel}>Re-enter your password</Text>
               <View style={inputFieldLarge}>
                 <TextInput style={input}
+                onFocus={()=>scrollRef.current?.scrollTo({y: 200, animated: true})}
                 value={adminUserObj.rePassword} 
                 onChangeText={value => formChange('rePassword', value)}
                 placeholder="Password"
@@ -152,11 +165,17 @@ const AdminAccountSetupScreen = ({navigation}) => {
                 secureTextEntry={true}
                 />
               </View>
-              <Text style={textLabel}>I agree to terms and conditions...</Text>
-              <Switch 
-              value={adminUserObj.terms} 
-              onValueChange={toggleSwitch}/>
-              <Button clickable title="Sign up" onPress={handleSubmit}/>
+              <View style={{width: '100%', alignItems: 'center', marginBottom: vh(3)}}>
+                <Text style={textLabel}>I agree to terms and conditions...</Text>
+                <Switch 
+                value={adminUserObj.terms} 
+                onValueChange={toggleSwitch}/>
+              </View>
+              <View style={{width: '100%', alignItems: 'center'}}>
+                  <Button text="Sign Up" func={handleSubmit} clickable width={vw(35)}/>
+                </View>
+              </View>
+              </ScrollView>
             </View>
           </View>
     );

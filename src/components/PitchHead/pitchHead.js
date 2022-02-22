@@ -15,7 +15,8 @@ import { gameweekBanner, gwArrow, gwText, pickTeamX, pitchHead, pitchHeadComp, p
 
 const PitchHead = ({ type, update }) => {
 
-    const UGJ = useSelector(state => state.user.focusedGWTeam.UGJ),
+    const dispatch = useDispatch(), 
+    UGJ = useSelector(state => state.user.focusedGWTeam.UGJ),
     user = useSelector(state => state.user.user),
     budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
     otherUGJ = useSelector(state => state.club.focusedGWTeam.UGJ),
@@ -23,9 +24,7 @@ const PitchHead = ({ type, update }) => {
     lastGW = useSelector(state => state.club.lastGW),
     otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus),
     userFocusGW = useSelector(state => state.user.userFocusGW),
-    clubFocusGW = useSelector(state => state.club.clubFocusGW),
-    changeGWOtherFUNC = useDispatch((starters, subs, UGJ, clubFocusGW) => changeGWOther(starters, subs, UGJ, clubFocusGW)),
-    setTeamPointsFUNC = useDispatch((starters, subs, UGJ, newUserFocusGW) => setTeamPoints(starters, subs, UGJ, newUserFocusGW))
+    clubFocusGW = useSelector(state => state.club.clubFocusGW);
 
     const changeGWPoints = async(direction) => {
         let GW = otherTeamFocus ? 
@@ -34,11 +33,11 @@ const PitchHead = ({ type, update }) => {
         if (otherTeamFocus) {
             const newClubFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1)
             const { starters, subs, records, otherUGJ } = await getTeamPointsInfoGWChange(otherUser.user_id, newClubFocusGW.gameweek_id, otherTeamFocus);
-            changeGWOtherFUNC(starters, subs, otherUGJ, newClubFocusGW);
+            dispatch(changeGWOther(starters, subs, otherUGJ, newClubFocusGW));
         } else {
             const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, direction === 'L' ? GW.gameweek-1 : GW.gameweek+1);
             const { starters, subs, UGJ } = await getTeamPointsInfoGWChange(user.user_id, newUserFocusGW.gameweek_id, otherTeamFocus);
-            setTeamPointsFUNC(starters, subs, UGJ, newUserFocusGW);
+            dispatch(setTeamPoints(starters, subs, UGJ, newUserFocusGW));
         }
     }
 

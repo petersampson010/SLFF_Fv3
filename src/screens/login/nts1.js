@@ -1,6 +1,6 @@
 import { connect, useDispatch } from 'react-redux';
-import React, { Component, useState } from 'react';
-import { View, Text, Switch, Button, StyleSheet, TextInput, processColor } from 'react-native';
+import React, { Component, useEffect, useRef, useState } from 'react';
+import { View, Text, Switch, StyleSheet, TextInput, processColor, ScrollView, Keyboard } from 'react-native';
 import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
 import Header from '../../components/header/header';
@@ -13,12 +13,15 @@ import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
 import { getLastAndAllGWs } from '../../functions/reusable';
 import { setStorage } from '../../functions/storage';
+import { vh, vw } from 'react-native-expo-viewport-units';
+import Button from '../../components/Button/button';
 
 
 
 const ntsScreen1 = ({navigation}) => {
 
-  const dispatch = useDispatch,
+  const dispatch = useDispatch(),
+  scrollRef = useRef(),
   [userObj, updateUserObj] = useState({
     email: '',
     team_name: '',
@@ -29,6 +32,8 @@ const ntsScreen1 = ({navigation}) => {
     budget: globalConfig.startBudget
   }),
   [verified, updateVerified] = useState(false);
+
+  Keyboard.addListener('keyboardDidHide', () => scrollRef.current?.scrollTo({y: 0, animated: true}));
 
   const formChange = (id, entry) => {
     switch(id) {
@@ -100,58 +105,73 @@ const ntsScreen1 = ({navigation}) => {
       <View style={screenContainer}>
             <View style={inputFieldContainerCenter}>
               <Text style={loginHead}>Create Account</Text>
-              <Text style={textLabel}>Enter your email address</Text>
-              <View style={inputFieldLarge}>
-                <TextInput style={input}
-                value={userObj.email} 
-                onChangeText={value => formChange('email', value)}
-                placeholder="email@address.com"
-                placeholderTextColor='#d1d2d6'
-                autoCapitalize="none"
-                />
-              </View>
-              <Text style={textLabel}>Enter your team name</Text>
-              <View style={inputFieldLarge}>
-                <TextInput style={input}
-                value={userObj.team_name} 
-                onChangeText={value => formChange('team_name', value)}
-                placeholder="Sunday Funday"
-                placeholderTextColor='#d1d2d6'
-                />
-              </View>
-              <Text style={textLabel}>Enter your password</Text>
-              <View style={inputFieldLarge}>
-                <TextInput style={input}
-                value={userObj.password} 
-                onChangeText={value => formChange('password', value)}
-                placeholder="Password"
-                placeholderTextColor='#d1d2d6'
-                autoCapitalize="none"
-                secureTextEntry
-                />
-              </View>
-              <Text style={textLabel}>Re-enter your password</Text>
-              <View style={inputFieldLarge}>
-                <TextInput style={input}
-                value={userObj.rePassword} 
-                onChangeText={value => formChange('rePassword', value)}
-                placeholder="Password"
-                placeholderTextColor='#d1d2d6'
-                autoCapitalize="none"
-                secureTextEntry
-                />
-              </View>
-              <Text style={textLabel}>Club ID</Text>
-              <View style={inputFieldLarge}>
-                <TextInput style={input}
-                value={userObj.clubId} 
-                onChangeText={value => formChange('clubID', value)}
-                placeholder="24"
-                placeholderTextColor='#d1d2d6'
-                autoCapitalize="none"
-                />
-              </View>
-              <Button clickable title="Sign Up" onPress={handleSubmit}/>
+              <ScrollView
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              ref={scrollRef}>
+                <View style={{height: vh(90)}}>
+                <Text style={textLabel}>Enter your email address</Text>
+                <View style={inputFieldLarge}>
+                  <TextInput style={input}
+                  onFocus={()=>scrollRef.current?.scrollTo({y: 0, animated: true})}
+                  value={userObj.email} 
+                  onChangeText={value => formChange('email', value)}
+                  placeholder="email@address.com"
+                  placeholderTextColor='#d1d2d6'
+                  autoCapitalize="none"
+                  />
+                </View>
+                <Text style={textLabel}>Enter your team name</Text>
+                <View style={inputFieldLarge}>
+                  <TextInput style={input}
+                  onFocus={()=>scrollRef.current?.scrollTo({y: 0, animated: true})}
+                  value={userObj.team_name} 
+                  onChangeText={value => formChange('team_name', value)}
+                  placeholder="Sunday Funday"
+                  placeholderTextColor='#d1d2d6'
+                  />
+                </View>
+                <Text style={textLabel}>Enter your password</Text>
+                <View style={inputFieldLarge}>
+                  <TextInput style={input}
+                  onFocus={()=>scrollRef.current?.scrollTo({y: 45, animated: true})}
+                  value={userObj.password} 
+                  onChangeText={value => formChange('password', value)}
+                  placeholder="Password"
+                  placeholderTextColor='#d1d2d6'
+                  autoCapitalize="none"
+                  secureTextEntry
+                  />
+                </View>
+                <Text style={textLabel}>Re-enter your password</Text>
+                <View style={inputFieldLarge}>
+                  <TextInput style={input}
+                  onFocus={()=>scrollRef.current?.scrollTo({y: 140, animated: true})}
+                  value={userObj.rePassword} 
+                  onChangeText={value => formChange('rePassword', value)}
+                  placeholder="Password"
+                  placeholderTextColor='#d1d2d6'
+                  autoCapitalize="none"
+                  secureTextEntry
+                  />
+                </View>
+                <Text style={textLabel}>Club ID</Text>
+                <View style={inputFieldLarge}>
+                  <TextInput style={input}
+                  onFocus={()=>scrollRef.current?.scrollTo({y: 200, animated: true})}
+                  value={userObj.clubId} 
+                  onChangeText={value => formChange('clubID', value)}
+                  placeholder="Club ID"
+                  placeholderTextColor='#d1d2d6'
+                  autoCapitalize="none"
+                  keyboardType='numeric'
+                  />
+                </View>
+                <View style={{width: '100%', alignItems: 'center'}}>
+                  <Button text="Sign Up" func={handleSubmit} clickable width={vw(35)}/>
+                </View>
+                </View>
+              </ScrollView>
             </View>
           </View>
     );

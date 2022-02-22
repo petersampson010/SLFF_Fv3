@@ -25,14 +25,12 @@ const LoginScreen = ({navigation}) => {
   // just have a log out button 
   // this will clear up the glitch where we had to reset team players as it was rendering double triple players
 
-  const [useObj, updateUserObj] = useState({
+  const dispatch = useDispatch(), 
+  [userObj, updateUserObj] = useState({
     email: '',
     password: ''
   }),
-  [admin, updateAdmin] = useState(false),
-  loginUser = useDispatch(obj => obj),
-  loginAdminUser = useDispatch(obj => obj),
-  resetTeamPlayersFUNC = useDispatch(() =>  resetTeamPlayers());
+  [admin, updateAdmin] = useState(false);
 
   
   const formChange = (id, entry) => {
@@ -73,8 +71,12 @@ const LoginScreen = ({navigation}) => {
   
   const handleUserSubmit = async() => {
     try {
+      console.log(userObj);
       const { user, token } = await userSignIn(userObj);
+      console.log(user);
+      console.log(token);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
+      console.log('set session storage');
       handleUserReturn(user);
     } catch(e) {
       showMessage({
@@ -88,7 +90,7 @@ const LoginScreen = ({navigation}) => {
   const handleUserReturn = async(user) => {
     try {
       if (user !== undefined && user !== null) {
-        loginUser(await userData(user));
+        dispatch(await userData(user));
         updateStack(navigation, 0, 'Home');
       } else {
         showMessage({
@@ -108,7 +110,7 @@ const LoginScreen = ({navigation}) => {
   const handleAdminReturn = async(adminUser) => {
     try {
       if (adminUser !== undefined && adminUser !== null) {
-        loginAdminUser(await adminData(adminUser));
+        dispatch(await adminData(adminUser));
         updateStack(navigation, 0, 'AdminHome');
       } else {
         showMessage({

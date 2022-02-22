@@ -26,7 +26,8 @@ import DatePicker from 'react-native-date-picker';
 
 const AdminHomeScreen = ({navigation}) => {
 
-    const [modal, updateModal] = useState({
+    const dispatch = useDispatch(), 
+    [modal, updateModal] = useState({
         active: false,
         update: false,
     }),
@@ -37,12 +38,7 @@ const AdminHomeScreen = ({navigation}) => {
         complete: false
     }),
     games = useSelector(state => state.club.allGames),
-    adminUser = useSelector(state => state.club.adminUser),
-    setClubFocusGWFUNC = useDispatch(game => setClubFocusGW(game)),
-    addGameStateFUNC = useDispatch(game => addGameState(game)),
-    updateGameStateFUNC = useDispatch(game => updateGameState(game)),
-    setModalFUNC = useDispatch(modalObj => setModal(modalObj)),
-    closeModalFUNC = useDispatch(() => closeModal());
+    adminUser = useSelector(state => state.club.adminUser);
 
     
 
@@ -80,20 +76,17 @@ const AdminHomeScreen = ({navigation}) => {
 
 
     const formChange = (id, value) => {
-        setState({
-            ...state, 
-            game: {
-                ...state.game,
-                [id]: value
-            }
-        })
+        updateGame({
+            ...game,
+            [id]: value
+        });
     }
 
     const addGame = async() => {
         try {
             let res = await postGame(game, adminUser.admin_user_id);
             if (res.date) {
-                addGameStateFUNC(res);
+                dispatch(addGameState(res));
                 updateModal({
                     active: false, 
                     update: false
@@ -115,7 +108,7 @@ const AdminHomeScreen = ({navigation}) => {
     const updateGameComplete = async() => {
         try {
             let res = await patchGame(game);
-            updateGameStateFUNC(game);
+            dispatch(updateGameState(game));
             if (res.date) {
                 updateModal({
                     active: false, 
@@ -143,17 +136,17 @@ const AdminHomeScreen = ({navigation}) => {
     }
 
     const setModal = (game) => {
-        setModalFUNC({modalSet: 'set4', player: null, width: vw(80), height: vh(45), btnClick: () => openEditGameModal(game)});
+        dispatch(setModal({modalSet: 'set4', player: null, width: vw(80), height: vh(45), btnClick: () => openEditGameModal(game)}));
     }
 
     const openSubmitGameStats = (game) => {
-        setClubFocusGWFUNC(game);
-        closeModalFUNC();
+        dispatch(setClubFocusGW(game));
+        dispatch(closeModal());
         navigation.navigate('GameEditor');
     }
 
     const openEditGameModal = (game) => {
-        closeModalFUNC();
+        dispatch(closeModal());
         updateModal({active: true, update: true});
         updateGame(game);
     }

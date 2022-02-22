@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { ScrollView, View, Text, Image } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import { addSubAttributeToPlayersArray, playerIds, fullName, getRecordId, playersArrayToObj, playersObjToArray, positionString } from '../../functions/reusable';
 import Pitch from '../../components/Pitch/pitch.js';
 import PlayersList from '../../components/playersList/playersList.js';
@@ -24,28 +24,31 @@ import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
 
 
-class TransfersScreen extends Component {
+const TransfersScreen = ({navigation}) => {
 
+    const dispatch = useDispatch(),
+    [positionFilter, updatePositionFilter] = useState('0'),
+    teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)),
+    clubPlayers = useSelector(state => state.club.clubPlayers),
+    user = useSelector(state => state.user.user),
+    budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
+    originalPlayers = useSelector(state => state.user.currentTeam.starters.concat(state.user.currentTeam.subs)),
+    spinner = useSelector(state => state.boolDeciders.spinner);
 
-    state = {
-        positionFilter: '0'
-    }
-
-    originalTeam = () => {
+    const originalTeam = () => {
         return {
-            '1': this.props.teamPlayers.filter(x=>x.position==='1'),
-            '2': this.props.teamPlayers.filter(x=>x.position==='2'),
-            '3': this.props.teamPlayers.filter(x=>x.position==='3'),
-            '4': this.props.teamPlayers.filter(x=>x.position==='4')
+            '1': teamPlayers.filter(x=>x.position==='1'),
+            '2': teamPlayers.filter(x=>x.position==='2'),
+            '3': teamPlayers.filter(x=>x.position==='3'),
+            '4': teamPlayers.filter(x=>x.position==='4')
         }
     }
 
-    transfer = player => {
+    const transfer = player => {
         let { position, price } = player;
-        const { transferOut, transferIn, user, teamPlayers } = this.props;
-        if (this.playerSelected(player)) {
-            transferOut(player);
-            this.props.closeModal();
+        if (playerSelected(player)) {
+            dispatch(transferOut(player));
+            dispatch(closeModal());
         } else {
             if (teamPlayers.filter(x=>x.position===position).length>2) {
                 showMessage({
@@ -53,20 +56,19 @@ class TransfersScreen extends Component {
                     type: "warning"
                 })
             } else {
-                transferIn(player);
-                this.props.closeModal();
+                dispatch(transferIn(player));
+                dispatch(closeModal());
 
             }
         }
     } 
 
-    playerSelected = player => playerIds(this.props.teamPlayers).includes(player.player_id);
+    const playerSelected = player => playerIds(teamPlayers).includes(player.player_id);
 
-    confirmUpdates = async() => {
-        const { teamPlayers, addSpinner, removeSpinner, originalPlayers, user, setLatestToTransferring, setTransferringBackToLatest, budget } = this.props;
+    const confirmUpdates = async() => {
         try {
             if (validateTransfers(budget, playersArrayToObj(teamPlayers))) {
-                addSpinner()
+                dispatch(addSpinner());
                 let count = 0;
                 let captain = false;
                 let vice_captain = false;
@@ -103,8 +105,8 @@ class TransfersScreen extends Component {
                 // update budget
                 await patchUserBUDGET(user.user_id, budget);
                 // persist budget update in root state
-                setLatestToTransferring();
-                removeSpinner();
+                dispatch(setLatestToTransferring());
+                dispatch(removeSpinner());
                 showMessage({
                     type: 'success',
                     message: `Transfers successful, you have ${user.transfers} left`
@@ -112,8 +114,8 @@ class TransfersScreen extends Component {
             }
         } catch(e) {
             console.warn(e.response.data);
-            setTransferringBackToLatest();
-            removeSpinner();
+            dispatch(setTransferringBackToLatest());
+            dispatch(removeSpinner());
             showMessage({
                 type: 'danger',
                 message: "Fail: This update was not successful, please try again later"
@@ -121,53 +123,27 @@ class TransfersScreen extends Component {
         }
     }
 
-    setModal = player => {
-        this.props.setModal({modalSet: 'set1', player: player.player, btnClick: this.transfer, width: vw(80), height: vh(50)});
+    const setModalInput = player => {
+        dispatch(setModal({modalSet: 'set1', player: player.player, btnClick: transfer, width: vw(80), height: vh(50)}));
     }
 
-    render() { 
         return ( 
             <View style={screenContainer}>
-                {this.props.spinner ? <SpinnerOverlay/> : null}
-                <PitchHead type="transfers" update={this.confirmUpdates}/>
+                {spinner ? <SpinnerOverlay/> : null}
+                <PitchHead type="transfers" update={confirmUpdates}/>
                 <ScrollView style={pitchContainer}>
                     <Pitch 
                     type="transfers"
-                    playerGraphicClickFcn={this.setModal}
-                    team={this.props.teamPlayers}
+                    playerGraphicClickFcn={setModalInput}
+                    team={teamPlayers}
                     />
                     <PlayersList
-                    clickFcn={this.setModal}
+                    clickFcn={setModalInput}
                     />
                 </ScrollView>
-                <BottomNav navigation={this.props.navigation}/>
+                <BottomNav navigation={navigation}/>
             </View>
          );
-    }
-}
-
-const mapStateToProps = state => {
-    return {
-        teamPlayers: state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs),
-        clubPlayers: state.club.clubPlayers,
-        user: state.user.user,
-        budget: state.stateChanges.updatedNotPersistedTeam.budget,
-        originalPlayers: state.user.currentTeam.starters.concat(state.user.currentTeam.subs),
-        spinner: state.boolDeciders.spinner
-    }
-}
-
-export const mapDispatchToProps = dispatch => {
-    return {
-        transferOut: player => dispatch(transferOut(player)),
-        transferIn: player => dispatch(transferIn(player)),
-        addSpinner: () => dispatch(addSpinner()),
-        removeSpinner: () => dispatch(removeSpinner()),
-        setTransferringBackToLatest: () => dispatch(setTransferringBackToLatest()),
-        setLatestToTransferring: () => dispatch(setLatestToTransferring()),
-        setModal: modalObj => dispatch(setModal(modalObj)),
-        closeModal: () => dispatch(closeModal())
-    }
 }
  
-export default connect(mapStateToProps, mapDispatchToProps)(TransfersScreen);
+export default TransfersScreen;

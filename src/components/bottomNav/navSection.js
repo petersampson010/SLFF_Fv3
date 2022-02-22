@@ -12,14 +12,11 @@ import { updateStack } from '../../Navigation';
 
 const NavSection = ({ page, navigation }) => {
 
-    const lastGW = useSelector(state => state.club.lastGW),
+    const dispatch = useDispatch(), 
+    lastGW = useSelector(state => state.club.lastGW),
     lastStarters = useSelector(state => state.user.focusedGWTeam.starters),
     user = useSelector(state => state.user.user),
     otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus);
-
-    const setTransferringBackToLatestFUNC = useDispatch(() => setTransferringBackToLatest()),
-    setTeamPointsFUNC = useDispatch((starters, subs, UGJ, newUserFocusGW) => setTeamPoints(starters, subs, UGJ, newUserFocusGW)),
-    leavingClubPointsPageFUNC = useDispatch(() => leavingClubPointsPage())
 
     const currentPage = () => {
         return getNameOfNavPage(navigation.getState());
@@ -35,14 +32,14 @@ const NavSection = ({ page, navigation }) => {
         } else {
             if (currentPage()==='Points') {
                 if (otherTeamFocus) {
-                    leavingClubPointsPageFUNC();
+                    dispatch(leavingClubPointsPage());
                 } else {
                     const newUserFocusGW = await getGameweekFromAdminUserIdAndGameweek(user.admin_user_id, lastGW.gameweek);
                     const { starters, subs, UGJ } = await getTeamPointsInfoGWChange(user.user_id, newUserFocusGW.gameweek_id, false);
-                    setTeamPointsFUNC(starters, subs, UGJ, newUserFocusGW);
+                    dispatch(setTeamPoints(starters, subs, UGJ, newUserFocusGW));
                 }
             } else {
-                setTransferringBackToLatestFUNC();
+                dispatch(setTransferringBackToLatest());
             }
             updateStack(navigation, 0, page);
         } 

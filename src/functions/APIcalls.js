@@ -11,6 +11,7 @@ instance.interceptors.request.use(async(config) => {
     } catch (e) {
         console.warn(e)
     }
+    console.log('still returning');
     return config;
 })
 

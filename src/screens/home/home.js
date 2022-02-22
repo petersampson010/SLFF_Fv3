@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import { ScrollView, TouchableOpacity, Text, View, Image } from 'react-native';
-import { connect, useSelector } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import Header from '../../components/header/header';
 import { displayDate, getTeamPointsInfo, topPlayer, topUser } from '../../functions/reusable';
 import BottomNav from '../../components/bottomNav/bottomNav';
@@ -23,7 +23,8 @@ import AnimatedLinearGradient, {presetColors} from 'react-native-animated-linear
 
 const HomeScreen = ({navigation}) => {
 
-    const [modal, updateModal] = useState({
+    const dispatch = useDispatch(), 
+    [modal, updateModal] = useState({
         topPlayer: false,
         topUser: false
     }),
@@ -33,9 +34,7 @@ const HomeScreen = ({navigation}) => {
     topPlayer = useSelector(state => state.club.topPlayer),
     topUser = useSelector(state => state.club.topUser),
     lastGW = useSelector(state => state.club.lastGW ? state.club.lastGW : false),
-    lastUGJ = useSelector(state => state.user.focusedGWTeam.UGJ),
-    setOtherTeamPointsFUNC = useDispatch((starters, subs, records, UGJ, allPGJs, otherUser) => setOtherTeamPoints(starters, subs, records, UGJ, allPGJs, otherUser)),
-    setModalFUNC = useDispatch(modalObj => setModal(modalObj))
+    lastUGJ = useSelector(state => state.user.focusedGWTeam.UGJ);
     
 
     const renderRows = () => {
@@ -54,7 +53,7 @@ const HomeScreen = ({navigation}) => {
             const { starters, subs, records, otherUGJ, allPGJs } = await getTeamPointsInfo(team.user_id, lastGW.gameweek_id, true);
             const otherUser = await getUserById(team.user_id);
             if (otherUGJ) {
-                setOtherTeamPointsFUNC(starters, subs, records, otherUGJ, allPGJs, otherUser);
+                dispatch(setOtherTeamPoints(starters, subs, records, otherUGJ, allPGJs, otherUser));
                 navigation.navigate('Points');
             } else {
                 showMessage({
@@ -86,9 +85,9 @@ const HomeScreen = ({navigation}) => {
 
     const setModalCheck = (entry) => {
         if (entry.player) {
-            setModalFUNC({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)});
+            dispatch(setModal({modalSet: 'set3', player: entry.player, pg: entry.pg, btnClick: null, width: vw(80), height: vh(50)}));
         } else {
-            setModalFUNC({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)});
+            dispatch(setModal({modalSet: 'set3', user: entry.user, ug: entry.ug, btnClick: null, width: vw(80), height: vh(50)}));
         }
     }
         const opacity = modal.topPlayer || modal.topUser ? 0.1 : 1;
@@ -127,11 +126,13 @@ const HomeScreen = ({navigation}) => {
                             <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
                             : null}
                         </View>
-                        <ScrollView style={''}>
-                            <View style={{paddingBottom: vh(20)}}>
-                                {renderRows()}
-                            </View>
-                        </ScrollView>
+                        <View style={{marginBottom: vh(90)}}>
+                            <ScrollView>
+                                <View>
+                                    {renderRows()}
+                                </View>
+                            </ScrollView>
+                        </View>
                     </View>
                     : null}
                 </View>

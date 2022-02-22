@@ -18,7 +18,8 @@ import { connect, useDispatch } from 'react-redux';
 
 const AdminPlayerEditScreen = ({}) => {
 
-    const [modal, updateModal] = useState({
+    const dispatch = useDispatch(), 
+    [modal, updateModal] = useState({
         active: false,
         player: {
             "player_id": 1,
@@ -31,9 +32,7 @@ const AdminPlayerEditScreen = ({}) => {
             "created_at": "2020-11-23T13:03:11.328Z",
             "updated_at": "2020-11-23T13:03:11.328Z"
             }
-    }),
-    updateStateClubPlayersFUNC = useDispatch(updatedPlayer => updateStateClubPlayers(updatedPlayer));
-
+    });
 
     const formChange = (id, entry) => {
         updateModal({...modal,
@@ -66,7 +65,7 @@ const AdminPlayerEditScreen = ({}) => {
     const updatePlayer = async() => {
         try {
             let updatedPlayer = await patchPlayer(modal.player);
-            updateStateClubPlayersFUNC(updatedPlayer);
+            dispatch(updateStateClubPlayers(updatedPlayer));
             updateModal({active: false, player: {
                 "player_id": 1,
                 "first_name": "G",

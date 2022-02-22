@@ -4,7 +4,7 @@ import { headers, labelText, standardText } from "../../styles/textStyle";
 
 export const loginHead = {
     ...headers,
-    marginBottom: vh(7),
+    marginBottom: vh(4),
 }
 
 export const switchText = {

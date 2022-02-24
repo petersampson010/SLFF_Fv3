@@ -120,10 +120,10 @@ const HomeScreen = ({navigation}) => {
                     {lastGW ? 
                     <View>
                         <View style={tableRowHead}>
-                            <Text style={{...tableElement3, ...standardText}}>Team</Text>
-                            <Text style={{...tableElement3, ...standardText}}>Total</Text>
+                            <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>Team</Text>
+                            <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>Total</Text>
                             {lastGW ? 
-                            <Text style={{...tableElement3, ...standardText}}>vs. {lastGW.opponent}</Text>
+                            <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>vs. {lastGW.opponent}</Text>
                             : null}
                         </View>
                         <View style={{marginBottom: vh(90)}}>

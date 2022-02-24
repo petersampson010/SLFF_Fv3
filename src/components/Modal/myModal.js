@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Modal, TouchableOpacity, View, Text, Image } from 'react-native';
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { showMessage } from 'react-native-flash-message';
-import { connect, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { closeModal, setCaptain, setVCaptain } from '../../actions';
 import Button from '../Button/button';
 import Checkbox from '../Checkbox/checkbox';
@@ -18,42 +18,40 @@ import userGWProfile from '../profile/userGWProfile';
 
 const MyModal = () => {
     
-    const records = useSelector(state => state.user.records);
-    const modal = useSelector(state => state.modal);
-    const modalActive = useSelector(state => state.boolDeciders.modal);
-    const captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain);
-    const vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain);
-    const { player, width, modalSet, pg, ug, user } = modal;
+    const dispatch = useDispatch(), 
+    records = useSelector(state => state.user.records),
+    modal = useSelector(state => state.modal),
+    modalActive = useSelector(state => state.boolDeciders.modal),
+    captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain),
+    vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain),
+    { player, width, modalSet, pg, ug, user } = modal,
+    playerImg = require('../../../images/profile.jpg'),
+    subImg = require('../../../images/subIcon.png');
 
-    const closeModal = useDispatch(() => closeModal());
-    const setCap = useDispatch((player) => setCaptain(player));
-    const setVCap = useDispatch((player) => setVCaptain(player));
-
-    setC = player => {
+    const setC = player => {
         if (vCaptain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            setCap(player);
+            dispatch(setCaptain(player));
         }
     }
 
-    setVC = player => {
+    const setVC = player => {
         if (captain.player_id===player.player_id) {
             showMessage({
                 message: "Player is already a captain",
                 type: 'warning'
             })
         } else {
-            setVCap(player);
+            dispatch(setVCaptain(player));
         }
     }
 
-    topRightJSX = () => {
+    const topRightJSX = () => {
         const { modalSet } = modal;
-        const playerImg = require('../../../images/profile.jpg');
         switch(modalSet) {
             case 'set1': case 'set2':
                 return <View 
@@ -78,9 +76,8 @@ const MyModal = () => {
         }
     }
 
-    bottomBtn = () => {
+    const bottomBtn = () => {
         const { modalSet, btnClick, player } = modal;
-        const subImg = require('../../../images/subIcon.png');
         switch(modalSet) {
             case 'set1': case 'set2':
                 return <Button width={vw(35)} clickable modal comp={<Image source={subImg} imageStyle={{resizeMode: 'cover'}} style={subImage}/>} func={()=>btnClick(player)}/>
@@ -93,8 +90,6 @@ const MyModal = () => {
         }
     }
 
-        const playerImg = require('../../../images/profile.jpg');
-        const subImg = require('../../../images/subIcon.png');
         return (
             <Modal
             visible={modalActive}
@@ -118,7 +113,7 @@ const MyModal = () => {
                     {ug ? userGWProfile(ug) : null}
                     <View style={modalJSX}>
                         {bottomBtn()}
-                        <Button clickable modal text='Close' func={closeModal} width={vw(35)}/>
+                        <Button clickable modal text='Close' func={()=>dispatch(closeModal())} width={vw(35)}/>
                     </View>
                 </View>
                 </View>  

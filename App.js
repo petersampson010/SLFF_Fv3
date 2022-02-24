@@ -22,7 +22,7 @@ const App = () => {
     <Provider store={store}>
       <LoadContainer />
       <MyModal/>
-      
+      <FlashMessage position="top"/>
     </Provider>
   );
 };

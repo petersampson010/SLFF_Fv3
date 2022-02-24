@@ -29,7 +29,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
   
   const formChange = (id, entry) => {
     if (id==='email') {
-      updateAdminUserObj({...state.adminUserObj, email: entry})
+      updateAdminUserObj({...adminUserObj, email: entry})
     } else if (id==='password') {
       updateAdminUserObj({...adminUserObj, password: entry})
     } else if (id==='clubName') {
@@ -95,15 +95,15 @@ const AdminAccountSetupScreen = ({navigation}) => {
   
   const handleSubmit = async() => {
     try {
-      checkPassword()
+      checkPassword();
       let res = await postAdminUser(adminUserObj);
       const { token, admin_user } = res;
-      await setStorage('authToken', token);
+      await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       dispatch(setAdminUser(admin_user));
       updateStack(navigation, 0, 'ClubSetup');
     } catch(e) {
       showMessage({
-        message: e.response.data.errors ? e.response.data.errors[0] : "Sorry, we are experiencing some technical issues. Please try again later.",
+        message: e ? e[0] : "Sorry, we are experiencing some technical issues. Please try again later.",
         type: "danger"
       });
       console.warn(e.response.data);

@@ -21,8 +21,8 @@ export const buttonContainer = {
 export const absoluteButton = {
     zIndex: 99999,
     position: 'absolute',
-    bottom: vh(30),
-    right: vh(3),
+    top: vh(30),
+    left: vh(3),
     backgroundColor: $darkBlue
 }
 

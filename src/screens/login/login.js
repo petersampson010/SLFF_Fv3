@@ -62,7 +62,7 @@ const LoginScreen = ({navigation}) => {
       handleAdminReturn(admin_user);
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e[0],
         type: "danger"
       })
       console.warn(e.response.data);
@@ -79,11 +79,11 @@ const LoginScreen = ({navigation}) => {
       console.log('set session storage');
       handleUserReturn(user);
     } catch(e) {
+      console.log(e);
       showMessage({
-        message: e.response.data,
+        message: e[0],
         type: "danger"
       })
-      console.warn(e.response.data);
     }
   }
     
@@ -100,10 +100,10 @@ const LoginScreen = ({navigation}) => {
       }
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e,
         type: "danger"
       })
-      console.warn(e.response.data);
+      console.warn(e);
     }
   }
 
@@ -120,10 +120,10 @@ const LoginScreen = ({navigation}) => {
       }
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e,
         type: "danger"
       });
-      console.warn(e.response.data);
+      console.warn(e);
     }
   }
 

@@ -16,8 +16,6 @@ import { headers, labelText, modalLabelText, sidenote, standardText } from '../.
 import { $arylideYellow, $chocolateBlack, $darkBlue, $luminousGreen, $zaGreen, screenContainer } from '../../styles/global';
 import { buttonSplit } from '../../components/Button/style';
 import Button from '../../components/Button/button';
-import { game, submitOrEditGame } from '../../components/Modal/modalSetting';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import StateModal from '../../components/Modal/StateModal';
 import { input, inputFieldLarge } from '../../styles/input';
 import { textLabel } from '../login/style';
@@ -98,7 +96,7 @@ const AdminHomeScreen = ({navigation}) => {
             }
         } catch(e) {
             showMessage({
-                message: e.response.data,
+                message: e,
                 type: "danger"
               });
             console.warn(e);
@@ -121,7 +119,7 @@ const AdminHomeScreen = ({navigation}) => {
             }
         } catch(e) {
             showMessage({
-                message: e.response.data,
+                message: e,
                 type: "danger"
               });
             console.warn(e);

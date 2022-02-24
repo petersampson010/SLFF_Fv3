@@ -69,14 +69,14 @@ export const pointsTEXT = {
 export const scoreTEXT = {
     fontFamily: 'Avenir Next',
     color: $standardWhite,
-    fontSize: 18,
+    fontSize: 20,
     textAlign: 'center'
 }
 
 export const scoreTeamsTEXT = {
     fontFamily: 'Avenir Next',
     color: $standardWhite,
-    fontSize: 14,
+    fontSize: 17,
     paddingTop: vh(0.3),
     textAlign: 'center'
 }

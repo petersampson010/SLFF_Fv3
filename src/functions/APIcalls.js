@@ -16,30 +16,56 @@ instance.interceptors.request.use(async(config) => {
 })
 
 const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {params: body}).then(res => {
-    if (singleObjReturn) {
-        return res.data[0]
+    if (res.data.errors) {
+        throw res.data.errors; 
     } else {
-        return res.data
+        if (singleObjReturn) {
+            console.log('singlee obj return');
+            return res.data[0]
+        } else {
+            console.log('array return ');
+            return res.data
+        }
     }
 }).catch(e => {
-    throw e.response.data.errors;
+    console.warn(e);
+    throw e;
 })
 
-const axiosPost = (url, payload) => instance.post(url, payload).then(res => res.data).catch(e => {
-    throw e.response.data.errors;
+const axiosPost = (url, payload) => instance.post(url, payload).then(res => {
+    if (res.data.errors) {
+        throw res.data.errors;
+    } else {
+        return res.data;
+    }
+}).catch(e => {
+    throw e;
 });
 
-const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => res.data).catch(e => {
-    throw e.response.data.errors;
+const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => {
+    if (res.data.errors) {
+        throw res.data.errors;
+    } else {
+        return res.data;
+    }
+}).catch(e => {
+    throw e;
 });
 
-const axiosDelete = url => instance.delete(url).catch(e => {
-    throw e.response.data.errors;
+const axiosDelete = url => instance.delete(url).then(res => {
+    if (res.data.errors) {
+        throw res.data.errors;
+    } else {
+        return res.data;
+    }
+}).catch(e => {
+    throw e;
 });
 
 // USER
 
 import { showMessage } from "react-native-flash-message";
+import { resetStore } from '../actions';
 import { getStorage } from './storage';
 
 export const userSignIn = userObj => axiosGet('user_sign_in', false, userObj);
@@ -292,10 +318,10 @@ export const postPGJ = async(joiner, admin_user_id) => {
         });
     } catch(e) {
         showMessage({
-            message: e.response.data,
+            message: e,
             type: "danger"
           });
-        console.warn(e.response.data);
+        console.warn(e);
     }
 }
 

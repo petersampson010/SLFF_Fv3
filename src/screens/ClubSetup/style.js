@@ -7,7 +7,7 @@ import { labelText, standardText } from "../../styles/textStyle"
 export const picker = {
     transform: [{ scaleX: 0.7 }, { scaleY: 0.7 }],
     ...standardText,
-    width: vw(25)
+    width: vw(30)
 }
 
 export const pickerItemStyle = {
@@ -24,10 +24,10 @@ export const textBox = {
     ...standardText,
     borderBottomWidth: 0.3,
     borderBottomColor: $arylideYellow,
-
 }
 
 export const headerTextBox = {
     ...labelText,
-    textAlign: 'center',
+    paddingLeft: vw(3)
+    // textAlign: 'center',
 }

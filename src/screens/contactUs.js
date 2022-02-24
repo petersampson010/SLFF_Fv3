@@ -29,7 +29,7 @@ export default function ContactUsScreen() {
       }
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e,
         type: "danger"
       });
     }

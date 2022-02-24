@@ -79,10 +79,10 @@ const AdminPlayerEditScreen = ({}) => {
                 }})
         } catch(e) {
             showMessage({
-                message: e.response.data,
+                message: e,
                 type: "danger"
               });
-            console.warn(e.response.data);
+            console.warn(e);
         }
     }
 

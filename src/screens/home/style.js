@@ -44,10 +44,10 @@ export const appTitle = {
 }
 
 export const recentGame = {
-    position: 'absolute',
+    // position: 'absolute',
     zIndex: 999,
     color: $arylideYellow,
     fontFamily: 'Avenir Next',
     left: vw(3),
-    transform: [{rotate: '-12deg'}]
+    // transform: [{rotate: '-12deg'}]
 }

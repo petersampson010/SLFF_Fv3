@@ -22,15 +22,15 @@ const GWScore = ({ width, backgroundColor }) => {
         (userFocusGW ? userFocusGW : lastGW);
         return otherTeamFocus ?
         <View style={{...gwScoreContainer, width, backgroundColor}}> 
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
-            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(36), textAlign: 'right'}}>{adminUser.club_name}</Text>
+            <Text style={{...scoreTEXT, width: vw(20), textAlign: 'center'}}>{GW.score}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(36), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
         :
         <View style={{...gwScoreContainer, width, backgroundColor}}> 
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'right'}}>{adminUser.club_name}</Text>
-            <Text style={{...scoreTEXT, width: vw(14), textAlign: 'center'}}>{GW.score}</Text>
-            <Text style={{...scoreTeamsTEXT, width: vw(39), textAlign: 'left'}}>{GW.opponent}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(36), textAlign: 'right'}}>{adminUser.club_name}</Text>
+            <Text style={{...scoreTEXT, width: vw(20), textAlign: 'center'}}>{GW.score}</Text>
+            <Text style={{...scoreTeamsTEXT, width: vw(36), textAlign: 'left'}}>{GW.opponent}</Text>
         </View>
 }
  

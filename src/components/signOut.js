@@ -7,7 +7,7 @@ import { updateStack } from '../Navigation';
 import { $darkBlue, $darkBlueOpacity } from '../styles/global';
 import { standardText } from '../styles/textStyle';
 
-const signOutText = ({navigation}) => {
+const signOutText = (navigation) => {
 
     const dispatch = useDispatch();
 

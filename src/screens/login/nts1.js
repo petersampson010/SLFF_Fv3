@@ -94,10 +94,10 @@ const ntsScreen1 = ({navigation}) => {
       updateStack(navigation, 0, 'nts2');
     } catch(e) {
       showMessage({
-        message: e.response.data,
+        message: e,
         type: "danger"
       });
-      console.warn(e.response.data);
+      console.warn(e);
     }
   }
 

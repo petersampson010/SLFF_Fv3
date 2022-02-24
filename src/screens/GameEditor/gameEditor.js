@@ -35,7 +35,7 @@ const GameEditorScreen = ({ navigation }) => {
 
     useEffect(() => {
         const setPlayers = () => {
-            let players =  {};
+            let players = {};
             for (let i=0;i<clubPlayers.length;i++) {
                 let player = clubPlayers[i];
                 players = {
@@ -142,7 +142,7 @@ const GameEditorScreen = ({ navigation }) => {
                 postArr.push(players[playerID]);
             }
         }
-        updatePlayers(updatePlayers);
+        updatePlayers(updatedPlayers);
         updateActiveDialog(false);
         if (outcome) {
             postPGJoiners(postArr);
@@ -177,10 +177,10 @@ const GameEditorScreen = ({ navigation }) => {
         } catch(e) {
             updateSpinner(false);
             showMessage({
-                message: e.response.data,
+                message: e,
                 type: "danger"
               });
-            console.warn(e.response.data);
+            console.warn(e);
         }
     }
 

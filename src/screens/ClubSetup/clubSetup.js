@@ -1,15 +1,15 @@
 import { connect, useDispatch, useSelector } from 'react-redux';
-import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, SectionList, ScrollView } from 'react-native';
+import React, { Component, useState } from 'react';
+import { View, Text, ScrollView } from 'react-native';
 import { FlatList, TextInput } from 'react-native-gesture-handler';
 import { Table, Row, Rows } from 'react-native-table-component';
 import { postPlayer } from '../../functions/APIcalls';
 import  { validatePlayer } from '../../functions/validity';
 import { capitalize } from '../../functions/reusable';
-import { tableElement3, tableElement4, tableRow } from '../../styles/table';
-import { labelText, standardText } from '../../styles/textStyle';
+import { tableElement3, tableElement4, tableRow, tableRowHead } from '../../styles/table';
+import { labelText, sidenote, standardText } from '../../styles/textStyle';
 import { headerTextBox, picker, pickerItemStyle, textBox, textInput, topBar } from './style';
-import { screenContainer } from '../../styles/global';
+import { $arylideYellow, screenContainer } from '../../styles/global';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { inputFieldLarge, inputFieldSmall } from '../../styles/input';
 import { updateStack } from '../../Navigation';
@@ -19,12 +19,13 @@ import { TouchableNativeFeedbackBase } from 'react-native';
 import SpinnerOverlay from '../../components/spinner/spinner';
 import { showMessage } from 'react-native-flash-message';
 import { Picker } from '@react-native-picker/picker';
+import Button from '../../components/Button/button';
 
 
 const ClubSetupScreen = ({navigation}) => {
 
     const dispatch = useDispatch(), 
-    [players, updatePlayers] = {
+    [players, updatePlayers] = useState({
             0: {name: '', position:'1', price: ''},
             1: {name: '', position:'1', price: ''},
             2: {name: '', position:'1', price: ''},
@@ -50,7 +51,7 @@ const ClubSetupScreen = ({navigation}) => {
             20: {name: '', position:'1', price: ''},
             22: {name: '', position:'1', price: ''},
             23: {name: '', position:'1', price: ''}
-    },
+    }),
     adminUserId = useSelector(state => state.club.adminUser.admin_user_id),
     spinner = useSelector(state => state.boolDeciders.spinner);
 
@@ -97,16 +98,17 @@ const ClubSetupScreen = ({navigation}) => {
                 autoCapitalize = 'words'
                 style={{...textBox, width: vw(50)}}
             />
-            <Picker style={picker} itemStyle={pickerItemStyle} key={i} selectedValue={players[i].position} onValueChange={value=>updatePosition(i, value)}>
+            <Picker dropdownIconColor={$arylideYellow} dropdownIconRippleColor={$arylideYellow} mode={'dropdown'} style={picker} itemStyle={pickerItemStyle} key={i} selectedValue={players[i].position} onValueChange={value=>updatePosition(i, value)}>
                 <Picker.Item label="GK" value='1'/>
                 <Picker.Item label="DEF" value='2'/>
                 <Picker.Item label="MID" value='3'/>
                 <Picker.Item label="FWD" value='4'/>
             </Picker>
                 <TextInput
+                keyboardType='numeric'
                     value={players[i].price} 
                     onChange={el=>updatePrice(el.nativeEvent.text, i)}
-                    style={{...textBox, textAlign: 'center', width: vw(20)}}
+                    style={{...textBox, textAlign: 'center', width: vw(15)}}
                 />
         </View>
         )
@@ -135,11 +137,11 @@ const ClubSetupScreen = ({navigation}) => {
             updateStack(navigation, 0, 'AdminHome');
         } catch(e)  {
             showMessage({
-                message: e.response.data,
+                message: e,
                 type: "danger"
               });
             dispatch(removeSpinner());
-            console.warn(e.response.data);
+            console.warn(e);
         }
     }
 
@@ -158,17 +160,17 @@ const ClubSetupScreen = ({navigation}) => {
                 {spinner ? <SpinnerOverlay/> :
                 <View>
                     <View style={topBar}>
-                        <View>
-                        <Text style={labelText}>Average Player Price: £{averagePrice()}m</Text>
-                        <Text style={labelText}>Reccommended: £74m</Text>
+                        <View >
+                            <Text style={labelText}>Average Player Price: £{averagePrice()}m</Text>
+                            <Text style={labelText}>Reccommended: £74m</Text>
                         </View>
-                        <Button clickable title="Submit Club Players" onPress={submitPlayers}/>
+                        <Button width={vw(35)} clickable text="Submit Club Players" func={submitPlayers}/>
                     </View>
                     <View>
-                        <View style={tableRow}>
+                        <View style={{...tableRowHead, alignItems: 'center'}}>
                             <Text style={{...headerTextBox, width: vw(50)}}>Name</Text>
-                            <Text style={{...headerTextBox, width: vw(25)}}>Position</Text>
-                            <Text style={{...headerTextBox, width: vw(20)}}>Price (£0-99m)</Text>
+                            <Text style={{...headerTextBox, width: vw(30)}}>Position</Text>
+                            <Text style={{...headerTextBox, width: vw(15)}}>Price <Text style={sidenote}>£0-99m</Text></Text>
                         </View>
                     </View>
                     <ScrollView contentContainerStyle={{paddingBottom: vh(20)}}>

@@ -93,11 +93,7 @@ const ntsScreen1 = ({navigation}) => {
       dispatch(setClubPlayersAndLastGW(allPlayers, lastGW));
       updateStack(navigation, 0, 'nts2');
     } catch(e) {
-      showMessage({
-        message: e,
-        type: "danger"
-      });
-      console.warn(e);
+      flashMyMessage(e, 'danger');
     }
   }
 

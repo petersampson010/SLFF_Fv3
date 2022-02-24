@@ -61,11 +61,7 @@ const LoginScreen = ({navigation}) => {
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       handleAdminReturn(admin_user);
     } catch(e) {
-      showMessage({
-        message: e[0],
-        type: "danger"
-      })
-      console.warn(e.response.data);
+      flashMyMessage(e, 'danger');
     }
   }
   
@@ -99,11 +95,7 @@ const LoginScreen = ({navigation}) => {
         })
       }
     } catch(e) {
-      showMessage({
-        message: e,
-        type: "danger"
-      })
-      console.warn(e);
+      flashMyMessage(e, 'danger');
     }
   }
 
@@ -119,11 +111,7 @@ const LoginScreen = ({navigation}) => {
         })
       }
     } catch(e) {
-      showMessage({
-        message: e,
-        type: "danger"
-      });
-      console.warn(e);
+      flashMyMessage(e, 'danger');
     }
   }
 

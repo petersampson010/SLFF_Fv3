@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createStore } from 'redux';
 import Navigation from './Navigation';
-import rootReducer from './rootReducer';
-import FlashMessage, { showMessage } from 'react-native-flash-message';
 import SpinnerOverlay from './components/spinner/spinner';
 import { clearStorage, getStorage, getTokenAndId } from './functions/storage';
 import userData from './functions/GetAndSet/userData';
@@ -11,6 +8,7 @@ import adminData from './functions/GetAndSet/adminData';
 import { getAdminUserById, getUserById } from './functions/APIcalls';
 import { View } from 'react-native';
 import { screenContainer } from './styles/global';
+import { flashMyMessage } from './functions/flashMyMessage';
 
 const LoadContainer = () => {
 
@@ -41,10 +39,7 @@ const LoadContainer = () => {
                 }
             } catch(e) {
                 console.log(e);
-                showMessage({
-                    type: 'danger',
-                    message: e
-                })
+                flashMyMessage(e, 'danger');
                 console.warn(e)
             }
             console.log('shouold always  hit  no matter ')

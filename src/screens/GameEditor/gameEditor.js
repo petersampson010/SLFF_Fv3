@@ -176,11 +176,7 @@ const GameEditorScreen = ({ navigation }) => {
             navigation.navigate('AdminHome');
         } catch(e) {
             updateSpinner(false);
-            showMessage({
-                message: e,
-                type: "danger"
-              });
-            console.warn(e);
+            flashMyMessage(e, 'danger');
         }
     }
 

@@ -4,11 +4,11 @@ import { screenContainer } from '../styles/global';
 import { input, inputFieldContainerCenter, inputFieldLarge, inputFieldVeryLarge } from '../styles/input';
 import { textLabel } from './login/style';
 import { vh, vw } from "react-native-expo-viewport-units"
-import { labelText, standardText } from '../styles/textStyle';
+import { labelText } from '../styles/textStyle';
 import { TouchableOpacity } from 'react-native';
 import { postMessage } from '../functions/APIcalls';
-import { showMessage } from 'react-native-flash-message';
 import Button from '../components/Button/button';
+import { flashMyMessage } from '../functions/flashMyMessage';
 
 export default function ContactUsScreen() {
 
@@ -28,10 +28,7 @@ export default function ContactUsScreen() {
         setComplete(true);
       }
     } catch(e) {
-      showMessage({
-        message: e,
-        type: "danger"
-      });
+      flashMyMessage(e, 'danger');
     }
   }
 

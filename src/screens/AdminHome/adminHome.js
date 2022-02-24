@@ -20,6 +20,7 @@ import StateModal from '../../components/Modal/StateModal';
 import { input, inputFieldLarge } from '../../styles/input';
 import { textLabel } from '../login/style';
 import DatePicker from 'react-native-date-picker';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 const AdminHomeScreen = ({navigation}) => {
@@ -95,11 +96,7 @@ const AdminHomeScreen = ({navigation}) => {
                 })
             }
         } catch(e) {
-            showMessage({
-                message: e,
-                type: "danger"
-              });
-            console.warn(e);
+            flashMyMessage(e, 'danger');
         }
     }   
 
@@ -118,11 +115,7 @@ const AdminHomeScreen = ({navigation}) => {
                 })
             }
         } catch(e) {
-            showMessage({
-                message: e,
-                type: "danger"
-              });
-            console.warn(e);
+            flashMyMessage(e, 'danger');
         }
     }
 

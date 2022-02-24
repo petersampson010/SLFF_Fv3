@@ -17,7 +17,8 @@ export const pickerItemStyle = {
 
 export const topBar = {
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    padding: vh(1)
 }
 
 export const textBox = {

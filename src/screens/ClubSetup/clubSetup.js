@@ -105,7 +105,7 @@ const ClubSetupScreen = ({navigation}) => {
                 <Picker.Item label="FWD" value='4'/>
             </Picker>
                 <TextInput
-                keyboardType='numeric'
+                    keyboardType='numeric'
                     value={players[i].price} 
                     onChange={el=>updatePrice(el.nativeEvent.text, i)}
                     style={{...textBox, textAlign: 'center', width: vw(15)}}
@@ -118,7 +118,11 @@ const ClubSetupScreen = ({navigation}) => {
         if (countPlayers()>1) {
             postPlayers();
         } else {
-            console.warn('not enough players ya get me')
+            showMessage({
+                type: 'warning',
+                message: 'Not enough players'
+            });
+            console.warn('not enough players ya get me');
         }
     }
 
@@ -136,12 +140,8 @@ const ClubSetupScreen = ({navigation}) => {
             dispatch(removeSpinner());
             updateStack(navigation, 0, 'AdminHome');
         } catch(e)  {
-            showMessage({
-                message: e,
-                type: "danger"
-              });
+            flashMyMessage(e, 'danger');
             dispatch(removeSpinner());
-            console.warn(e);
         }
     }
 
@@ -160,7 +160,7 @@ const ClubSetupScreen = ({navigation}) => {
                 {spinner ? <SpinnerOverlay/> :
                 <View>
                     <View style={topBar}>
-                        <View >
+                        <View style={{justifyContent: 'center'}}>
                             <Text style={labelText}>Average Player Price: £{averagePrice()}m</Text>
                             <Text style={labelText}>Reccommended: £74m</Text>
                         </View>
@@ -173,7 +173,7 @@ const ClubSetupScreen = ({navigation}) => {
                             <Text style={{...headerTextBox, width: vw(15)}}>Price <Text style={sidenote}>£0-99m</Text></Text>
                         </View>
                     </View>
-                    <ScrollView contentContainerStyle={{paddingBottom: vh(20)}}>
+                    <ScrollView contentContainerStyle={{paddingBottom: vh(75)}}>
                             {renderRows()}
                     </ScrollView>
                 </View>

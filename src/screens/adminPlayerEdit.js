@@ -1,20 +1,18 @@
-import React, { Component, useState } from 'react';
-import { ScrollView, View, Switch, Text, TextInput } from 'react-native';
+import React, { useState } from 'react';
+import { View, Switch, Text, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { Input } from 'react-native-elements';
 import PlayersList from '../components/playersList/playersList';
 import {vw, vh} from 'react-native-expo-viewport-units';
-import { availability, fullName, positionString } from '../functions/reusable';
+import { availability } from '../functions/reusable';
 import { patchPlayer } from '../functions/APIcalls';
-import { showMessage } from 'react-native-flash-message';
 import Button from '../components/Button/button';
 import { screenContainer } from '../styles/global';
 import StateModal from '../components/Modal/StateModal';
-import { input, inputFieldLarge, inputFieldMedium, inputFieldSmall } from '../styles/input';
-import { textLabel } from './login/style';
+import { input, inputFieldMedium, inputFieldSmall } from '../styles/input';
 import { modalLabelText } from '../styles/textStyle';
 import { updateGameState, updateStateClubPlayers } from '../actions';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
+import { flashMyMessage } from '../functions/flashMyMessage';
 
 const AdminPlayerEditScreen = ({}) => {
 
@@ -78,10 +76,7 @@ const AdminPlayerEditScreen = ({}) => {
                 "updated_at": "2020-11-23T13:03:11.328Z"
                 }})
         } catch(e) {
-            showMessage({
-                message: e,
-                type: "danger"
-              });
+            flashMyMessage(e, 'danger');
             console.warn(e);
         }
     }

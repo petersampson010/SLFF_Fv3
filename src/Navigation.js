@@ -124,13 +124,14 @@ function Navigation({initialRoute}) {
         }}}
         />
         <Stack.Screen name="AdminHome" component={AdminHomeScreen} 
-        options={{
+        options={({navigation})=>({
           title: 'Club Home',
           headerLeft: ()=>false,
+          headerRight: ()=>signOutText(navigation),
           headerStyle: {backgroundColor: $inputBlue}
         , headerTitleStyle: {
           color: 'white'
-        }}}/>
+        }})}/>
         <Stack.Screen name="GameEditor" component={GameEditorScreen} 
         options={{
           title: 'Game Editor',

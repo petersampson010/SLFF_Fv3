@@ -28,7 +28,8 @@ const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {par
         }
     }
 }).catch(e => {
-    console.warn(e);
+    console.log('***** ERROR BEING THROWN BY GET: *****');
+    console.log(e);
     throw e;
 })
 
@@ -39,6 +40,8 @@ const axiosPost = (url, payload) => instance.post(url, payload).then(res => {
         return res.data;
     }
 }).catch(e => {
+    console.log('***** ERROR BEING THROWN BY POST: *****');
+    console.log(e);
     throw e;
 });
 
@@ -49,6 +52,8 @@ const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => {
         return res.data;
     }
 }).catch(e => {
+    console.log('***** ERROR BEING THROWN BY PATCH: *****');
+    console.log(e);
     throw e;
 });
 
@@ -59,13 +64,13 @@ const axiosDelete = url => instance.delete(url).then(res => {
         return res.data;
     }
 }).catch(e => {
+    console.log('***** ERROR BEING THROWN BY DELETE: *****');
+    console.log(e);
     throw e;
 });
 
 // USER
-
-import { showMessage } from "react-native-flash-message";
-import { resetStore } from '../actions';
+import { flashMyMessage } from './flashMyMessage';
 import { getStorage } from './storage';
 
 export const userSignIn = userObj => axiosGet('user_sign_in', false, userObj);
@@ -134,14 +139,18 @@ export const getPlayersByUserIdGWIdSub = async(userId, gwId, sub) => {
 
 export const getGWSubsByUserId = (id, gameweekId) => axiosGet(`users/${id}/${gameweekId}/gw_subs`)
 
-export const postPlayer = (player, adminUserId) => axiosPost('players', {
-    first_name: player.name.split(' ')[0],
-    last_name: player.name.split(' ')[1],
+export const postPlayer = (player, adminUserId) => {
+    const nameSplit = player.name.split(' '),
+    firstName = nameSplit[0],
+    lastName = nameSplit[1];
+    return axiosPost('players', {
+    first_name: lastName ? firstName : '',
+    last_name: lastName ? lastName : firstName,
     position: player.position,
     price: (player.price),
     availability: 'a',
     admin_user_id: adminUserId
-});
+})};
 
 export const patchPlayer = player => axiosPatch(`players/${player.player_id}`, {
     first_name: player.first_name,
@@ -317,11 +326,7 @@ export const postPGJ = async(joiner, admin_user_id) => {
             admin_user_id
         });
     } catch(e) {
-        showMessage({
-            message: e,
-            type: "danger"
-          });
-        console.warn(e);
+        flashMyMessage(e, 'danger');
     }
 }
 
@@ -359,4 +364,10 @@ export const postMessage = (name, email, msg) => axiosPost('messages', {
     name,
     email,
     msg
+});
+
+
+export const sendEmail = (message, recipient) => axiosPost('http://localhost:3000/send_email', {
+    message,
+    recipient
 });

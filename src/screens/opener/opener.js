@@ -1,11 +1,12 @@
-import React, { Component } from 'react';
-import { View, Text, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { showMessage } from 'react-native-flash-message';
-import { getStorage } from '../../functions/storage';
+import React from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+import { sendEmail } from '../../functions/APIcalls';
 import { screenContainer } from '../../styles/global';
 import { optionContainer, optionsContainer, optionText, optionHead, optionUsContainer } from './style';
 
 const OpenerScreen = ({navigation}) => {
+
+    sendEmail('come hree', 'petersampson010@gmail.com');
 
         return (
           <View style={screenContainer}>

@@ -8,6 +8,7 @@ import { $electricBlue } from '../../styles/global';
 import { navSectionBackground, navSectionContainer, navText } from './style';
 import { getGameweekFromAdminUserIdAndGameweek } from '../../functions/APIcalls';
 import { updateStack } from '../../Navigation';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 const NavSection = ({ page, navigation }) => {

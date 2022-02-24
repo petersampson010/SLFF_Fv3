@@ -113,13 +113,9 @@ const TransfersScreen = ({navigation}) => {
                 })
             }
         } catch(e) {
-            console.warn(e.response.data);
             dispatch(setTransferringBackToLatest());
+            flashMyMessage(e, 'danger');
             dispatch(removeSpinner());
-            showMessage({
-                type: 'danger',
-                message: "Fail: This update was not successful, please try again later"
-            })
         }
     }
 

@@ -46,40 +46,6 @@ const AdminAccountSetupScreen = ({navigation}) => {
     })
   }
 
-  // checkValidAccount = (allAdminUsers) => {
-  //   if (checkEmail(allAdminUsers) && checkPassword()) {
-  //     return true;
-  //   } else {
-  //     return false;
-  //   }
-  // }
-
-  // checkEmail = allAdminUsers => {
-  //   let valid = true;
-  //   // loop1:
-  //   for (let i=0;i<allAdminUsers.length;i++) {
-  //     let user = allAdminUsers[i];
-  //     if (user.email===state.adminUserObj.email) {
-  //       showMessage({
-  //         message: "Email already exists, please try again or go back and try to login using this email",
-  //         description: "If you need a sub-section of error",
-  //         type: "warning"
-  //       });
-  //       valid = false;
-  //       break;
-  //     } else if (user.club_name===state.adminUserObj.clubName) {
-  //       showMessage({
-  //         message: "Club Name already in use, please try again or go back and try to login",
-  //         description: "If you need a sub-section of error",
-  //         type: "warning"
-  //       });
-  //       valid = false;
-  //       break;
-  //     }
-  //   }
-  //   return valid;
-  // }
-
   const checkPassword = () => {
     if (adminUserObj.password===adminUserObj.rePassword) {
       return true;
@@ -102,11 +68,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
       dispatch(setAdminUser(admin_user));
       updateStack(navigation, 0, 'ClubSetup');
     } catch(e) {
-      showMessage({
-        message: e ? e[0] : "Sorry, we are experiencing some technical issues. Please try again later.",
-        type: "danger"
-      });
-      console.warn(e.response.data);
+      flashMyMessage(e, 'danger');
     }
     return;
   }

@@ -17,7 +17,6 @@ const Pitch = ({ type, team, playerGraphicClickFcn, clickFcn, update, subs, allP
     const otherTeamFocus = useSelector(state => state.boolDeciders.otherTeamFocus);
     const otherUGJ = useSelector(state => state.club.focusedGWTeam.UGJ);
     const formattedTeam = () => playersArrayToObj(team);
-    console.log(formattedTeam()['4']);
     const pitchImg = require('../../../images/kisspng-ball-game-football-pitch-corner-kick-football-stadium-5ac96cf3827065.1735532915231500675343.png');
 
 

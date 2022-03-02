@@ -71,6 +71,8 @@ const MyModal = () => {
                 return <Text style={modalLabelText}>Would you like to edit the game or submit the stats and complete it?</Text>;
             case 'set5':
                 return <Text style={modalLabelText}>Please ensure stats are correct, once confirmeed they cannot be corrected.</Text>;
+            case 'set6':
+                return <Text style={modalLabelText}>Thanks for signing up! An email has been sent to you. Please check it and confirm. Once you have done so please select 'Complete'.</Text>;
             default: 
                 return;
         }
@@ -85,6 +87,8 @@ const MyModal = () => {
                 return <Button width={vw(35)} clickable modal text="Edit Game" func={btnClick}/>;
             case 'set5':
                 return <Button width={vw(35)} clickable modal text="Submit Stats" func={btnClick}/>;
+            case 'set6':
+                return <Button width={vw(35)} clickable modal text="Complete" func={btnClick}/>;
             default: 
                 return;
         }

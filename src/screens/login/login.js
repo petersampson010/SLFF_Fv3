@@ -67,15 +67,10 @@ const LoginScreen = ({navigation}) => {
   
   const handleUserSubmit = async() => {
     try {
-      console.log(userObj);
       const { user, token } = await userSignIn(userObj);
-      console.log(user);
-      console.log(token);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
-      console.log('set session storage');
       handleUserReturn(user);
     } catch(e) {
-      console.log(e);
       showMessage({
         message: e[0],
         type: "danger"

@@ -14,15 +14,12 @@ import { $arylideYellow, $darkBlue } from '../../styles/global';
 
 const playerGWProfile = pg => {
 
-    console.log('**** PLAYER GW PROFILE ****');
 
     renderPointsBreakdown = () => {
         return Object.keys(pg).map(score=>{
             let att = pg[score];
-            console.log(score);
             score = score==="total_points" ? "Points" : score;
             score = score==="goals_conceded" ? "Condeded" : score;
-            console.log(score);
             if (att==null || att=='0' || score=="pg_id" || score=="updated_at" || score=="created_at" || score=="player_id" || score=="gameweek_id" || score=="admin_user_id") {
                 return;
             } else {

@@ -11,7 +11,6 @@ instance.interceptors.request.use(async(config) => {
     } catch (e) {
         console.warn(e)
     }
-    console.log('still returning');
     return config;
 })
 
@@ -20,10 +19,8 @@ const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {par
         throw res.data.errors; 
     } else {
         if (singleObjReturn) {
-            console.log('singlee obj return');
             return res.data[0]
         } else {
-            console.log('array return ');
             return res.data
         }
     }
@@ -90,8 +87,6 @@ export const patchUser = (userId, userPatchObj) => {
 }
 
 export const getUserTotalPoints = (userId) => axiosGet(`users/${userId}/total_points`);
-
-
 
 
 // ADMIN_USER

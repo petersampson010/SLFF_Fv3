@@ -1,10 +1,10 @@
-import { connect, useDispatch } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import React, { Component, useEffect, useRef, useState } from 'react';
 import { View, Text, Switch, StyleSheet, TextInput, processColor, ScrollView, Keyboard } from 'react-native';
-import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, postUser } from '../../functions/APIcalls';
+import { getAdminUserById, getAllAdminUsers, getAllPlayersByAdminUserId, getAllUsers, getUserById, postUser } from '../../functions/APIcalls';
 import { validateUser } from '../../functions/validity';
 import Header from '../../components/header/header';
-import { setAdminUser, setClubPlayersAndLastGW, setUser } from '../../actions';
+import { closeModal, setAdminUser, setClubPlayersAndLastGW, setModal, setUser } from '../../actions';
 import { showMessage } from 'react-native-flash-message';
 import { screenContainer } from '../../styles/global';
 import { inputField, inputFieldsContainer, loginHead, switchText, textLabel } from './style';
@@ -12,9 +12,10 @@ import { inputFieldContainerCenter, inputFieldLarge, input } from '../../styles/
 import { updateStack } from '../../Navigation';
 import globalConfig from '../../config/globalConfig.json';
 import { getLastAndAllGWs } from '../../functions/reusable';
-import { setStorage } from '../../functions/storage';
+import { getStorage, setStorage } from '../../functions/storage';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 
@@ -32,6 +33,18 @@ const ntsScreen1 = ({navigation}) => {
     budget: globalConfig.startBudget
   }),
   [verified, updateVerified] = useState(false);
+
+  useEffect(() => {
+    console.log('hitting useEffect');
+    const checkVerified = () => {
+      console.log('hitting checkVerified function');
+      console.log(verified);
+      if (verified) {
+        updateStack(navigation, 0, 'nts2');
+      }
+    };
+    checkVerified();
+  }, [verified])
 
   Keyboard.addListener('keyboardDidHide', () => scrollRef.current?.scrollTo({y: 0, animated: true}));
 
@@ -71,27 +84,35 @@ const ntsScreen1 = ({navigation}) => {
     try {
       checkPassword();
       let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget};
-      const { token, user } = await postUser(userData);
-      console.log(token);
-      console.log(user);
+      const {user, token} = await postUser(userData);
+      dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: ()=>checkEmailConfirm()}));
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
-      console.log('test2');
-
       let adminUser = await getAdminUserById(user.admin_user_id);
-      console.log(adminUser);
-      console.log('teest3');
-
       let { lastGW } = await getLastAndAllGWs(user.admin_user_id);
-      console.log('test4');
-      console.log(lastGW);
-
       dispatch(setUser(user));
       dispatch(setAdminUser(adminUser));
-      console.log('6');
-
       let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
       dispatch(setClubPlayersAndLastGW(allPlayers, lastGW));
-      updateStack(navigation, 0, 'nts2');
+    } catch(e) {
+      flashMyMessage(e, 'danger');
+    }
+  } 
+
+  const checkEmailConfirm = async() => {
+    try {
+      const { user_id } = await getStorage('session');
+      console.log(user_id);
+      console.log(typeof user_id);
+      const res = await getUserById(user_id);
+      console.log(res);
+      if (res.confirm_email) {
+        console.log('email is confirmed');
+        dispatch(closeModal());
+        updateVerified(true);
+        flashMyMessage('Email confirmed successfully', 'success');
+      } else {
+        flashMyMessage('Email not confirmed yet', 'warning');
+      }
     } catch(e) {
       flashMyMessage(e, 'danger');
     }

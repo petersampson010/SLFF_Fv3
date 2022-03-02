@@ -1,9 +1,9 @@
-import React, { Component, useRef, useState } from 'react';
+import React, { Component, useEffect, useRef, useState } from 'react';
 import { View, Text, Switch, Keyboard, ScrollView } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 import { connect, useDispatch } from 'react-redux';
-import { setAdminUser } from '../../actions';
-import { getAllAdminUsers, getAllUsers, postAdminUser, getAllUsersByAdminUserId } from '../../functions/APIcalls'; 
+import { closeModal, setAdminUser, setModal } from '../../actions';
+import { getAllAdminUsers, getAllUsers, postAdminUser, getAllUsersByAdminUserId, getAdminUserById } from '../../functions/APIcalls'; 
 import { showMessage } from "react-native-flash-message";
 import { screenContainer } from '../../styles/global';
 import { loginHead, switchText, textLabel } from './style';
@@ -12,6 +12,7 @@ import { updateStack } from '../../Navigation';
 import { getStorage, setStorage } from '../../functions/storage';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 const AdminAccountSetupScreen = ({navigation}) => {
 
@@ -23,7 +24,20 @@ const AdminAccountSetupScreen = ({navigation}) => {
     rePassword: '',
     clubName: '',
     terms: false
-  });
+  }),
+  [verified, updateVerified] = useState(false);
+
+  useEffect(() => {
+    console.log('hitting useEffect');
+    const checkVerified = () => {
+      console.log('hitting checkVerified function');
+      console.log(verified);
+      if (verified) {
+        updateStack(navigation, 0, 'ClubSetup');
+      }
+    };
+    checkVerified();
+  }, [verified])
 
   Keyboard.addListener('keyboardDidHide', () => scrollRef.current?.scrollTo({y: 0, animated: true}));
   
@@ -62,15 +76,33 @@ const AdminAccountSetupScreen = ({navigation}) => {
   const handleSubmit = async() => {
     try {
       checkPassword();
-      let res = await postAdminUser(adminUserObj);
-      const { token, admin_user } = res;
+      let { token, admin_user } = await postAdminUser(adminUserObj);
+      dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       dispatch(setAdminUser(admin_user));
-      updateStack(navigation, 0, 'ClubSetup');
     } catch(e) {
       flashMyMessage(e, 'danger');
     }
     return;
+  }
+
+  const checkEmailConfirm = async() => {
+    try {
+      const { admin_user_id } = await getStorage('session');
+      console.log(admin_user_id);
+      console.log(typeof admin_user_id);
+      const res = await getAdminUserById(admin_user_id);
+      if (res.confirm_email) {
+        console.log('email is confirmed');
+        dispatch(closeModal());
+        updateVerified(true);
+        flashMyMessage('Email confirmed successfully', 'success');
+      } else {
+        flashMyMessage('Email not confirmed yet', 'warning');
+      }
+    } catch(e) {
+      flashMyMessage(e, 'danger');
+    }
   }
 
     return (
@@ -90,7 +122,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
                 onChangeText={value => formChange('email', value)}
                 placeholder="email@address.com"
                 placeholderTextColor='#d1d2d6'
-                autoCapitalize="words"
+                autoCapitalize="none"
                 />
               </View>
               <Text style={textLabel}>Enter your club name</Text>

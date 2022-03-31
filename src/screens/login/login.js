@@ -16,6 +16,7 @@ import { vw } from 'react-native-expo-viewport-units';
 import { getStorage, setStorage } from '../../functions/storage';
 import userData from '../../functions/GetAndSet/userData';
 import adminData from '../../functions/GetAndSet/adminData';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 const LoginScreen = ({navigation}) => {
@@ -61,7 +62,7 @@ const LoginScreen = ({navigation}) => {
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       handleAdminReturn(admin_user);
     } catch(e) {
-      flashMyMessage(e, 'danger');
+      flashMyMessage(e[0], 'danger');
     }
   }
   

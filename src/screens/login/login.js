@@ -58,20 +58,24 @@ const LoginScreen = ({navigation}) => {
 
   const handleAdminSubmit = async() => {
     try {
+      dispatch(addSpinner());
       const { admin_user, token } = await adminUserSignIn(userObj);
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       handleAdminReturn(admin_user);
     } catch(e) {
+      dispatch(removeSpinner());
       flashMyMessage(e[0], 'danger');
     }
   }
   
   const handleUserSubmit = async() => {
     try {
+      dispatch(addSpinner());
       const { user, token } = await userSignIn(userObj);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
       handleUserReturn(user);
     } catch(e) {
+      dispatch(removeSpinner());
       showMessage({
         message: e[0],
         type: "danger"
@@ -83,14 +87,17 @@ const LoginScreen = ({navigation}) => {
     try {
       if (user !== undefined && user !== null) {
         dispatch(await userData(user));
+        dispatch(removeSpinner());
         updateStack(navigation, 0, 'Home');
       } else {
+        dispatch(removeSpinner());
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
         })
       }
     } catch(e) {
+      dispatch(removeSpinner());
       flashMyMessage(e, 'danger');
     }
   }
@@ -99,14 +106,17 @@ const LoginScreen = ({navigation}) => {
     try {
       if (adminUser !== undefined && adminUser !== null) {
         dispatch(await adminData(adminUser));
+        dispatch(removeSpinner());
         updateStack(navigation, 0, 'AdminHome');
       } else {
+        dispatch(removeSpinner());
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
         })
       }
     } catch(e) {
+      dispatch(removeSpinner());
       flashMyMessage(e, 'danger');
     }
   }

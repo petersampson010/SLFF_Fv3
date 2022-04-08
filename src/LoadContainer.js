@@ -18,7 +18,7 @@ const LoadContainer = () => {
   
     useEffect(() => {
         const loggedIn = async() => {
-            await clearStorage();
+            // await clearStorage();
             try {
                 let session = await getStorage('session');
                 if (session) {

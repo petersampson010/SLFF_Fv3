@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+
 const instance = axios.create({
-    baseURL: 'http://localhost:3000/'
+    baseURL: process.env.RN_SET_API_URL
 }) 
 
 instance.interceptors.request.use(async(config) => {
@@ -15,6 +16,8 @@ instance.interceptors.request.use(async(config) => {
 })
 
 const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {params: body}).then(res => {
+    console.log(process.env);
+    console.log(process.env.RN_SET_API_URL);
     if (res.data.errors) {
         throw res.data.errors; 
     } else {
@@ -30,7 +33,11 @@ const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {par
     throw e;
 })
 
-const axiosPost = (url, payload) => instance.post(url, payload).then(res => {
+const axiosPost = (url, payload) => {
+    console.log(process.env);
+    console.log(process.env.RN_SET_API_URL);
+
+    return instance.post(url, payload).then(res => {
     if (res.data.errors) {
         throw res.data.errors;
     } else {
@@ -41,6 +48,7 @@ const axiosPost = (url, payload) => instance.post(url, payload).then(res => {
     console.log(e);
     throw e;
 });
+}
 
 const axiosPatch = (url, payload) => instance.patch(url, payload).then(res => {
     if (res.data.errors) {
@@ -176,8 +184,7 @@ export const getRecord = (userId, gwId, playerId) => axiosGet(`records?user_id=$
 
 export const getRecordsByUserIdGWIdSub = (userId, gwId, sub) => axiosGet(`records?user_id=${userId}&gameweek_id=${gwId}&sub=${sub}`);
 
-export const postRecord = (player, userId, count) => {
-    return axiosPost('records', {
+export const postRecord = (player, userId, count) => axiosPost('records', {
     sub: count>5 ? true : false,
     captain: count===2 ? true : false,
     vice_captain: count===5 ? true : false,
@@ -185,7 +192,7 @@ export const postRecord = (player, userId, count) => {
     player_id: player.player_id,
     gameweek_id: 0,
     admin_user_id: player.admin_user_id
-})};
+});
 
 export const postRecordDUPLICATE = (record) => axiosPost('records', {
     sub: record.sub,

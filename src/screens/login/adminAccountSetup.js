@@ -13,6 +13,7 @@ import { getStorage, setStorage } from '../../functions/storage';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
 import { flashMyMessage } from '../../functions/flashMyMessage';
+import globalConfig from '../../config/globalConfig.json';
 
 const AdminAccountSetupScreen = ({navigation}) => {
 
@@ -77,7 +78,12 @@ const AdminAccountSetupScreen = ({navigation}) => {
     try {
       checkPassword();
       let { token, admin_user } = await postAdminUser(adminUserObj);
-      dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
+      if (globalConfig.RN_SET_MAIL) {
+        dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
+      } else {
+        updateVerified(true);
+        flashMyMessage('Skipping Email confirmation', 'success');
+      }
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       dispatch(setAdminUser(admin_user));
     } catch(e) {

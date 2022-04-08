@@ -1,0 +1,1 @@
+ios: npm run ios

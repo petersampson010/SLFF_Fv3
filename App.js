@@ -18,6 +18,8 @@ const store = createStore(rootReducer);
 
 const App = () => {
 
+  console.log(process.env.RN_SET_API_URL);
+
   return (
     <Provider store={store}>
       <LoadContainer />

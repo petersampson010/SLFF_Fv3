@@ -55,6 +55,7 @@ const ntsScreen2 = ({navigation}) => {
                         let records = [];
                         let returnUser = await patchUser(user.user_id, {gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
                         for (let i=0;i<globalConfig.numberOfPlayers;i++) {
+                            teamPlayers.sort((a,b) => a.position - b.position);
                             let record = await postRecord(teamPlayers[i], returnUser.user_id, i);
                             records.push(record);
                         }

@@ -244,7 +244,7 @@ const GameEditorScreen = ({ navigation }) => {
                     <View style={headComp}><Text style={{width: vh(16), ...standardText}}>Goals Conceeded</Text></View>
                 </View>
                 <ScrollView style={screenContainer}>
-                    <View style={{paddingBottom: vh(62)}}>
+                    <View style={{paddingBottom: vh(71)}}>
                         {renderRows()}
                     </View>
                 </ScrollView>

@@ -16,7 +16,6 @@ import { getStorage, setStorage } from '../../functions/storage';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
 import { flashMyMessage } from '../../functions/flashMyMessage';
-import globalConfig from '../../config/globalConfig.json';
 
 
 

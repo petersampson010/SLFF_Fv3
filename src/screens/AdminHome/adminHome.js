@@ -44,7 +44,7 @@ const AdminHomeScreen = ({navigation}) => {
     const renderGame = (game, i) => <TouchableOpacity key={i} style={gameContainer}
     onPress={()=>setModal(game)}>
         <View>
-            <Text style={labelText}>HEROKU  WORKING{game.opponent}</Text>
+            <Text style={labelText}>{game.opponent}</Text>
             <Text style={sidenote}>{displayDate(game.date)}</Text>
         </View>
         {game.complete ? 

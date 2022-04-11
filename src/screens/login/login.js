@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { View, Text, Switch, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect, useDispatch } from 'react-redux';
-import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
+import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner, removeSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
   getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId, adminUserSignIn, userSignIn } 
   from '../../functions/APIcalls'; 

@@ -16,8 +16,6 @@ instance.interceptors.request.use(async(config) => {
 })
 
 const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {params: body}).then(res => {
-    console.log(process.env);
-    console.log(process.env.RN_SET_API_URL);
     if (res.data.errors) {
         throw res.data.errors; 
     } else {
@@ -34,9 +32,6 @@ const axiosGet = (url, singleObjReturn=false, body={}) => instance.get(url, {par
 })
 
 const axiosPost = (url, payload) => {
-    console.log(process.env);
-    console.log(process.env.RN_SET_API_URL);
-
     return instance.post(url, payload).then(res => {
     if (res.data.errors) {
         throw res.data.errors;

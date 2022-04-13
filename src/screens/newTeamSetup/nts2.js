@@ -103,7 +103,7 @@ const ntsScreen2 = ({navigation}) => {
     }
 
     const setModalINPUT = player => {
-        dispatch(setModal({modalSet: 'set1', player, btnClick: transfer, width: vw(80), height: vh(30)}));
+        dispatch(setModal({modalSet: 'set1', player: player.player, pg: player.pg, btnClick: transfer, width: vw(80), height: vh(30)}));
     }
 
         return ( 

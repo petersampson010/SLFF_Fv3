@@ -24,7 +24,7 @@ const MyModal = () => {
     modalActive = useSelector(state => state.boolDeciders.modal),
     captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain),
     vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain),
-    { player, width, modalSet, pg, ug, user } = modal,
+    { width, modalSet, ug, user, player, pg } = modal,
     playerImg = require('../../../images/profile.jpg'),
     subImg = require('../../../images/subIcon.png');
 

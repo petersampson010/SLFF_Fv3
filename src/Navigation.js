@@ -30,6 +30,7 @@ export const updateStack = (navigation, stackIndex, page) => {
 
 function Navigation({initialRoute}) {
 // console.log(initialRoute)
+console.log('hitting nav');
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName={initialRoute} screenOptions={{headerTitleAlign: 'center'}}>

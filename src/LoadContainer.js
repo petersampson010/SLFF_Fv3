@@ -1,20 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Navigation from './Navigation';
 import SpinnerOverlay from './components/spinner/spinner';
 import { clearStorage, getStorage, getTokenAndId } from './functions/storage';
 import userData from './functions/GetAndSet/userData';
 import adminData from './functions/GetAndSet/adminData';
 import { getAdminUserById, getUserById } from './functions/APIcalls';
-import { View } from 'react-native';
 import { screenContainer } from './styles/global';
 import { flashMyMessage } from './functions/flashMyMessage';
+import { removeSpinner } from './actions';
+import { overlay, spinnerTitle } from './components/spinner/style';
+import { screensEnabled } from 'react-native-screens';
+import { ActivityIndicator, View, Text } from "react-native";
+import MyModal from './components/Modal/myModal';
+import FlashMessage from 'react-native-flash-message';
 
 const LoadContainer = () => {
-
-    const [onLoad, updateOnLoad] = useState(true);
-    const [initialRoute, updateInitialRoute] = useState('Opener');
-    const dispatch = useDispatch();
+    const [initialRoute, updateInitialRoute] = useState('Opener'),
+    dispatch = useDispatch(),
+    [onLoad, updateOnLoad] = useState(true),
+    spinner = useSelector(state => state.boolDeciders.spinner);
   
     useEffect(() => {
         const loggedIn = async() => {
@@ -38,17 +43,29 @@ const LoadContainer = () => {
                 flashMyMessage(e, 'danger');
                 console.warn(e)
             }
+            console.log('aree we hitting');
+            dispatch(removeSpinner());
             updateOnLoad(false);
         };
         loggedIn(); 
     }, []);
 
-    return onLoad ? 
-            <View style={screenContainer}>
-                <SpinnerOverlay/>
+    return <View style={screenContainer}>
+            {onLoad ? 
+            <View style={overlay}>
+                <Text style={spinnerTitle}>SLFF</Text>
+                <ActivityIndicator size="large" color="#00ff00"/>
             </View>
-            :
-            <Navigation initialRoute={initialRoute}/>;
+            : 
+            <View style={screenContainer}>
+                <MyModal/>
+                <FlashMessage position="top"/>
+                {spinner ? <SpinnerOverlay/> : null}
+                <Navigation initialRoute={initialRoute}/>
+            </View>}
+            {/* <SpinnerOverlay/>
+            <MyModal/> */}
+        </View>
 }
 
 export default LoadContainer;

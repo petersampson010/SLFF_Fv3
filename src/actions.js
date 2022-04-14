@@ -1,6 +1,6 @@
 import { getCaptain, getVCaptain, isCaptain, isVCaptain } from "./functions/reusable"
 
-export const loginUser = (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs) => {
+export const loginUser = (user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs, nextGW) => {
     let captain = getCaptain(currentStarters, records);
     let vCaptain = getVCaptain(currentStarters, records);
     return {
@@ -22,7 +22,8 @@ export const loginUser = (user, adminUser, clubPlayers, currentStarters, current
         allLastUGJs,
         topPlayer, 
         topUser,
-        allPGJs
+        allPGJs, 
+        nextGW
     }
 }
 

@@ -48,6 +48,7 @@ const initialState = {
         },
         allLastUGJs: [],
         lastGW: null,
+        nextGW: null,
         clubFocusGW: null,
         allGames: [],
         league: [],
@@ -112,6 +113,7 @@ const rootReducer = (state = initialState, action) => {
                     clubPlayers: action.clubPlayers,
                     allLastUGJs: action.allLastUGJs,
                     lastGW: action.lastGW,
+                    nextGW: action.nextGW,
                     league: action.league,
                     topPlayer: action.topPlayer,
                     topUser: action.topUser

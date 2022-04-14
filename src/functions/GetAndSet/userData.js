@@ -1,4 +1,4 @@
-import { getAdminUserById, getAllPGJFromUserId, getAllPGJsFromGameweekId, getAllPlayersByAdminUserId, getAllRecordsByUserId, getLeague, getPlayerById, getPlayersByUserIdGWIdSub, getUGJ, getUGJs, getUserById } from "../APIcalls";
+import { getAdminUserById, getAllPGJFromUserId, getAllPGJsFromGameweekId, getAllPlayersByAdminUserId, getAllRecordsByUserId, getGameweekFromAdminUserIdAndGameweek, getLeague, getnextGWweekFromAdminUserId, getPlayerById, getPlayersByUserIdGWIdSub, getUGJ, getUGJs, getUserById } from "../APIcalls";
 import { getLastAndAllGWs } from "../reusable";
 import { loginUser } from "../../actions";
 
@@ -14,11 +14,13 @@ const userData = async(user) => {
         let league = await getLeague(adminUser.admin_user_id);
         if (lastGW) {
           const { gameweek_id } = lastGW;
+          const nextGW = await getnextGWweekFromAdminUserId(adminUser.admin_user_id);
+          console.log(nextGW);
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);
           if (lastPGJs.length<1) {
-            return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, []);
+            return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastPGJs, [], [], null, null, [], nextGW);
           } else {
             let allPGJs = await getAllPGJFromUserId(user.user_id);
             let allLastUGJs = await getUGJs(adminUser.admin_user_id, gameweek_id);
@@ -34,10 +36,10 @@ const userData = async(user) => {
               ug,
               user: await getUserById(ug.user_id)
             } : null;
-            return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs);
+            return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, lastGWStarters, lastGWSubs, records, league, lastGW, lastUGJ, lastPGJs, allLastUGJs, topPlayer, topUser, allPGJs, nextGW);
           }
         } else {
-          return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, []);
+          return loginUser(user, adminUser, clubPlayers, currentStarters, currentSubs, [], [], records, league, null, null, [], [], null, null, [], null);
         }
       } catch(e) {
         return false;

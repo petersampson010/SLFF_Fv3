@@ -6,12 +6,16 @@ import { addSpinner, closeModal, removeSpinner, setCaptain, setLatestToTransferr
 import {vw, vh} from 'react-native-expo-viewport-units';
 import { validatePickTeam } from '../../functions/validity';
 import _ from 'lodash';
-import { patchRecordSUBS, patchRecordCAPTAINS, patchRecordToCAPTAIN, patchRecordRemoveCAPTAIN } from '../../functions/APIcalls';
+import { patchRecordSUBS, patchRecordCAPTAINS, patchRecordToCAPTAIN, patchRecordRemoveCAPTAIN, getnextGWweekFromAdminUserId } from '../../functions/APIcalls';
 import { showMessage } from 'react-native-flash-message';
 import Pitch from '../../components/Pitch/pitch';
 import BottomNav from '../../components/bottomNav/bottomNav';
 import { screenContainer } from '../../styles/global';
 import PitchHead from '../../components/PitchHead/pitchHead';
+import GWScore from '../../components/gwScore/gwScore';
+import { $inputBlue } from '../../styles/global';
+import { recentGame } from '../home/style';
+import { clubNameTEXT } from '../../styles/textStyle';
 
 
 
@@ -27,9 +31,8 @@ const PickTeamScreen = ({navigation}) => {
     captain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.captain),
     vCaptain = useSelector(state => state.stateChanges.updatedNotPersistedTeam.vCaptain),
     originalCaptain = useSelector(state => state.user.currentTeam.captain),
-    originalVCaptain = useSelector(state => state.user.currentTeam.vCaptain);
-
-
+    originalVCaptain = useSelector(state => state.user.currentTeam.vCaptain),
+    nextGW = useSelector(state => state.club.nextGW);
 
     const transfer = player => {
         let subsIds = subs.map(s => s.player_id);
@@ -101,9 +104,12 @@ const PickTeamScreen = ({navigation}) => {
         dispatch(setModal({modalSet: 'set2', player: {...player.player, sub}, width: vw(80), height: vh(60), btnClick: transfer}))
     }
 
+
+
         return (
             <View style={screenContainer}>
                 <PitchHead type='pickTeam' update={validateTeam}/>
+                <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text>
                 <ScrollView>
                     <Pitch
                     type="pickTeam"

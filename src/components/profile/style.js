@@ -53,11 +53,12 @@ export const buttons = {
 
 export const GWContainer = {
     flexDirection: 'row',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flexWrap: 'wrap'
 }
 
 export const GWInfoContainer = {
-    marginVertical: vh(2),
+    marginTop: vh(2),
     textAlign: 'center',
     margin: vh(0.3),
     width: vw(18),

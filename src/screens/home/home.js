@@ -42,9 +42,9 @@ const HomeScreen = ({navigation}) => {
         <TouchableOpacity key={i}
             style={tableRow}
             onPress={() => goToTeamPoints(team)}>
-            <Text style={{...tableElement3, ...standardText}}>{team.team_name}</Text>
-            <Text style={{...tableElement3, ...standardText}}>{team.total_points}</Text>
+            <Text style={{width: vw(50), ...standardText}}>{team.team_name}</Text>
             {lastGW ? <Text style={{...tableElement3, ...standardText}}>{team.gw_points}</Text> : null}
+            <Text style={{width: vw(10), ...standardText}}>{team.total_points}</Text>
         </TouchableOpacity>);
     }
 
@@ -120,11 +120,11 @@ const HomeScreen = ({navigation}) => {
                     {lastGW ? 
                     <View>
                         <View style={tableRowHead}>
-                            <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>Team</Text>
-                            <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>Total</Text>
+                            <Text style={{width: vw(50), ...standardText, fontWeight: 'bold'}}>Team</Text>
                             {lastGW ? 
                             <Text style={{...tableElement3, ...standardText, fontWeight: 'bold'}}>vs. {lastGW.opponent}</Text>
                             : null}
+                            <Text style={{width: vw(10), ...standardText, fontWeight: 'bold'}}>Total</Text>
                         </View>
                         <View style={{marginBottom: vh(90)}}>
                             <ScrollView>

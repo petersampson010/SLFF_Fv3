@@ -256,6 +256,7 @@ export const getAllGWsFromAdminUserId = auId => axiosGet(`gameweeks?admin_user_i
 
 export const getGameweekFromAdminUserIdAndGameweek = (adminUserId, gameweek) => axiosGet(`gameweeks?admin_user_id=${adminUserId}&gameweek=${gameweek}`, true);
 
+export const getnextGWweekFromAdminUserId = adminUserId => axiosGet(`gameweeks?admin_user_id=${adminUserId}`).then(res => res.filter(x => !x.complete)).then(res => res.sort((a,b) => new Date(a.date) - new Date(b.date))).then(gws => gws[0]);
 
 // PLAYER-GAMEWEEK-JOINERS
 

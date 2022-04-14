@@ -21,6 +21,7 @@ import { subImage } from '../../components/Modal/style';
 import { playerImage, playerImageLarge } from '../../components/PlayerGraphic/style';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
+import { recentGame } from '../home/style';
 
 
 const TransfersScreen = ({navigation}) => {
@@ -31,7 +32,9 @@ const TransfersScreen = ({navigation}) => {
     clubPlayers = useSelector(state => state.club.clubPlayers),
     user = useSelector(state => state.user.user),
     budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
-    originalPlayers = useSelector(state => state.user.currentTeam.starters.concat(state.user.currentTeam.subs));
+    originalPlayers = useSelector(state => state.user.currentTeam.starters.concat(state.user.currentTeam.subs)),
+    nextGW = useSelector(state => state.club.nextGW);
+
 
     const originalTeam = () => {
         return {
@@ -124,6 +127,7 @@ const TransfersScreen = ({navigation}) => {
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="transfers" update={confirmUpdates}/>
+                <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text>
                 <ScrollView style={pitchContainer}>
                     <Pitch 
                     type="transfers"

@@ -115,7 +115,7 @@ const MyModal = () => {
                              : null}
                     {pg ? playerGWProfile(pg) : null}
                     {ug ? userGWProfile(ug) : null}
-                    <View style={modalJSX}>
+                    <View style={{...modalJSX, marginTop: vh(2)}}>
                         {bottomBtn()}
                         <Button clickable modal text='Close' func={()=>dispatch(closeModal())} width={vw(35)}/>
                     </View>

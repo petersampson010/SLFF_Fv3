@@ -1,7 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, Text } from "react-native";
 import { useDispatch } from 'react-redux';
-import { resetStore } from '../actions';
+import { removeSpinner, resetStore } from '../actions';
 import { clearStorage } from "../functions/storage";
 import { updateStack } from '../Navigation';
 import { $darkBlue, $darkBlueOpacity } from '../styles/global';
@@ -15,6 +15,7 @@ const signOutText = (navigation) => {
         clearStorage();
         dispatch(resetStore());
         updateStack(navigation, 0, 'Opener');
+        dispatch(removeSpinner());
     }
 
     return ( 

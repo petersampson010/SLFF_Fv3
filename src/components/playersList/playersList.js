@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { connect, useDispatch, useSelector } from 'react-redux';
@@ -18,6 +18,10 @@ const PlayersList = ({clickFcn}) => {
     subImg = require('../../../images/subIcon.png'),
     clubPlayers = useSelector(state => state.club.clubPlayers),
     teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs));
+
+    useEffect(() => {
+
+    }, [teamPlayers])
 
     const table = () => {
         switch(positionFilter) {
@@ -40,18 +44,24 @@ const PlayersList = ({clickFcn}) => {
         return playerIds(teamPlayers).includes(player.player_id);
     }
 
-    const tableRowRender = (player, key) => {
-        const playerImg = require('../../../images/profile.jpg');
-        const subImg = require('../../../images/subIcon.png');
-        return <TouchableOpacity key={key}
-        style={{...tableRow, opacity: playerSelected(player) ? 0.2 : 1}}
+    const tableRowRender = (player, i) => {
+        return playerSelected(player) ? 
+        <View key={i} style={tableRow}
+        onPress={()=>clickFcn({player: player})}>
+            <Text style={{...tableElement1, ...standardText, opacity: 0.4}}>{fullName(player)}</Text>
+            <Text style={{...tableElement1, ...standardText, opacity: 0.4}}>{positionString(player.position)}</Text>
+            <Text style={{...tableElement4, ...standardText, opacity: 0.4}}>£{player.price}m</Text>
+        </View>
+        :
+        <TouchableOpacity key={i}
+        style={tableRow}
         onPress={()=>clickFcn({player: player})}>
             <Text style={{...tableElement1, ...standardText}}>{fullName(player)}</Text>
             <Text style={{...tableElement1, ...standardText}}>{positionString(player.position)}</Text>
             <Text style={{...tableElement4, ...standardText}}>£{player.price}m</Text>
         </TouchableOpacity>;
     }
-    
+
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>

@@ -13,6 +13,7 @@ import { getStorage, setStorage } from '../../functions/storage';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
 import { flashMyMessage } from '../../functions/flashMyMessage';
+import globalConfig from '../../config/globalConfig.json';
 
 const AdminAccountSetupScreen = ({navigation}) => {
 
@@ -28,10 +29,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
   [verified, updateVerified] = useState(false);
 
   useEffect(() => {
-    console.log('hitting useEffect');
     const checkVerified = () => {
-      console.log('hitting checkVerified function');
-      console.log(verified);
       if (verified) {
         updateStack(navigation, 0, 'ClubSetup');
       }
@@ -77,7 +75,12 @@ const AdminAccountSetupScreen = ({navigation}) => {
     try {
       checkPassword();
       let { token, admin_user } = await postAdminUser(adminUserObj);
-      dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
+      if (globalConfig.RN_SET_MAIL) {
+        dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
+      } else {
+        updateVerified(true);
+        flashMyMessage('Skipping Email confirmation', 'success');
+      }
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       dispatch(setAdminUser(admin_user));
     } catch(e) {
@@ -89,11 +92,8 @@ const AdminAccountSetupScreen = ({navigation}) => {
   const checkEmailConfirm = async() => {
     try {
       const { admin_user_id } = await getStorage('session');
-      console.log(admin_user_id);
-      console.log(typeof admin_user_id);
       const res = await getAdminUserById(admin_user_id);
       if (res.confirm_email) {
-        console.log('email is confirmed');
         dispatch(closeModal());
         updateVerified(true);
         flashMyMessage('Email confirmed successfully', 'success');

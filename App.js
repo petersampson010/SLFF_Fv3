@@ -13,16 +13,17 @@ import rootReducer from './src/rootReducer';
 import FlashMessage from 'react-native-flash-message';
 import MyModal from './src/components/Modal/myModal';
 import LoadContainer from './src/LoadContainer';
+import SpinnerOverlay from './src/components/spinner/spinner';
 
 const store = createStore(rootReducer);
 
 const App = () => {
 
+  console.log(process.env.RN_SET_API_URL);
+
   return (
     <Provider store={store}>
       <LoadContainer />
-      <MyModal/>
-      <FlashMessage position="top"/>
     </Provider>
   );
 };

@@ -16,7 +16,6 @@ import _, { remove } from 'lodash';
 import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
 import { TouchableHighlightBase } from 'react-native';
 import { addSpinner, closeModal, removeSpinner, setLatestToTransferring, setModal, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
-import SpinnerOverlay from '../../components/spinner/spinner';
 import PitchHead from '../../components/PitchHead/pitchHead';
 import { subImage } from '../../components/Modal/style';
 import { playerImage, playerImageLarge } from '../../components/PlayerGraphic/style';
@@ -32,8 +31,7 @@ const TransfersScreen = ({navigation}) => {
     clubPlayers = useSelector(state => state.club.clubPlayers),
     user = useSelector(state => state.user.user),
     budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
-    originalPlayers = useSelector(state => state.user.currentTeam.starters.concat(state.user.currentTeam.subs)),
-    spinner = useSelector(state => state.boolDeciders.spinner);
+    originalPlayers = useSelector(state => state.user.currentTeam.starters.concat(state.user.currentTeam.subs));
 
     const originalTeam = () => {
         return {
@@ -125,7 +123,6 @@ const TransfersScreen = ({navigation}) => {
 
         return ( 
             <View style={screenContainer}>
-                {spinner ? <SpinnerOverlay/> : null}
                 <PitchHead type="transfers" update={confirmUpdates}/>
                 <ScrollView style={pitchContainer}>
                     <Pitch 

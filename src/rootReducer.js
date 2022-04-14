@@ -4,7 +4,7 @@ import { syncGWs } from "./functions/sync/syncGWs";
 
 const initialState = {
     boolDeciders: {
-        spinner: false, 
+        spinner: true, 
         otherTeamFocus: false, 
         adminActive: false, 
         loginComplete: false,

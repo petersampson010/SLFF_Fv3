@@ -4,14 +4,13 @@ import { showMessage } from 'react-native-flash-message';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
-import { closeModal, completeGameState, setModal, updateStateClubPlayers } from '../../actions';
+import { addSpinner, closeModal, completeGameState, removeSpinner, setModal, updateStateClubPlayers } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
 import { tableElement1, tableElement9, tableRow } from '../../styles/table';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import { headers, standardText } from '../../styles/textStyle';
 import { inputFieldSmall, input, inputFieldContainerInLine, scoreInput } from '../../styles/input';
 import { calculateScore, getLastAndAllGWs } from '../../functions/reusable';
-import SpinnerOverlay from '../../components/spinner/spinner';
 import Button from '../../components/Button/button';
 import { headComp, tableComp } from './style';
 
@@ -25,13 +24,12 @@ const GameEditorScreen = ({ navigation }) => {
     allUsers = useSelector(state => state.club.allUsers),
     lastGW = useSelector(state => state.club.lastGW);
 
-    const [players, updatePlayers] = useState({});
-    const [activeDialog, updateActiveDialog] = useState(false);
-    const [score, updateScore] = useState({
+    const [players, updatePlayers] = useState({}),
+    [activeDialog, updateActiveDialog] = useState(false),
+    [score, updateScore] = useState({
         team: '',
         oppo: ''
     });
-    const [spinner, updateSpinner] = useState(false);
 
     useEffect(() => {
         const setPlayers = () => {
@@ -119,7 +117,7 @@ const GameEditorScreen = ({ navigation }) => {
     }
 
     const startSpin = () => {
-        updateSpinner(true);
+        dispatch(addSpinner());
         validatePlayerScores();
     }
 
@@ -147,7 +145,7 @@ const GameEditorScreen = ({ navigation }) => {
         if (outcome) {
             postPGJoiners(postArr);
         } else {
-            updateSpinner(false);
+            dispatch(removeSpinner());
             showMessage({
                 message: "Please update minutes",
                 type: "warning"
@@ -167,7 +165,7 @@ const GameEditorScreen = ({ navigation }) => {
             await completeGame(clubFocusGW.gameweek_id, score, lastGW ? lastGW.gameweek+1 : 1);
             let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
             dispatch(completeGameState(returnObj.GWs, returnObj.lastGW));
-            updateSpinner(false);
+            dispatch(removeSpinner());
             dispatch(closeModal());
             showMessage({
                 message: "Success",
@@ -175,7 +173,7 @@ const GameEditorScreen = ({ navigation }) => {
               });
             navigation.navigate('AdminHome');
         } catch(e) {
-            updateSpinner(false);
+            dispatch(removeSpinner());
             flashMyMessage(e, 'danger');
         }
     }
@@ -209,7 +207,6 @@ const GameEditorScreen = ({ navigation }) => {
     
         return (
             <View style={{backgroundColor: $darkBlue}}>
-                {spinner ? <SpinnerOverlay/> : null}
                 <Button clickable absolute text="Confirm" width={vw(35)} func={setModalRedux}/>
                 <View style={inputFieldContainerInLine}>
                     <Text style={{...standardText, width: vw(30), textAlign: 'right'}}>{adminUser.club_name}</Text>
@@ -244,7 +241,7 @@ const GameEditorScreen = ({ navigation }) => {
                     <View style={headComp}><Text style={{width: vh(16), ...standardText}}>Goals Conceeded</Text></View>
                 </View>
                 <ScrollView style={screenContainer}>
-                    <View style={{paddingBottom: vh(62)}}>
+                    <View style={{paddingBottom: vh(71)}}>
                         {renderRows()}
                     </View>
                 </ScrollView>

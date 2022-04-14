@@ -2,7 +2,7 @@ import React, { Component, useState } from 'react';
 import { View, Text, Switch, TextInput } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect, useDispatch } from 'react-redux';
-import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner } from '../../actions';
+import { loginUser, loginAdminUser, resetTeamPlayers, addSpinner, removeSpinner } from '../../actions';
 import { getUserByEmail, getAdminUserByEmail, getAllPlayersByAdminUserId, getAllRecordsByUserId, getPlayersByUserIdGWIdSub, 
   getAllUsersByAdminUserId, getAllGamesByAdminUserId, getLeague, getAllGWsFromAdminUserId, getAllPGJsFromGameweekId, getUGJ, getUGJs, getPlayerById, getUserById, getAdminUserById, getAllPGJFromUserId, adminUserSignIn, userSignIn } 
   from '../../functions/APIcalls'; 
@@ -16,6 +16,7 @@ import { vw } from 'react-native-expo-viewport-units';
 import { getStorage, setStorage } from '../../functions/storage';
 import userData from '../../functions/GetAndSet/userData';
 import adminData from '../../functions/GetAndSet/adminData';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 const LoginScreen = ({navigation}) => {
@@ -57,20 +58,24 @@ const LoginScreen = ({navigation}) => {
 
   const handleAdminSubmit = async() => {
     try {
+      dispatch(addSpinner());
       const { admin_user, token } = await adminUserSignIn(userObj);
       await setStorage('session', JSON.stringify({token, admin_user_id: admin_user.admin_user_id}));
       handleAdminReturn(admin_user);
     } catch(e) {
-      flashMyMessage(e, 'danger');
+      dispatch(removeSpinner());
+      flashMyMessage(e[0], 'danger');
     }
   }
   
   const handleUserSubmit = async() => {
     try {
+      dispatch(addSpinner());
       const { user, token } = await userSignIn(userObj);
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
       handleUserReturn(user);
     } catch(e) {
+      dispatch(removeSpinner());
       showMessage({
         message: e[0],
         type: "danger"
@@ -82,14 +87,17 @@ const LoginScreen = ({navigation}) => {
     try {
       if (user !== undefined && user !== null) {
         dispatch(await userData(user));
+        dispatch(removeSpinner());
         updateStack(navigation, 0, 'Home');
       } else {
+        dispatch(removeSpinner());
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
         })
       }
     } catch(e) {
+      dispatch(removeSpinner());
       flashMyMessage(e, 'danger');
     }
   }
@@ -98,14 +106,17 @@ const LoginScreen = ({navigation}) => {
     try {
       if (adminUser !== undefined && adminUser !== null) {
         dispatch(await adminData(adminUser));
+        dispatch(removeSpinner());
         updateStack(navigation, 0, 'AdminHome');
       } else {
+        dispatch(removeSpinner());
         showMessage({
           message: "Login failed, please try again",
           type: "danger"
         })
       }
     } catch(e) {
+      dispatch(removeSpinner());
       flashMyMessage(e, 'danger');
     }
   }

@@ -52,8 +52,7 @@ const ClubSetupScreen = ({navigation}) => {
             22: {name: '', position:'1', price: ''},
             23: {name: '', position:'1', price: ''}
     }),
-    adminUserId = useSelector(state => state.club.adminUser.admin_user_id),
-    spinner = useSelector(state => state.boolDeciders.spinner);
+    adminUserId = useSelector(state => state.club.adminUser.admin_user_id);
 
     const updatePosition = (i, selectedValue) => {
         updatePlayers({...players, [i]: {...players[i], position: selectedValue}})
@@ -157,7 +156,6 @@ const ClubSetupScreen = ({navigation}) => {
 
         return (
             <View style={screenContainer}>
-                {spinner ? <SpinnerOverlay/> :
                 <View>
                     <View style={topBar}>
                         <View style={{justifyContent: 'center'}}>
@@ -177,7 +175,6 @@ const ClubSetupScreen = ({navigation}) => {
                             {renderRows()}
                     </ScrollView>
                 </View>
-                }
             </View>
         );
 }

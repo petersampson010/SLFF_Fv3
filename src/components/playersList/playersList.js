@@ -45,15 +45,13 @@ const PlayersList = ({clickFcn}) => {
         const subImg = require('../../../images/subIcon.png');
         return <TouchableOpacity key={key}
         style={{...tableRow, opacity: playerSelected(player) ? 0.2 : 1}}
-        onPress={()=>clickFcn(player)}>
+        onPress={()=>clickFcn({player: player})}>
             <Text style={{...tableElement1, ...standardText}}>{fullName(player)}</Text>
             <Text style={{...tableElement1, ...standardText}}>{positionString(player.position)}</Text>
             <Text style={{...tableElement4, ...standardText}}>£{player.price}m</Text>
         </TouchableOpacity>;
     }
-
-    console.log(positionFilter);
-
+    
         return ( 
             <View style={playersListContainer}>
                 <View style={filter}>

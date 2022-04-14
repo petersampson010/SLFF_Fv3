@@ -4,7 +4,7 @@ import { appTitleTEXT } from "../../styles/textStyle";
 
 export const overlay = {
     position: 'absolute',
-    zIndex: 1,
+    zIndex: 10,
     width: vw(100),
     height: vh(100),
     alignItems: 'center',
@@ -16,5 +16,6 @@ export const overlay = {
 
 export const spinnerTitle = {
     ...appTitleTEXT,
+    zIndex: 999,
     paddingBottom: vh(20)
 }

@@ -9,7 +9,7 @@ export const modalContainer = {
     borderRadius: 12,
     alignItems: 'center', 
     padding: vh(3),
-    zIndex: 999
+    zIndex: 9
 }
 
 export const modalJSX = {

@@ -90,6 +90,12 @@ const AdminHomeScreen = ({navigation}) => {
                     active: false, 
                     update: false
                 });
+                updateGame({
+                    dateModalVisible: false,
+                    opponent: '',
+                    date: new Date(),
+                    complete: false
+                })
                 showMessage({
                     message: "Game/Event added",
                     type: 'success'

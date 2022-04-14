@@ -29,10 +29,7 @@ const AdminAccountSetupScreen = ({navigation}) => {
   [verified, updateVerified] = useState(false);
 
   useEffect(() => {
-    console.log('hitting useEffect');
     const checkVerified = () => {
-      console.log('hitting checkVerified function');
-      console.log(verified);
       if (verified) {
         updateStack(navigation, 0, 'ClubSetup');
       }
@@ -95,11 +92,8 @@ const AdminAccountSetupScreen = ({navigation}) => {
   const checkEmailConfirm = async() => {
     try {
       const { admin_user_id } = await getStorage('session');
-      console.log(admin_user_id);
-      console.log(typeof admin_user_id);
       const res = await getAdminUserById(admin_user_id);
       if (res.confirm_email) {
-        console.log('email is confirmed');
         dispatch(closeModal());
         updateVerified(true);
         flashMyMessage('Email confirmed successfully', 'success');

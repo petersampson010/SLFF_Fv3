@@ -1,5 +1,5 @@
 import { vh, vw } from "react-native-expo-viewport-units";
-import { $baseBlue, $darkBlue, $standardWhite } from "../../styles/global";
+import { $baseBlue, $darkBlue, $darkBlueMidOpacity, $darkBlueOpacity, $standardWhite } from "../../styles/global";
 import { appTitleTEXT } from "../../styles/textStyle";
 
 export const overlay = {
@@ -9,8 +9,7 @@ export const overlay = {
     height: vh(100),
     alignItems: 'center',
     justifyContent: 'center',
-    // backgroundColor: $darkBlue,
-    opacity: 0.8,
+    backgroundColor: $darkBlueMidOpacity,
     paddingBottom: vh(25)
 }
 

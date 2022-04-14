@@ -28,6 +28,7 @@ export const $arylideYellow = '#E9D758';
 
 export const $darkBlue = '#152032';
 export const $darkBlueOpacity = 'rgba(21, 32, 50, 0.1)';
+export const $darkBlueMidOpacity = 'rgba(21, 32, 50, 0.6)';
 export const $luminousGreen = 'rgb(99, 220, 159)';
 export const $inputBlue = '#3d4151';
 export const $seaBlue = '#0072d2';

@@ -117,6 +117,7 @@ const GameEditorScreen = ({ navigation }) => {
     }
 
     const startSpin = () => {
+        dispatch(closeModal());
         dispatch(addSpinner());
         validatePlayerScores();
     }

@@ -63,8 +63,6 @@ const LoadContainer = () => {
                 {spinner ? <SpinnerOverlay/> : null}
                 <Navigation initialRoute={initialRoute}/>
             </View>}
-            {/* <SpinnerOverlay/>
-            <MyModal/> */}
         </View>
 }
 

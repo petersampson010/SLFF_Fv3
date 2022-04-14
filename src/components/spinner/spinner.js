@@ -6,7 +6,6 @@ import { overlay, spinnerTitle } from "./style";
 
 
 const SpinnerOverlay = () => {
-  const profilePic = require('../../../images/profile.jpg');
 
   return <View style={overlay}>
               <ActivityIndicator size="large" color="#00ff00"/>

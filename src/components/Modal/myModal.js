@@ -98,7 +98,7 @@ const MyModal = () => {
             <Modal
             visible={modalActive}
             transparent={true}>
-                <View style={{marginTop: vh(10), height: vh(90), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
+                <View style={{height: vh(100), width: vw(100), backgroundColor: 'rgba(0,0,0,0.5)'}}>
                 <View style={{...modalContainer, top: vh(15), width:width, left:(vw(100)-(width))/2}}>
                     <View style={modalJSX}>
                         <View>
@@ -116,8 +116,8 @@ const MyModal = () => {
                     {pg ? playerGWProfile(pg) : null}
                     {ug ? userGWProfile(ug) : null}
                     <View style={{...modalJSX, marginTop: vh(2)}}>
-                        {bottomBtn()}
                         <Button clickable modal text='Close' func={()=>dispatch(closeModal())} width={vw(35)}/>
+                        {bottomBtn()}
                     </View>
                 </View>
                 </View>  

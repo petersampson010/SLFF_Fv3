@@ -24,9 +24,9 @@ export const capitalize = string => {
 
 export const fullName = player => {
     if (player) {
-        return (player.first_name==='' ? capitalize(player.first_name) + ' ' : '') + capitalize(player.last_name)
+        return (player.first_name==='' ? '' : capitalize(player.first_name) + ' ') + capitalize(player.last_name);
     } else {
-        return player
+        return player;
     }
 }
 

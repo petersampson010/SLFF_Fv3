@@ -127,7 +127,7 @@ const TransfersScreen = ({navigation}) => {
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="transfers" update={confirmUpdates}/>
-                <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text>
+                {nextGW ? <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text> : <Text style={recentGame}>Your club currently has no games upcoming</Text>}
                 <ScrollView style={pitchContainer}>
                     <Pitch 
                     type="transfers"

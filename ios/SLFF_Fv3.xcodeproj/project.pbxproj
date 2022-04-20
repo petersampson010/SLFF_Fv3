@@ -145,7 +145,6 @@
 				B0AA40254B6F532F0AD6809D /* Pods-SLFF_Fv3-SLFF_Fv3Tests.debug.xcconfig */,
 				F9D1EC29819B68D63B07BB71 /* Pods-SLFF_Fv3-SLFF_Fv3Tests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -485,6 +484,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K9AC99LNT4;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SLFF_Fv3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -511,6 +511,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = K9AC99LNT4;
 				INFOPLIST_FILE = SLFF_Fv3/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

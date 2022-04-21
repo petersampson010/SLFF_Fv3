@@ -22,8 +22,7 @@ const ntsScreen2 = ({navigation}) => {
     const dispatch = useDispatch(),  
     user = useSelector(state => state.user.user),
     teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)),
-    originalBudget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
-    [budget, updateOriginalBudget] = useState(originalBudget),
+    budget = useSelector(state => state.stateChanges.updatedNotPersistedTeam.budget),
     lastGW = useSelector(state => state.club.lastGW);
 
     const transfer = player => {
@@ -50,7 +49,7 @@ const ntsScreen2 = ({navigation}) => {
         const teamPlayersObj = playersArrayToObj(teamPlayers);
         try {
             dispatch(addSpinner());
-            if (validateTransfers(budget, teamPlayersObj)) {
+            if (validateTransfers(0, 1, budget, teamPlayersObj)) {
                     if (teamPlayersObj['1'].length===1) {
                         let records = [];
                         let returnUser = await patchUser(user.user_id, {gw_start: lastGW ? lastGW.gameweek+1 : 1, budget}); 
@@ -108,7 +107,7 @@ const ntsScreen2 = ({navigation}) => {
 
         return ( 
             <View style={screenContainer}>
-                <PitchHead type='transfers' update={submitTeam}/>
+                <PitchHead type='nts2' update={submitTeam}/>
                 <ScrollView style={pitchContainer}>
                     {/* <Header style={styles.header} title='Team Selection'/> */}
                     <Pitch

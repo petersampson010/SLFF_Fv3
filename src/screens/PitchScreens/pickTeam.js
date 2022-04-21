@@ -16,6 +16,7 @@ import GWScore from '../../components/gwScore/gwScore';
 import { $inputBlue } from '../../styles/global';
 import { recentGame } from '../home/style';
 import { clubNameTEXT } from '../../styles/textStyle';
+import { banner, bannerText } from './style';
 
 
 
@@ -109,7 +110,9 @@ const PickTeamScreen = ({navigation}) => {
         return (
             <View style={screenContainer}>
                 <PitchHead type='pickTeam' update={validateTeam}/>
-                {nextGW ? <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text> : <Text style={recentGame}>Your club currently has no games upcoming</Text>}
+                <View style={{...banner, backgroundColor: '#C5C5C5'}}>
+                    {nextGW ? <Text style={bannerText}>Upcoming Game vs {nextGW.opponent}</Text> : <Text style={bannerText}>Your club currently has no games upcoming</Text>}
+                </View>
                 <ScrollView>
                     <Pitch
                     type="pickTeam"

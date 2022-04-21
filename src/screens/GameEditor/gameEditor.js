@@ -2,7 +2,7 @@ import React, { Component, useEffect, useState } from 'react';
 import { View, Text, TextInput, ScrollView } from 'react-native';
 import { showMessage } from 'react-native-flash-message';
 import { connect, useDispatch, useSelector } from 'react-redux';
-import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId } from '../../functions/APIcalls';
+import { postPGJoiner, completeGame, postUGJ, getRecordsByGWId, patchRecordGAMEWEEK, postRecordDUPLICATE, postPGJ, getRecordsByGWIdAndUserId, getAllRecordsByGWId, patchUser } from '../../functions/APIcalls';
 import { validatePlayerScore } from '../../functions/validity';
 import { addSpinner, closeModal, completeGameState, removeSpinner, setModal, updateStateClubPlayers } from '../../actions';
 import { $baseBlue, $darkBlue, $electricBlue, $inputBlue, screenContainer } from '../../styles/global';
@@ -164,7 +164,7 @@ const GameEditorScreen = ({ navigation }) => {
             await patchCurrentRecords(records);
             await postNewRecords(records);
             await completeGame(clubFocusGW.gameweek_id, score, lastGW ? lastGW.gameweek+1 : 1);
-            let returnObj = await getLastAndAllGWs(adminUser.admin_user_id)
+            let returnObj = await getLastAndAllGWs(adminUser.admin_user_id);
             dispatch(completeGameState(returnObj.GWs, returnObj.lastGW));
             dispatch(removeSpinner());
             dispatch(closeModal());
@@ -180,13 +180,17 @@ const GameEditorScreen = ({ navigation }) => {
     }
 
     const postUGJoiners = async() => {
+        console.log('****** starting postUGJ loop *******');
         for (let i=0; i<allUsers.length; i++) {
+            console.log('*** NEW USER ***');
             const user = allUsers[i];
-            if (user.gw_start===0) {
-            }
+            console.log(user);
             let records = await getRecordsByGWIdAndUserId(user.user_id, 0);
+            console.log(records);
             const score = await calculateScore(records, clubFocusGW.gameweek_id);
+            console.log(score);
             await postUGJ(user, clubFocusGW.gameweek_id, score);
+            await patchUser(user.user_id, {transfers: user.transfers+1})
         }
     }
 

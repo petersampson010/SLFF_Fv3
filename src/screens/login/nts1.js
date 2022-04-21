@@ -80,12 +80,11 @@ const ntsScreen1 = ({navigation}) => {
     const handleSubmit = async() => {
     try {
       checkPassword();
-      let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget};
+      let userData = {admin_user_id: userObj.clubId, email: userObj.email, password: userObj.password, team_name: userObj.team_name, gw_start: null, budget: globalConfig.startBudget, transfers: globalConfig.startTransfers};
       const {user, token} = await postUser(userData);
       if (globalConfig.RN_SET_MAIL) {
         dispatch(setModal({modalSet: 'set6', width: vw(80), height: vh(50), btnClick: checkEmailConfirm}));
       } else {
-        updateVerified(true);
         flashMyMessage('Skipping Email confirmation', 'success');
       }
       await setStorage('session', JSON.stringify({token, user_id: user.user_id}));
@@ -95,6 +94,9 @@ const ntsScreen1 = ({navigation}) => {
       dispatch(setAdminUser(adminUser));
       let allPlayers = await getAllPlayersByAdminUserId(adminUser.admin_user_id);
       dispatch(setClubPlayersAndLastGW(allPlayers, lastGW));
+      if (!globalConfig.RN_SET_MAIL) {
+        updateVerified(true);
+      }
     } catch(e) {
       flashMyMessage(e, 'danger');
     }

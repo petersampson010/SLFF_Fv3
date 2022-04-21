@@ -4,19 +4,17 @@ import {vw, vh} from 'react-native-expo-viewport-units';
 
 export const modalContainer = {
     position: "absolute",
-    // top: vh(15),
     backgroundColor: '#C5C5C5',
     borderRadius: 12,
-    alignItems: 'center', 
-    padding: vh(3),
+    alignItems: 'center',
     zIndex: 9
 }
 
 export const modalJSX = {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: vh(2),
-    width: '100%'
+    width: '100%',
+    padding: vh(2)
 }
 
 
@@ -63,17 +61,16 @@ export const pickTeamStats = {
 export const captainCheckbox = {
     flexDirection: 'row', 
     justifyContent: 'center', 
-    width: vw(25), 
-    height: vh(3), 
+    paddingVertical: vw(1),
+    width: vw(25),
     marginHorizontal: vw(4),
     borderRadius: 10
 }
 
 export const captainCheckboxContainer = {
-    marginVertical: vh(2),
+    paddingVertical: vw(1),
     flexDirection: 'row',
     justifyContent: 'center',
-    width: '100%'
-    // height: vh(18),
-    // justifyContent: 'space-evenly'
+    width: '100%',
+    backgroundColor: $darkBlue,
 }

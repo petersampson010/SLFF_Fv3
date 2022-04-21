@@ -86,7 +86,11 @@ const LoginScreen = ({navigation}) => {
   const handleUserReturn = async(user) => {
     try {
       if (user !== undefined && user !== null) {
+        let ud = await userData(user);
+        console.log(ud);
+        console.log('abov');
         dispatch(await userData(user));
+        console.log('hitting past dispatch await');
         dispatch(removeSpinner());
         updateStack(navigation, 0, 'Home');
       } else {
@@ -97,6 +101,7 @@ const LoginScreen = ({navigation}) => {
         })
       }
     } catch(e) {
+      console.log('hitting this error');
       dispatch(removeSpinner());
       flashMyMessage(e, 'danger');
     }

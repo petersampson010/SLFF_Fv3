@@ -75,6 +75,8 @@ export const infoTitle = {
 }
 
 export const infoScore = {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
     height: vh(4),
     alignItems: 'center',
     justifyContent: 'center',

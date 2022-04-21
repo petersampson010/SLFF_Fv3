@@ -1,5 +1,6 @@
 {
     "startBudget": 700,
+    "startTransfers": 1,
     "numberOfPlayers": 9,
     "numberOfStarters": 6,
     "numberOfPosition": {

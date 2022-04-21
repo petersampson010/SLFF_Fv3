@@ -2,6 +2,7 @@ import { showMessage } from "react-native-flash-message";
 import { getAllUsers } from "./APIcalls";
 import { playersObjToArray } from "./reusable";
 import globalConfig from '../config/globalConfig.json';
+import { useSelector } from "react-redux";
 
 
 export const validatePlayer = player => {
@@ -11,30 +12,6 @@ export const validatePlayer = player => {
         return false;
     }
 }
-
-// Rails handles this
-
-// export const validateUser = (allUsers, adminUser, user) => {
-//     let result = true;
-//     if (adminUser.admin_user_id) {
-//         allUsers.forEach(x => {
-//             if (x.email===user.email) {
-//                 showMessage({
-//                     message: "Email address already in use",
-//                     type: "danger"
-//                 });
-//                 result = false;
-//             }
-//         })
-//     } else {
-//         showMessage({
-//             message: "Invalid club ID",
-//             type: "danger"
-//         })
-//         result = false;
-//     }
-//     return result;
-// }
 
 export const validatePickTeam = (team) => {
     if (playersObjToArray(team).length===globalConfig.numberOfStarters) {
@@ -66,21 +43,29 @@ export const validatePlayerScore = playerScore => {
     }
 }
 
-export const validateTransfers = (budget, team) => {
-    if (budget>=0) {
-        if (playersObjToArray(team).length===globalConfig.numberOfPlayers) {
-            return true;
+export const validateTransfers = (transfers, transfersAvailable, budget, team) => {
+    if (transfers<=transfersAvailable) {
+        if (budget>=0) {
+            if (playersObjToArray(team).length===globalConfig.numberOfPlayers) {
+                return true;
+            } else {
+                showMessage({
+                    type: 'warning',
+                    message: `you need ${globalConfig.numberOfPlayers} players on your team`
+                });
+                return false;
+            }
         } else {
             showMessage({
                 type: 'warning',
-                message: `you need ${globalConfig.numberOfPlayers} players on your team`
+                message: "Not enough funds for these transfers"
             });
             return false;
         }
     } else {
         showMessage({
             type: 'warning',
-            message: "Not enough funds for these transfers"
+            message: "You do not have the transfers available"
         });
         return false;
     }

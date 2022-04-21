@@ -6,9 +6,7 @@ export const tableRow = {
     borderBottomWidth: 1,
     borderColor: $electricBlueHighlight,
     paddingVertical: vh(0.5),
-    marginHorizontal: vw(2),
-    // borderWidth: 5,
-    // borderColor: $electricBlueHighlight
+    marginHorizontal: vw(2)
 }
 
 export const tableRowHead = {

@@ -3,43 +3,58 @@ import { TouchableOpacity } from 'react-native';
 import { Image } from 'react-native';
 import { View, Text } from 'react-native';
 import { vh, vw } from 'react-native-expo-viewport-units';
-import { capitalize } from '../../functions/reusable';
+import { capitalize, getPointsFromAttr } from '../../functions/reusable';
 import profileImg from '../../../images/profile.jpg';
 import { centerHorizontally } from '../../styles/align';
-import { standardText } from '../../styles/textStyle';
+import { labelText, standardText } from '../../styles/textStyle';
 import { modalTextContainer } from '../Modal/style';
 import { GWContainer, GWInfoContainer, infoScore, infoTitle, profile, profileContainer, title } from './style';
 import GWScore from '../gwScore/gwScore';
 import { $arylideYellow, $darkBlue } from '../../styles/global';
+import { banner, bannerText } from '../../screens/PitchScreens/style';
+import { tableElement1, tableElement4, tableRow } from '../../styles/table';
 
-const playerGWProfile = pg => {
+const playerGWProfile = (pg, player) => {
+
+    console.log(pg);
+    console.log(pg.minutes);
 
 
-    renderPointsBreakdown = () => {
-        return Object.keys(pg).map(score=>{
-            let att = pg[score];
-            score = score==="total_points" ? "Points" : score;
-            score = score==="goals_conceded" ? "Condeded" : score;
-            if (att==null || att=='0' || score=="pg_id" || score=="updated_at" || score=="created_at" || score=="player_id" || score=="gameweek_id" || score=="admin_user_id") {
-                return;
+    const renderPointsBreakdown = () => {
+        return Object.keys(pg).map(attr=>{
+            let score = pg[attr];
+            if (attr!=='goals_conceded' || player.position==3 || player.position==4) {
+                if (score==null || score=='0' || attr=="pg_id" || attr=="updated_at" || attr=="created_at" || attr=="player_id" || attr=="gameweek_id" || attr=="admin_user_id" || attr=="total_points") {
+                    return;
+                }
             } else {
-                return <View style={GWInfoContainer}>
-                    <View style={infoTitle}>
-                        <Text style={{color: 'white'}}>{capitalize(score)}</Text>
-                    </View>
-                    <View style={infoScore}>
-                        <Text style={{color: $darkBlue}}>{att}</Text>
-                    </View>
-                </View>
+                attr = "Conceded";
             }
+            return <View style={tableRow}>
+                <Text style={{...tableElement1}}>{capitalize(attr)}</Text>
+                <Text style={{...tableElement1}}>{score}</Text>
+                <Text style={{...tableElement4}}>{getPointsFromAttr(player.position, attr, score)}</Text>
+            </View>
         });
     }
 
     return ( 
-        <View>
-            <GWScore width={vw(80)} backgroundColor={$darkBlue}/>
-            <View style={GWContainer}>
-                {this.renderPointsBreakdown()}
+        <View style={{width: vw(80)}}>
+            <GWScore  backgroundColor={$darkBlue}/>
+            {pg.minutes==0 ? null : 
+            <View>
+                <View style={banner}>
+                    <Text style={bannerText}>Points Breakdown</Text>
+                </View>
+                <View style={tableRow}>
+                    <Text style={{...tableElement1}}></Text>
+                    <Text style={{...tableElement1}}>Tally</Text>
+                    <Text style={{...tableElement4}}>Points</Text>
+                </View>
+                {renderPointsBreakdown()}
+            </View>}
+            <View style={{...banner, marginTop: vw(2)}}>
+                <Text style={bannerText}>Total Points: {pg.total_points}</Text>
             </View>
         </View>
     );

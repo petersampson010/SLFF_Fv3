@@ -15,7 +15,6 @@ const userData = async(user) => {
         if (lastGW) {
           const { gameweek_id } = lastGW;
           const nextGW = await getnextGWweekFromAdminUserId(adminUser.admin_user_id);
-          console.log(nextGW);
           let lastGWStarters = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, false);
           let lastGWSubs = await getPlayersByUserIdGWIdSub(user.user_id, gameweek_id, true);
           let lastPGJs = await getAllPGJsFromGameweekId(gameweek_id);

@@ -330,9 +330,7 @@ export const postPGJ = async(joiner, admin_user_id) => {
 
 export const getAllPGJoiners = () => axiosGet('player_gameweek_joiners');
 
-export const getAllPGJFromUserId = userId => axiosGet(`http://localhost:3000/player_gameweek_joiners?user_id=${userId}`)
-
-export const getPGJsFromUserIdAndGameweekId = (userId, gameweekId) => axiosGet(`player_gameweek_joiners?user_id=${userId}&gameweek_id=${gameweekId}`);
+export const getAllPGJFromUserId = userId => axiosGet(`player_gameweek_joiners/by_user/${userId}`)
 
 export const getAllPGJsFromGameweekId = (gameweekId) => axiosGet(`player_gameweek_joiners?gameweek_id=${gameweekId}`)
 
@@ -365,7 +363,7 @@ export const postMessage = (name, email, msg) => axiosPost('messages', {
 });
 
 
-export const sendEmail = (message, recipient) => axiosPost('http://localhost:3000/send_email', {
+export const sendEmail = (message, recipient) => axiosPost('send_email', {
     message,
     recipient
 });

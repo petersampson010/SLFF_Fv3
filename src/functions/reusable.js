@@ -194,3 +194,38 @@ export const getLastAndAllGWs = async(adminUserId) => {
         return false;
     }
 }
+
+export const getPointsFromAttr = (position, attr, score) => {
+    console.log(position);
+    if (attr=='goals') {
+        if (position==4) {
+            return score*4
+        } else {
+            return score*5
+        }
+    } else if (attr=='Conceded' && score==0) {
+        if (position==1 || position==2) {
+            return 5
+        } else {
+            return 0;
+        }
+    }
+    switch(attr) {
+        case 'assists':
+            return score*3;
+        case 'minutes':
+            return Math.floor(score/30);
+        case 'own_goals':
+            return score*-3;
+        case 'y_cards':
+            return score*-1;
+        case 'r_cards':
+            return score*-3;
+        case 'bonus':
+            return score;
+        case 'penalty_miss':
+            return score*-3;
+        default:
+            return score;
+    }
+}

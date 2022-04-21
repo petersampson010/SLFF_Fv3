@@ -7,27 +7,27 @@ import PlayersList from '../../components/playersList/playersList.js';
 import { showMessage } from 'react-native-flash-message';
 import BottomNav from '../../components/bottomNav/bottomNav.js';
 import FadeInView from '../../components/fadeInView.js';
-import { pitchContainer } from './style.js';
+import { banner, bannerText, pitchContainer } from './style.js';
 import { screenContainer } from '../../styles/global.js';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { validateTransfers } from '../../functions/validity';
 import pitch from '../../components/Pitch/pitch.js';
 import _, { remove } from 'lodash';
-import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
+import { deleteRecord, getAllRecordsByUserIdAndPlayerId, getRecord, getRecordsByUserIdAndPlayerId, patchRecordGAMEWEEK, patchUser, patchUserBUDGET, postRecord, postRecordTRANSFER } from '../../functions/APIcalls';
 import { TouchableHighlightBase } from 'react-native';
-import { addSpinner, closeModal, removeSpinner, setLatestToTransferring, setModal, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
+import { addSpinner, closeModal, removeSpinner, setAvailableTransfers, setLatestToTransferring, setModal, setTransferringBackToLatest, transferIn, transferOut } from '../../actions';
 import PitchHead from '../../components/PitchHead/pitchHead';
 import { subImage } from '../../components/Modal/style';
 import { playerImage, playerImageLarge } from '../../components/PlayerGraphic/style';
 import { vh, vw } from 'react-native-expo-viewport-units';
 import Button from '../../components/Button/button';
 import { recentGame } from '../home/style';
+import { flashMyMessage } from '../../functions/flashMyMessage';
 
 
 const TransfersScreen = ({navigation}) => {
 
     const dispatch = useDispatch(),
-    [positionFilter, updatePositionFilter] = useState('0'),
     teamPlayers = useSelector(state => state.stateChanges.updatedNotPersistedTeam.starters.concat(state.stateChanges.updatedNotPersistedTeam.subs)),
     clubPlayers = useSelector(state => state.club.clubPlayers),
     user = useSelector(state => state.user.user),
@@ -68,13 +68,14 @@ const TransfersScreen = ({navigation}) => {
 
     const confirmUpdates = async() => {
         try {
-            if (validateTransfers(budget, playersArrayToObj(teamPlayers))) {
+            const playersOut = _.difference(originalPlayers, teamPlayers);
+            const numOfTransfers = playersOut.length;
+            if (validateTransfers(numOfTransfers, user.transfers, budget, playersArrayToObj(teamPlayers))) {
                 dispatch(addSpinner());
                 let count = 0;
                 let captain = false;
                 let vice_captain = false;
                 // players transferred out
-                const playersOut = _.difference(originalPlayers, teamPlayers);
                 for (let i=0;i<playersOut.length;i++) {
                   let record = await getRecord(user.user_id, 0, playersOut[i].player_id);
                   if (record.sub) {
@@ -104,8 +105,9 @@ const TransfersScreen = ({navigation}) => {
                     }
                 }
                 // update budget
-                await patchUserBUDGET(user.user_id, budget);
+                await patchUser(user.user_id, {budget, transfers: user.transfers-numOfTransfers});
                 // persist budget update in root state
+                dispatch(setAvailableTransfers(user.transfers-numOfTransfers));
                 dispatch(setLatestToTransferring());
                 dispatch(removeSpinner());
                 showMessage({
@@ -127,7 +129,9 @@ const TransfersScreen = ({navigation}) => {
         return ( 
             <View style={screenContainer}>
                 <PitchHead type="transfers" update={confirmUpdates}/>
-                {nextGW ? <Text style={recentGame}>Upcoming Game vs {nextGW.opponent}</Text> : <Text style={recentGame}>Your club currently has no games upcoming</Text>}
+                <View style={{...banner, backgroundColor: '#C5C5C5'}}>
+                    {nextGW ? <Text style={bannerText}>Upcoming Game vs {nextGW.opponent}</Text> : <Text style={bannerText}>Your club currently has no games upcoming</Text>}
+                </View>
                 <ScrollView style={pitchContainer}>
                     <Pitch 
                     type="transfers"

@@ -47,10 +47,10 @@ const PitchHead = ({ type, update }) => {
                 return <GWScore/>;
             case 'pickTeam':
                 return <View style={pickTeamX}><Button clickable text='Confirm' func={update} width={vw(30)}/></View>;
-            case 'transfers':
+            case 'transfers', 'nts2':
                 return <View style={transfersX}>
                         <View >
-                            <Text style={labelText}>Transfers Available: {user.transfers}</Text>
+                            {type=='transfers' ? <Text style={labelText}>Transfers Available: {user.transfers}</Text> : null}
                             <View style={{flexDirection: "row"}}>
                                 <Text style={labelText}>Budget: </Text>
                                 <Text style={{...labelText, color: (budget>=0 ? 'green' : 'red')}}>{Math.floor((budget*100)/100)}m</Text>

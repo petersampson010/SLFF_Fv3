@@ -7,8 +7,8 @@ import { captainCheckbox } from '../Modal/style';
 const Checkbox = ({ text, func, clickable, active }) => {
 
         return ( 
-            <TouchableOpacity style={{...captainCheckbox, backgroundColor: active ? $arylideYellow : $darkBlue, color: active ? $darkBlue : 'white'}} onPress={clickable ? func : null}>
-                    <Text style={{color: active ? $darkBlue : 'white'}}>{text}</Text>
+            <TouchableOpacity style={{...captainCheckbox, backgroundColor: active ? $arylideYellow : 'white'}} onPress={clickable ? func : null}>
+                    <Text style={{color: $darkBlue}}>{text}</Text>
             </TouchableOpacity>
          );
 }

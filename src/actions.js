@@ -270,3 +270,10 @@ export const resetStore = () => {
         type: "RESETSTORE"
     }
 }
+
+export const setAvailableTransfers = transfers => {
+    return {
+        type: "SETAVAILABLETRANSFERS",
+        transfers
+    }
+}

@@ -43,7 +43,6 @@ const LoadContainer = () => {
                 flashMyMessage(e, 'danger');
                 console.warn(e)
             }
-            console.log('aree we hitting');
             dispatch(removeSpinner());
             updateOnLoad(false);
         };

@@ -107,15 +107,15 @@ const MyModal = () => {
                         </View>
                         {topRightJSX()}
                     </View>
-                            {modalSet === 'set2' && !player.sub ? 
-                            <View style={captainCheckboxContainer}>
-                                <Checkbox clickable active={player.player_id===captain.player_id} text="Captain" func={()=>setC(player)} style={captainCheckbox}/>
-                                <Checkbox clickable active={player.player_id===vCaptain.player_id} text="Vice Captain" func={()=>setVC(player)} style={captainCheckbox}/> 
-                            </View>
-                             : null}
-                    {pg ? playerGWProfile(pg) : null}
+                    {modalSet === 'set2' && !player.sub ? 
+                    <View style={captainCheckboxContainer}>
+                        <Checkbox clickable active={player.player_id===captain.player_id} text="Captain" func={()=>setC(player)} style={captainCheckbox}/>
+                        <Checkbox clickable active={player.player_id===vCaptain.player_id} text="Vice Captain" func={()=>setVC(player)} style={captainCheckbox}/> 
+                    </View>
+                    : null}
+                    {pg ? playerGWProfile(pg, player) : null}
                     {ug ? userGWProfile(ug) : null}
-                    <View style={{...modalJSX, marginTop: vh(2)}}>
+                    <View style={{...modalJSX, marginTop: vh(0)}}>
                         <Button clickable modal text='Close' func={()=>dispatch(closeModal())} width={vw(35)}/>
                         {bottomBtn()}
                     </View>

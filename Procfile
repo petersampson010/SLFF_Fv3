@@ -1,1 +1,1 @@
-ios: npm run ios
+# ios: npm run ios
